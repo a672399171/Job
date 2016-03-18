@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace用于java代码调用时识别指定xml的mapper文件 -->
+<mapper namespace="mapping.JobMapper">
+    <!-- 使用resultMap映射实体类和字段之间的一一对应关系 -->
+    <resultMap type="com.zzu.model.Job" id="jobResultMap" autoMapping="true">
+        <association property="type" javaType="com.zzu.model.Position">
+            <id property="id" column="p_id"/>
+            <result property="name" column="p_name"/>
+        </association>
+        <association property="post_company" javaType="com.zzu.model.Company" autoMapping="true">
+            <id property="id" column="c_id"/>
+        </association>
+    </resultMap>
+
+    <resultMap type="com.zzu.model.Comment" id="commentResultMap" autoMapping="true">
+        <id property="id" column="id"></id>
+        <association property="user" javaType="com.zzu.model.User">
+            <id property="id" column="u_id"/>
+            <result property="photo_src" column="photo_src"></result>
+        </association>
+    </resultMap>
+
+    <resultMap id="collectionResultMap" type="com.zzu.model.Collection" autoMapping="true">
+        <association property="user" javaType="com.zzu.model.User">
+            <id property="id" column="u_id"></id>
+        </association>
+        <association property="job" javaType="com.zzu.model.Job">
+            <id property="id" column="j_id"></id>
+        </association>
+    </resultMap>
+
+    <resultMap id="applyResultMap" type="com.zzu.model.Apply">
+        <association property="user" javaType="com.zzu.model.User">
+            <id property="id" column="u_id"></id>
+        </association>
+        <association property="job" javaType="com.zzu.model.Job">
+            <id property="id" column="j_id"></id>
+        </association>
+    </resultMap>
+
+    <select id="getAllClassifies" resultType="com.zzu.model.Classify">
+        SELECT * FROM tb_classify
+    </select>
+
+    <select id="getAllPositions" resultType="com.zzu.model.Position">
+        SELECT * FROM tb_position
+    </select>
+
+    <select id="getAllCompanyJobs" resultMap="jobResultMap" parameterType="int">
+        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where j.type=p.id and j.post_company=c.id and post_company=#{post_company}
+    </select>
+
+    <select id="getJobById" resultMap="jobResultMap" parameterType="int">
+        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where j.type=p.id and j.post_company=c.id and j.id=#{id}
+    </select>
+
+    <select id="getSchools" resultType="com.zzu.model.School">
+        SELECT * FROM tb_school
+    </select>
+
+    <select id="getRecentJobs" resultMap="jobResultMap" parameterType="int">
+        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where j.type=p.id and j.post_company=c.id ORDER BY j.post_time desc limit #{num}
+    </select>
+
+    <update id="addSchool" parameterType="string">
+        INSERT into tb_school(school) values(#{school})
+    </update>
+
+    <select id="getComments" resultMap="commentResultMap" parameterType="int">
+        SELECT j.id as j_id,m.*,u.id as u_id,u.photo_src
+        FROM tb_job j,tb_user u,tb_comment m
+        where m.u_id=u.id and m.j_id=j.id and m.j_id=#{id} ORDER BY m.c_time desc
+    </select>
+
+    <select id="getCollection" resultMap="collectionResultMap" parameterType="hashmap">
+        select j.*,u.*,c.* from tb_job j,tb_user u,tb_collection c where j.id=c.j_id and u.id=c.u_id and c.u_id=#{u_id} and c.j_id=#{j_id} limit 1
+    </select>
+
+    <select id="getApplies" resultMap="applyResultMap" parameterType="hashmap">
+        select * from tb_apply a,tb_user u,tb_job j where a.u_id=u.id and a.j_id=j.id and a.u_id=#{u_id}
+    </select>
+
+    <insert id="addApply" parameterType="com.zzu.model.Apply">
+        insert into tb_apply(u_id,j_id,state) values(#{user.id},#{job.id},#{state})
+    </insert>
+
+    <delete id="deleteCollection" parameterType="hashmap">
+        delete from tb_collection where u_id=#{u_id} and j_id=#{j_id}
+    </delete>
+
+    <delete id="addCollection" parameterType="hashmap">
+        insert into tb_collection values(#{u_id},#{j_id})
+    </delete>
+
+    <update id="addMajors" parameterType="list">
+        INSERT into tb_major(s_id,major) values
+        <foreach item="item" index="index" collection="list">
+            <choose>
+                <when test="index == 0">
+                    (2,#{item})
+                </when>
+                <otherwise>
+                    ,(2,#{item})
+                </otherwise>
+            </choose>
+        </foreach>
+    </update>
+
+    <insert id="addClassify" parameterType="com.zzu.model.Classify" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_classify(name) values(#{name})
+    </insert>
+
+    <update id="updateClassify" parameterType="com.zzu.model.Classify">
+        update tb_classify set name=#{name} where id=#{id}
+    </update>
+
+    <delete id="deleteClassify" parameterType="int">
+        delete from tb_classify where id=#{id}
+    </delete>
+
+    <insert id="addPosition" parameterType="com.zzu.model.Position">
+        insert into tb_position(c_id,name) values(#{c_id},#{name})
+    </insert>
+
+    <update id="updatePosition" parameterType="com.zzu.model.Position">
+        update tb_position set name=#{name} where id=#{id}
+    </update>
+
+    <delete id="deletePosition" parameterType="int">
+        delete from tb_position where id=#{id}
+    </delete>
+
+    <select id="searchJobs" resultMap="jobResultMap">
+        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where j.type=p.id and j.post_company=c.id ORDER BY j.post_time desc
+    </select>
+</mapper>

@@ -1,0 +1,72 @@
+@charset "UTF-8";
+#container {
+    background: white;
+}
+
+#hideJobDiv {
+    height: 200px;
+    position: absolute;
+    border: 1px solid grey;
+    background: white;
+    z-index: 100;
+    display: none;
+}
+
+#bigDiv {
+    position: absolute;
+    top:0;
+    left:0;
+    filter:alpha(opacity=100);
+    -moz-opacity:1;
+    -khtml-opacity: 1;
+    opacity: 1;
+    z-index: 50;
+    display: none;
+}
+
+#hideJobDiv ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: block;
+    overflow: auto;
+}
+
+#hideJobDiv ul li {
+    height: 30px;
+    line-height: 30px;
+}
+
+#hideJobDiv ul li:hover {
+    cursor: pointer;
+    background: #F8F8F8;
+}
+
+#leftList {
+    float: left;
+    width: 200px;
+    height: 100%;
+    overflow: auto;
+}
+
+#rightList {
+    float: left;
+    width: 200px;
+    height: 100%;
+    overflow: auto;
+}
+
+.tag {
+    display: inline-block;
+    width: 100px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: #F8F8F8;
+    color: grey;
+    border-radius: 5px;
+}
+
+.tag:hover {
+    color: grey;
+}

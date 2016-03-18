@@ -1,0 +1,48 @@
+@charset "UTF-8";
+body {
+    background: url("../images/login_bg.jpg") no-repeat top center;
+}
+
+#login_panel {
+    width: 40%;
+    min-width: 300px;
+    height: 40%;
+    min-height: 250px;
+    position: absolute;
+    top: 20%;
+    left: 30%;
+}
+
+#login_panel form {
+    width: 60%;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+#login_panel form button {
+    width: 100%;
+    margin: 0 auto;
+    font-size: larger;
+    font-weight: bold;
+    color: white;
+    background-color: #3e8f3e;
+}
+
+#login_panel form button:hover {
+    background-color: #118b0e;
+}
+
+#zhuce {
+    color: #2aabd2;
+    font-size: 15px;
+    margin-top: 5px;
+}
+
+#wangji {
+    float: right;
+    text-decoration: underline;
+}
+
+#msg {
+    color: red;
+}

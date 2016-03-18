@@ -1,0 +1,28 @@
+@charset "UTF-8";
+#well {
+    width: 70%;
+    min-width: 400px;
+    margin: 0 auto;
+}
+
+#regForm {
+    margin-top: 100px;
+}
+
+#regForm {
+    width: 40%;
+}
+
+#zhuce {
+    width: 100%;
+}
+
+#varifyDiv {
+    float: left;
+    margin-right: 15px;
+    width: 150px;
+}
+
+#checkDiv {
+    clear: both;
+}

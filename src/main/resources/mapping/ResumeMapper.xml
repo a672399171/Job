@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace用于java代码调用时识别指定xml的mapper文件 -->
+<mapper namespace="mapping.ResumeMapper">
+    <resultMap type="com.zzu.model.Resume" id="resumeResultMap" autoMapping="true">
+        <association property="major" javaType="com.zzu.model.Major">
+            <id property="id" column="m_id"/>
+            <result property="major" column="m_major"/>
+            <association property="school" javaType="com.zzu.model.School">
+                <id property="id" column="s_id"/>
+                <result property="school" column="s_school"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <select id="getResumeByUid" resultType="com.zzu.model.Resume" parameterType="int">
+        SELECT * FROM tb_resume WHERE u_id=#{u_id}
+    </select>
+
+    <!--<insert id="insertResume" parameterType="com.zzu.model.Resume">
+        insert into tb_resume (u_id,name,sex,birthday,phone,major,grade,province,city,email,spare_time,introduce,title,job_type,salary)
+        values (#{u_id},#{name},#{sex},#{birthday},#{phone},#{major},#{grade},#{province},#{city},#{email},#{spare_time},#{introduce},#{title},#{job_type},#{salary})
+    </insert>-->
+
+    <!--<update id="updateResume" parameterType="com.zzu.model.Resume">
+        update tb_resume set name=#{name},sex=#{sex},birthday=#{birthday},phone=#{phone},major=#{major},grade=#{grade},
+          province=#{province},city=#{city},email=#{email},spare_time=#{spare_time},introduce=#{introduce},title=#{title},job_type=#{job_type},salary=#{salary} where u_id=#{u_id}
+    </update>-->
+
+    <select id="searchResume" resultMap="resumeResultMap" parameterType="hashmap">
+        SELECT r.*,s.id as s_id,s.school as s_school,m.id as m_id,m.major as m_major,m.s_id as s_id FROM tb_resume
+        r,tb_school s,tb_major m where r.major=m.id and m.s_id=s.id
+        <if test="grade != 0">
+            and r.grade=#{grade}
+        </if>
+        <if test="salary != null and salary != ''">
+            and r.salary=#{salary}
+        </if>
+        <if test="school != 0">
+            and s_id=#{school}
+        </if>
+    </select>
+
+    <select id="getResumeById" resultMap="resumeResultMap" parameterType="int">
+        SELECT r.*,s.id as s_id,s.school as s_school,m.id as m_id,m.major as m_major,m.s_id as s_id FROM tb_resume
+        r,tb_school s,tb_major m where r.major=m.id and m.s_id=s.id and r.id=#{id}
+    </select>
+</mapper>

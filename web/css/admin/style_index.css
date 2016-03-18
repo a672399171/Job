@@ -1,0 +1,38 @@
+@charset "UTF-8";
+#navigation {
+    width: 200px;
+}
+
+#navigation ul {
+    list-style: none;
+}
+
+#navigation ul li a {
+    font-size: 14px;
+    display: block;
+    width: 100%;
+    height: 20px;
+    line-height: 20px;
+}
+
+#navigation ul li a:hover {
+    color: red;
+}
+
+#userForm {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 30px;
+}
+
+select {
+    width: 100%;
+}
+
+#detailDiv {
+    width: 200px;
+    height: 300px;
+    float: left;
+    margin-left: 50px;
+    border: 1px solid grey;
+}

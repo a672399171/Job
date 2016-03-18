@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace用于java代码调用时识别指定xml的mapper文件 -->
+<mapper namespace="mapping.UserMapper">
+
+    <select id="search" resultType="com.zzu.model.User" parameterType="hashmap">
+        SELECT * FROM tb_user WHERE username=#{username} AND password=#{password}
+    </select>
+
+    <select id="exists" resultType="com.zzu.model.User" parameterType="string">
+        SELECT * FROM tb_user WHERE username=#{username}
+    </select>
+
+    <select id="getUserById" resultType="com.zzu.model.User" parameterType="int">
+        SELECT * FROM tb_user WHERE id=#{id}
+    </select>
+
+    <update id="modifyInfo" parameterType="hashmap">
+        update tb_user set nickname=#{nickname},sex=#{sex},photo_src=#{photo_src} where id=#{id}
+    </update>
+
+    <update id="updateSecret" parameterType="hashmap">
+        update tb_user set push=#{secret} where id=#{id}
+    </update>
+
+    <select id="searchVarifyByUsername" resultType="com.zzu.model.Varify" parameterType="string">
+        SELECT * FROM tb_varify WHERE username=#{username}
+    </select>
+
+    <update id="updateVarify" parameterType="com.zzu.model.Varify">
+        update tb_varify set varify=#{varify},time=#{time},email=#{email} where username=#{username}
+    </update>
+
+    <insert id="insertVarify" parameterType="com.zzu.model.Varify">
+        insert into tb_varify (username,varify,time,email) values(#{username},#{varify},#{time},#{email})
+    </insert>
+
+    <select id="adminLogin" resultType="com.zzu.model.Admin" parameterType="hashmap">
+        SELECT * FROM tb_admin WHERE username=#{username} AND password=#{password}
+    </select>
+
+    <select id="searchUsers" resultType="com.zzu.model.User">
+        SELECT * FROM tb_user
+    </select>
+
+    <select id="searchPoor" resultType="com.zzu.model.Poor">
+        SELECT * FROM tb_poor where u_id=#{u_id}
+    </select>
+
+    <update id="insertPoor" parameterType="com.zzu.model.Poor">
+        insert into tb_poor(u_id,name,email,school,src,status) values(#{u_id},#{name},#{email},#{school},#{src},#{status})
+          ON DUPLICATE KEY UPDATE name=#{name},email=#{email},school=#{school},src=#{src},status=#{status}
+    </update>
+
+    <select id="searchCompany" resultType="com.zzu.model.Company" parameterType="hashmap">
+        SELECT * FROM tb_company WHERE username=#{username} AND password=#{password}
+    </select>
+
+    <select id="getCompanyById" resultType="com.zzu.model.Company" parameterType="int">
+        SELECT * FROM tb_company WHERE id=#{id}
+    </select>
+
+    <update id="updateCompany" parameterType="com.zzu.model.Company">
+        update tb_company set company_name=#{company_name},address=#{address},name=#{name},
+         phone=#{phone},introduce=#{introduce},type=#{type},scope=#{scope},email=#{email},logo=#{logo} where id=#{id}
+    </update>
+
+    <update id="modifyCompanyPassword" parameterType="hashmap">
+        update tb_company set password=#{password} where id=#{id}
+    </update>
+
+    <insert id="addUser" parameterType="com.zzu.model.User">
+        insert into tb_user(username,password,school_num,nickname,phone,email,sex,push)
+        values(#{username},#{password},#{school_num},#{nickname},#{phone},#{email},#{sex},#{push})
+    </insert>
+
+    <update id="modifyUser" parameterType="com.zzu.model.User">
+        update tb_user set password=#{password},school_num=#{school_num},nickname=#{nickname},
+        phone=#{phone},email=#{email},sex=#{sex},push=#{push} where id=#{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="int">
+        delete from tb_user where id=#{id}
+    </delete>
+</mapper>

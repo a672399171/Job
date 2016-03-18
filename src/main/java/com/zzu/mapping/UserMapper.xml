@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace用于java代码调用时识别指定xml的mapper文件 -->
+<mapper namespace="com.zzu.mapping.UserMapper">
+
+    <select id="search" resultType="com.zzu.model.User" parameterMap="map">
+        SELECT * FROM tb_user WHERE username=#{username} AND password=#{password}
+    </select>
+</mapper>
