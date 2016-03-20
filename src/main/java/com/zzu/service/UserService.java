@@ -94,4 +94,18 @@ public class UserService {
 	public void deleteUser(int id) {
 		userDao.deleteUser(id);
 	}
+
+	public List<Company> searchCompanies() {
+		return userDao.searchCompanies();
+	}
+
+	//修改密码
+	public void changeUserPassword(User user) {
+		userDao.changeUserPassword(user);
+	}
+
+	//绑定email
+	public void bindEmail(User user) {
+		userDao.bindEmail(user);
+	}
 }

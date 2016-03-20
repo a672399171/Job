@@ -39,14 +39,6 @@ public class JobDao {
 		return classifies;
 	}
 
-	public List<Position> getAllPositions() {
-		List<Position> positions = null;
-		session = factory.openSession();
-		positions = session.selectList("mapping.JobMapper.getAllPositions");
-		session.commit();
-		return positions;
-	}
-
 	public List<Job> getAllCompanyJobs(int post_company) {
 		List<Job> jobs = null;
 		session = factory.openSession();
@@ -232,12 +224,29 @@ public class JobDao {
 
 	/**
 	 * 查询职位
+	 *
 	 * @return
 	 */
-	public List<Job> searchJobs() {
+	public List<Job> searchJobs(int[] c_ids) {
 		session = factory.openSession();
-		List<Job> jobs = session.selectList("mapping.JobMapper.searchJobs");
+		List<Job> jobs = session.selectList("mapping.JobMapper.searchJobs",c_ids);
 		session.commit();
 		return jobs;
+	}
+
+	/**
+	 * 查询大类下的所有小类
+	 *
+	 * @param c_id
+	 * @return
+	 */
+	public List<Position> searchPositions(int c_id) {
+		List<Position> positions = null;
+		session = factory.openSession();
+		Position position = new Position();
+		position.setC_id(c_id);
+		positions = session.selectList("mapping.JobMapper.searchPositions", position);
+		session.commit();
+		return positions;
 	}
 }

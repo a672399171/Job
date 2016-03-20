@@ -6,6 +6,7 @@
     <title>账号设置</title>
     <script type="text/javascript"
             src="${root}/js/jquery-1.11.2.js"></script>
+    <script src="${root}/layer/layer.js"></script>
     <script type="text/javascript"
             src="${root}/js/jquery.fullPage.min.js"></script>
     <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
@@ -47,7 +48,8 @@
         <div class="col-md-8">
             <h4>账号设置</h4>
             <hr>
-            <table class="table" style="font-size: 14px">
+            <button class="btn btn-default" onclick="openChangePasswordDlg()">修改密码</button>
+            <table class="table" style="font-size: 14px;margin-top: 20px">
                 <tr>
                     <th width="100">名称</th>
                     <th width="300">说明</th>
@@ -58,13 +60,12 @@
                         <c:when test="${empty sessionScope.user.email}">
                             <td style="color: red"><i class="fa fa-exclamation-triangle"></i> 邮箱未认证</td>
                             <td>认证邮箱是找回密码等操作时验证您身份的途径之一。</td>
-                            <td><a href="javascript:void(0)" data-toggle="modal"
-                                   data-target="#modal1">认证</a></td>
+                            <td><a href="javascript:void(0)" onclick="openEmailDlg()">认证</a></td>
                         </c:when>
                         <c:otherwise>
                             <td style="color: green"><i class="fa fa-check-circle"></i> 邮箱已认证</td>
                             <td>认证邮箱是找回密码等操作时验证您身份的途径之一。</td>
-                            <td><a href="javascript:void(0)">更换</a></td>
+                            <td><a href="javascript:void(0)" onclick="openEmailDlg()">更换</a></td>
                         </c:otherwise>
                     </c:choose>
                 </tr>
@@ -85,61 +86,44 @@
                 </tr>
             </table>
         </div>
-        <div class="modal bs-example-modal-sm" id="modal1" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content" style="width: 500px">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">修改设置</h4>
-                    </div>
-                    <div class="modal-body container">
-                        <span>验证邮箱，绑定成功后可用该邮箱直接登录</span>
-
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control" id="email" placeholder="输入常用邮箱">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onclick="sendEmail()">确定</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal bs-example-modal-sm" id="modal2" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content" style="width: 500px">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">修改设置</h4>
-                    </div>
-                    <div class="modal-body container">
-                        <span>验证手机号，修改成功后可用该手机号直接登录</span>
-
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control" id="phone" placeholder="输入常用常用手机号">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control" id="varify" placeholder="输入短信验证码">
-                            </div>
-                            <button type="button" class="btn btn-default" onclick="sendMsg()">获取验证码</button>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">确定</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
+</div>
+
+<div id="changePassword" class="hideDiv1">
+    <table style="margin: 0 auto">
+        <tr style="height: 30px;line-height: 30px;margin-top: 10px">
+            <td>
+                <input type="password" placeholder="输入当前密码" id="originPwd"/>
+            </td>
+        </tr>
+        <tr style="height: 30px;line-height: 30px;margin-top: 10px">
+            <td>
+                <input type="password" placeholder="输入新密码" id="newPwd"/>
+            </td>
+        </tr>
+        <tr style="text-align: center;height: 30px;line-height: 30px;margin-top: 10px">
+            <td>
+                <input type="button" class="btn btn-default" value="确认" onclick="changePassword()"/>
+                <input type="button" class="btn btn-default" value="取消" onclick="layer.closeAll();"/>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="emailDiv" class="hideDiv1">
+    <table style="margin: 0 auto">
+        <tr style="height: 30px;line-height: 30px;margin-top: 10px">
+            <td>
+                <input type="email" placeholder="输入要绑定的邮箱" id="email"/>
+            </td>
+        </tr>
+        <tr style="text-align: center;height: 30px;line-height: 30px;margin-top: 10px">
+            <td>
+                <input type="button" class="btn btn-default" value="确认" onclick="bindEmail()"/>
+                <input type="button" class="btn btn-default" value="取消" onclick="layer.closeAll();"/>
+            </td>
+        </tr>
+    </table>
 </div>
 
 <script type="application/javascript">
@@ -147,14 +131,52 @@
 
     }
 
-    function sendEmail() {
+    //修改密码对话框
+    function openChangePasswordDlg() {
+        layer.open({
+            type: 1,
+            title: "修改密码",
+            area: ['300px', '200px'],
+            content: $('#changePassword')
+        });
+    }
+
+    //更换邮箱对话框
+    function openEmailDlg() {
+        layer.open({
+            type: 1,
+            title: "邮箱验证",
+            area: ['300px', '200px'],
+            content: $('#emailDiv')
+        });
+    }
+
+    //发送email
+    function bindEmail() {
         $.post("${root}/user/bindEmail.do",
-        {
-            url:"${root}/user/",
-            email:$("#email").val()
-        }, function(data){
-            alert("发送成功！");
-        },"json");
+                {
+                    email: $("#email").val()
+                }, function (data) {
+                    layer.closeAll();
+                }, "json");
+        layer.msg('发送中', {icon: 16});
+    }
+
+    //修改密码
+    function changePassword() {
+        $.post("${root}/user/changePassword.do", {
+            originPwd: $("#originPwd").val(),
+            newPwd: $("#newPwd").val()
+        }, function (data) {
+            if (data.msg == "unlogin") {
+                window.location = "${root}/user/toLogin.do"
+            } else if (data.msg == "pwderror") {
+                alert("密码错误");
+            } else {
+                alert("修改成功");
+                layer.closeAll();
+            }
+        }, "JSON");
     }
 </script>
 </body>

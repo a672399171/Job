@@ -13,7 +13,7 @@ import java.util.Properties;
  */
 public class MailUtil {
 
-	public static void sendEmail(String url,String email) {
+	public static void sendEmail(String url,String email,String title) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html><head></head><body>");
 		sb.append("<a href='" + url + "'>点击验证</a>48小时有效");
@@ -23,11 +23,16 @@ public class MailUtil {
 		sender.setHost("smtp.qq.com");
 
 		MimeMessage message = sender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(message);
+		MimeMessageHelper helper = null;
+		try {
+			helper = new MimeMessageHelper(message,true,"utf-8");
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
 		try {
 			helper.setTo(email);
 			helper.setFrom("672399171@qq.com");
-			helper.setSubject("测试");
+			helper.setSubject(title);
 			helper.setText(sb.toString(),true);
 		} catch (MessagingException e) {
 			e.printStackTrace();

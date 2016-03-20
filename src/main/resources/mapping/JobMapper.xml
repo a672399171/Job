@@ -135,6 +135,23 @@
     </delete>
 
     <select id="searchJobs" resultMap="jobResultMap">
-        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where j.type=p.id and j.post_company=c.id ORDER BY j.post_time desc
+        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where
+        j.type=p.id and j.post_company=c.id
+        <if test="array != null">
+            and j.type in
+            <foreach item="item" index="index" collection="array"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY j.post_time desc
     </select>
+
+    <select id="searchPositions" parameterType="com.zzu.model.Position" resultType="com.zzu.model.Position">
+        select * from tb_position
+        <if test="c_id != 0">
+            where c_id=#{c_id}
+        </if>
+    </select>
+
 </mapper>

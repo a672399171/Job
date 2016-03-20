@@ -26,20 +26,19 @@
 <div data-options="region:'south'" style="height:100px;"></div>
 <div data-options="region:'west',title:'导航',split:true" id="navigation">
     <ul>
-        <li><a href="javascript:void(0)" id="um">用户管理</a></li>
-        <li><a href="javascript:void(0)" id="tm">职位类型管理</a></li>
-        <li><a href="javascript:void(0)" id="jm">职位管理</a></li>
+
     </ul>
 </div>
-<div id="tt" class="easyui-tabs" data-options="region:'center',fit:true"
+<div id="tt" class="easyui-tabs" data-options="region:'center'"
      style="padding:5px;background:#eee;">
 </div>
 
 <script type="application/javascript">
     var vos = [
-        {"text": "用户管理", "url": "${root}/user/admin/user_manage.do"},
-        {"text": "职位类型管理", "url": "${root}/user/admin/type_manage.do"},
-        {"text": "职位管理", "url": "${root}/user/admin/job_manage.do"}
+        {"text": "用户管理", "url": "${root}/user/admin/user_manage.do", "id": "user_manage"},
+        {"text": "职位类型管理", "url": "${root}/user/admin/type_manage.do", "id": "type_manage"},
+        {"text": "职位管理", "url": "${root}/user/admin/job_manage.do", "id": "job_manage"},
+        {"text": "公司管理", "url": "${root}/user/admin/company_manage.do", "id": "company_manage"}
     ];
 
     //初始化
@@ -50,14 +49,15 @@
             closable: false
         });
 
-        $("#um").click(vos[0], openTab);
-        $("#tm").click(vos[1], openTab);
-        $("#jm").click(vos[2], openTab);
+        for (var i = 0; i < vos.length; i++) {
+            $("#navigation ul").append("<li><a href='javascript:void(0)' id='" + vos[i].id + "'>" + vos[i].text + "</a></li>");
+            $("#" + vos[i].id).click(vos[i],openTab);
+        }
     });
 
     function openTab(obj) {
-        if ($("#tt").tabs('exists',obj.data.text)) {
-            $("#tt").tabs('select',obj.data.text)
+        if ($("#tt").tabs('exists', obj.data.text)) {
+            $("#tt").tabs('select', obj.data.text)
         } else {
             $('#tt').tabs('add', {
                 title: obj.data.text,
@@ -73,6 +73,8 @@
             });
         }
     }
+
+
 </script>
 </body>
 </html>

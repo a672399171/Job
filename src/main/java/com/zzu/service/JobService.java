@@ -19,8 +19,8 @@ public class JobService {
 		return jobDao.getAllClassifies();
 	}
 
-	public List<Position> getAllPositions() {
-		return jobDao.getAllPositions();
+	public List<Position> searchPositions(int c_id) {
+		return jobDao.searchPositions(c_id);
 	}
 
 	public List<Job> getAllCompanyJobs(int post_company) {
@@ -142,7 +142,7 @@ public class JobService {
 	 * 查询职位
 	 * @return
 	 */
-	public List<Job> searchJobs() {
-		return jobDao.searchJobs();
+	public List<Job> searchJobs(int[] p_ids) {
+		return jobDao.searchJobs(p_ids);
 	}
 }

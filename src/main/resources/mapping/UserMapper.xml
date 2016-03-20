@@ -85,4 +85,16 @@
     <delete id="deleteUser" parameterType="int">
         delete from tb_user where id=#{id}
     </delete>
+
+    <select id="searchCompanies" resultType="com.zzu.model.Company">
+        SELECT * FROM tb_company
+    </select>
+
+    <update id="changePassword" parameterType="com.zzu.model.User">
+        update tb_user set password=#{password} where id=#{id}
+    </update>
+
+    <update id="bindEmail" parameterType="com.zzu.model.User">
+        update tb_user set email=#{email} where id=#{id}
+    </update>
 </mapper>

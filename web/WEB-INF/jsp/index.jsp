@@ -29,12 +29,14 @@
     <div id="type_title">选择类目</div>
     <ul>
         <c:forEach var="item" items="${requestScope.array}">
-            <li>${item.name}
+            <li>
+                <a href="javascript:void(0)">${item.name}</a>
                 <span></span>
+
                 <div class='hideDiv'>
                     <p class='alink'>
                         <c:forEach items="${item.positions}" var="position">
-                            <a href='#'>${position.name}</a>
+                            <a href='${root}/job/job_list.do?c_id=${item.id}&p_id=${position.id}'>${position.name}</a>
                         </c:forEach>
                     </p>
                 </div>

@@ -277,3 +277,7 @@ a:hover {
 #resumeTable {
     margin-top: 20px;
 }
+
+.hideDiv1 {
+    display: none;
+}

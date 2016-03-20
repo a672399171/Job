@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <html>
 <head>
@@ -21,10 +22,14 @@
     <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <style type="text/css">
-        #top,#middle {
+        .row {
+            clear: both;
+        }
+
+        #middle {
             background: white;
             min-width: 800px;
-            width: 70%;
+            width: 80%;
             margin-left: 150px;
             margin-top: 20px;
             margin-bottom: 20px;
@@ -65,58 +70,147 @@
 <body>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 
-<div id="top" class="container">
-    <div class="row">
-        <div class="col-md-2">
-            类别
+<div class="container">
+    <div class="row selectType" id="positionDiv">
+        <div class="col-md-1">
+            类别:
         </div>
-        <div class="col-md-10">
-            leibie
+        <div class="col-md-11">
+            <ul>
+                <li>不限</li>
+                <c:forEach items="${requestScope.positions}" var="item">
+                    <li
+                            <c:if test="${item.id == p_id}">
+                                class="on"
+                            </c:if>
+                            id="${item.id}">${item.name}</li>
+                </c:forEach>
+            </ul>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-2">
-            月薪
+    <div class="row selectType" id="timeDiv">
+        <div class="col-md-1">
+            工作时间:
         </div>
-        <div class="col-md-10">
-            leibie
+        <div class="col-md-11">
+            <ul>
+                <li class="on" id="first">不限</li>
+                <li>周一</li>
+                <li>周二</li>
+                <li>周三</li>
+                <li>周四</li>
+                <li>周五</li>
+                <li>周六</li>
+                <li>周日</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row selectType" id="salaryDiv">
+        <div class="col-md-1">
+            月薪:
+        </div>
+        <div class="col-md-11">
+            <ul>
+                <li class="on" low="0" high="max">不限</li>
+                <li low="0" high="500">500以下</li>
+                <li low="500" high="1000">500-1000</li>
+                <li low="1000" high="2000">1000-2000</li>
+                <li low="2000" high="3000">2000-3000</li>
+                <li low="3000" high="4000">3000-4000</li>
+                <li low="4000" high="max">4000以上</li>
+            </ul>
         </div>
     </div>
 </div>
 
 <div id="middle">
-    <div class="job_item" url="www.baidu.com">
-        <table>
-            <tr>
-                <td width="300"><a href="#" class="link">金融销售</a></td>
-                <td width="200" class="font3">今天</td>
-                <td width="300" class="font5">国晟鸿业(厦门)资产管理有限公司</td>
-            </tr>
-            <tr>
-                <td class="font5">应届生</td>
-                <td class="font4">3000-6000</td>
-                <td class="font3">民营/私企 | 101－300人</td>
-            </tr>
-        </table>
-    </div>
-    <div class="job_item">
-
-    </div>
-    <div class="job_item">
-
-    </div>
-    <div class="job_item">
-
-    </div>
-    <div class="job_item">
-
-    </div>
+    <c:forEach var="item" items="${requestScope.jobs}">
+        <div class="job_item">
+            <table>
+                <tr>
+                    <td width="300"><a href="#" class="link">${item.name}</a></td>
+                    <td width="200" class="font3">
+                        <fmt:formatDate value="${item.post_time}" pattern="yyyy-MM-dd"></fmt:formatDate>
+                    </td>
+                    <td width="300" class="font5">${item.post_company.company_name}</td>
+                </tr>
+                <tr>
+                    <td class="font5">应届生</td>
+                    <td class="font4">${item.low_salary}-${item.high_salary}</td>
+                    <td class="font3">民营/私企 | 101－300人</td>
+                </tr>
+            </table>
+        </div>
+    </c:forEach>
 </div>
 
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 
 <script type="application/javascript">
+    $("#timeDiv li").click(function (e) {
+        if ($(e.target)[0].id == "first") {
+            $("#timeDiv li").removeClass("on");
+            $(this).addClass("on");
+        } else {
+            if ($("#first").hasClass("on")) {
+                $("#first").removeClass("on");
+            }
+            if ($(this).attr("flag") == undefined) {
+                $(this).attr("flag", false);
+            }
+            if ($(this).attr("flag") == "false") {
+                $(this).addClass("on");
+                $(this).attr("flag", true);
+            } else {
+                $(this).removeClass("on");
+                $(this).attr("flag", false);
+            }
+        }
+        loadData();
+    });
+    $("#salaryDiv li").click(function () {
+        $("#salaryDiv li").removeClass("on");
+        $(this).addClass("on");
+        loadData();
+    });
 
+    $("#positionDiv li").click(function () {
+        $("#positionDiv li").removeClass("on");
+        $(this).addClass("on");
+        loadData();
+    });
+
+    //加载数据，刷新页面
+    function loadData() {
+        var url = "${root}/job/job_list.do?c_id=${c_id}&p_id=${p_id}";
+        var position = $("#positionDiv .on").id;
+        if (position == undefined) {
+            position = 0;
+        }
+        var time = getWorkTime();
+        var low = $("#salaryDiv .on").attr("low");
+        var high = $("#salaryDiv .on").attr("high");
+
+        url += "&position=" + position + "&time=" + time + "&low=" + low + "&high=" + high;
+        window.location = url;
+    }
+
+    //获取工作时间
+    function getWorkTime() {
+        var time = "";
+        if ($("#first").hasClass("on")) {
+            time = "0000000";
+        } else {
+            for (var i = 1; i < $("#timeDiv li").length; i++) {
+                if ($("#timeDiv li").eq(i).hasClass("on")) {
+                    time += "1";
+                } else {
+                    time += "0";
+                }
+            }
+        }
+        return time;
+    }
 </script>
 </body>
 </html>

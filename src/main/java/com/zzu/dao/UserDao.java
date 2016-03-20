@@ -185,4 +185,26 @@ public class UserDao {
 		session.delete("mapping.UserMapper.deleteUser",id);
 		session.commit();
 	}
+
+	public List<Company> searchCompanies() {
+		List<Company> companies = null;
+		session = factory.openSession();
+		companies = session.selectList("mapping.UserMapper.searchCompanies");
+		session.commit();
+		return companies;
+	}
+
+	//修改密码
+	public void changeUserPassword(User user) {
+		session = factory.openSession();
+		session.update("mapping.UserMapper.changeUserPassword",user);
+		session.commit();
+	}
+
+	//绑定email
+	public void bindEmail(User user) {
+		session = factory.openSession();
+		session.update("mapping.UserMapper.bindEmail",user);
+		session.commit();
+	}
 }

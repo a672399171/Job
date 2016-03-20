@@ -232,15 +232,6 @@
 
         return school;
     }
-
-    /*function updateDatabase() {
-     $.getJSON("${root}/json/major.json",
-     function (data) {
-     $.post("${root}/job/updateDatabase.do", {data: JSON.stringify(data)}, function (data) {
-     console.log(data);
-     });
-     });
-     }*/
 </script>
 </body>
 </html>
