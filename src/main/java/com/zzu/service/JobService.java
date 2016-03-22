@@ -2,6 +2,7 @@ package com.zzu.service;
 
 import com.zzu.dao.JobDao;
 import com.zzu.model.*;
+import com.zzu.util.StringUtil;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -37,7 +38,7 @@ public class JobService {
 		for (Resume resume : resumes) {
 			String time1 = resume.getSpare_time();
 			for (int i = 0; i < time1.length(); i += 2) {
-				if (spare_time.charAt(i) == '1' && time1.charAt(i) == '0' && time1.charAt(i + 1) == '0') {
+				if (spare_time.charAt(i) == '1' && time1.charAt(i) == '0' && time1.charAt(i + 7) == '0') {
 					resumes.remove(resume);
 					break;
 				}
@@ -70,19 +71,19 @@ public class JobService {
 		return jobDao.getComments(id);
 	}
 
-	public Collection getCollection(int u_id,int j_id) {
-		return jobDao.getCollection(u_id,j_id);
+	public Collection getCollection(int u_id, int j_id) {
+		return jobDao.getCollection(u_id, j_id);
 	}
 
-	public void updateCollection(boolean collection,int u_id,int j_id) {
-		if(collection) {
-			jobDao.addCollection(u_id,j_id);
+	public void updateCollection(boolean collection, int u_id, int j_id) {
+		if (collection) {
+			jobDao.addCollection(u_id, j_id);
 		} else {
-			jobDao.deleteCollection(u_id,j_id);
+			jobDao.deleteCollection(u_id, j_id);
 		}
 	}
 
-	public List<Apply> getApplies(int u_id,int j_id) {
+	public List<Apply> getApplies(int u_id, int j_id) {
 		return jobDao.getApplies(u_id, j_id);
 	}
 
@@ -92,6 +93,7 @@ public class JobService {
 
 	/**
 	 * 添加大类
+	 *
 	 * @param classify
 	 */
 	public void addClassify(Classify classify) {
@@ -100,6 +102,7 @@ public class JobService {
 
 	/**
 	 * 更新大类
+	 *
 	 * @param classify
 	 */
 	public void updateClassify(Classify classify) {
@@ -108,6 +111,7 @@ public class JobService {
 
 	/**
 	 * 删除大类
+	 *
 	 * @param id
 	 */
 	public void deleteClassify(int id) {
@@ -116,6 +120,7 @@ public class JobService {
 
 	/**
 	 * 添加小类
+	 *
 	 * @param position
 	 */
 	public void addPosition(Position position) {
@@ -124,6 +129,7 @@ public class JobService {
 
 	/**
 	 * 更新小类
+	 *
 	 * @param position
 	 */
 	public void updatePosition(Position position) {
@@ -132,6 +138,7 @@ public class JobService {
 
 	/**
 	 * 删除小类
+	 *
 	 * @param id
 	 */
 	public void deletePosition(int id) {
@@ -140,9 +147,53 @@ public class JobService {
 
 	/**
 	 * 查询职位
+	 *
 	 * @return
 	 */
-	public List<Job> searchJobs(int[] p_ids) {
-		return jobDao.searchJobs(p_ids);
+	public List<Job> searchJobs(int[] p_ids, String time, String low, String high,int page) {
+		int l = -1, h = -1;
+		if (!StringUtil.isEmpty(low) && StringUtil.isNumber(low)) {
+			l = Integer.parseInt(low);
+		}
+		if (!StringUtil.isEmpty(high) && StringUtil.isNumber(high)) {
+			h = Integer.parseInt(high);
+		}
+		List<Job> jobs = jobDao.searchJobs(p_ids, l, h,page);
+		if (!StringUtil.isEmpty(time)) {
+			if (StringUtil.isSpareTimeString(time)) {
+				for (Job job : jobs) {
+					String workTime = job.getWork_time();
+					for (int i = 0; i < time.length(); i++) {
+						if (time.charAt(i) == '1' &&
+								workTime.charAt(i) == '0' && workTime.charAt(i + 7) == '0') {
+							jobs.remove(job);
+							break;
+						}
+					}
+				}
+			} else {
+				jobs = null;
+			}
+		}
+
+		return jobs;
+	}
+
+	/**
+	 * 获取总条数
+	 * @param p_ids
+	 * @param low
+	 * @param high
+	 * @return
+	 */
+	public int getJobCount(int[] p_ids, String low, String high) {
+		int l = -1, h = -1;
+		if (!StringUtil.isEmpty(low) && StringUtil.isNumber(low)) {
+			l = Integer.parseInt(low);
+		}
+		if (!StringUtil.isEmpty(high) && StringUtil.isNumber(high)) {
+			h = Integer.parseInt(high);
+		}
+		return jobDao.getJobCount(p_ids, l, h);
 	}
 }

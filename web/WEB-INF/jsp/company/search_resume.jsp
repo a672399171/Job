@@ -177,13 +177,13 @@
     function getSpareTime() {
         var time = "";
         if ($("#first").hasClass("on")) {
-            time = "00000000000000";
+            time = "0000000";
         } else {
             for (var i = 1; i < $("#timeDiv li").length; i++) {
                 if ($("#timeDiv li").eq(i).hasClass("on")) {
-                    time += "11";
+                    time += "1";
                 } else {
-                    time += "00";
+                    time += "0";
                 }
             }
         }

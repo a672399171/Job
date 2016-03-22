@@ -1,16 +1,16 @@
 package com.zzu.util;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import server.smsService;
 import sun.misc.BASE64Encoder;
 
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2016/3/2.
@@ -18,10 +18,12 @@ import java.util.Random;
 public class StringUtil {
 	public static final String STR = "0123456789ABCDEFGHIJKLMNabcdefghijklmn";
 
+	//判断字符串是否为空
 	public static boolean isEmpty(String s) {
 		return s == null || s.trim().equals("");
 	}
 
+	//MD5加密
 	public static String toMd5(String str) {
 		//确定计算方法
 		MessageDigest md5 = null;
@@ -41,40 +43,7 @@ public class StringUtil {
 		return newStr;
 	}
 
-	public static void showAllCitys() {
-		FileOutputStream fileOutputStream = null;
-		BufferedWriter bw = null;
-		try {
-			fileOutputStream = new FileOutputStream("F:/a.json");
-			bw = new BufferedWriter(new OutputStreamWriter(fileOutputStream));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		Document doc = null;
-		try {
-			doc = Jsoup.connect("http://www.maps7.com/china_province.php").get();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		Elements hrefs = doc.select("a");
-		StringBuilder stringBuilder = new StringBuilder();
-		for (Element href : hrefs) {
-			System.out.println(href.html());
-			stringBuilder.append("\"" + href.html() + "\"" + ",");
-		}
-		try {
-			bw.write(stringBuilder.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				bw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
+	//产生指定长度的字符串
 	public static String randomString(int length) {
 		StringBuilder sb = new StringBuilder();
 		Random r = new Random();
@@ -86,6 +55,7 @@ public class StringUtil {
 		return sb.toString();
 	}
 
+	//测试发送短信
 	public static void sendMsg() {
 		// 发送短信
 		String userid = "a672399171";   //你的用户名
@@ -99,8 +69,34 @@ public class StringUtil {
 		System.out.println("结果：" + result);
 	}
 
+	//判断是否为数字
+	public static boolean isNumber(String str) {
+		Pattern pattern = Pattern.compile("\\d+");
+		Matcher matcher = pattern.matcher(str);
+		return matcher.find();
+	}
+
+	//判断是否是空余时间字符串
+	public static boolean isSpareTimeString(String s) {
+		Pattern pattern = Pattern.compile("[0,1]{7}");
+		Matcher matcher = pattern.matcher(s);
+		return matcher.find();
+	}
+
+	//提取字符串中的数字
+	public static List<String> getNumberList(String str) {
+		List<String> list = new ArrayList<String>();
+		Pattern pattern = Pattern.compile("(\\d+)");
+		Matcher matcher = pattern.matcher(str);
+		while (matcher.find()) {
+			list.add(matcher.group(1));
+		}
+		return list;
+	}
+
 	public static void main(String[] args) {
-		System.out.println(toMd5("admin"));
+		//System.out.println(toMd5("admin"));
+		System.out.println(getNumberList("/Date(1458536322941)/"));
 		//showAllCitys();
 		//sendMsg();
 	}

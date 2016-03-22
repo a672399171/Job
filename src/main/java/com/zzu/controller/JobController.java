@@ -124,14 +124,26 @@ public class JobController {
 	}
 
 	@RequestMapping("/job_list.do")
-	public String jobList(int c_id, int p_id, Integer position, String time, String low, String high, Model model) {
+	public String jobList(int c_id, int p_id, String time, String low, String high,
+	                      int page, Model model) {
 		List<Position> positions = jobService.searchPositions(c_id);
 		model.addAttribute("positions", positions);
 		model.addAttribute("p_id", p_id);
 		model.addAttribute("c_id", c_id);
+		model.addAttribute("time", time);
+		model.addAttribute("low", low);
+		model.addAttribute("high", high);
+		model.addAttribute("page",page);
 
-		List<Job> jobs = jobService.searchJobs(new int[]{p_id});
+		int[] p_ids = null;
+		if (p_id != 0) {
+			p_ids = new int[]{p_id};
+		}
+
+		List<Job> jobs = jobService.searchJobs(p_ids, time, low, high, page);
 		model.addAttribute("jobs", jobs);
+
+		int count = jobService.getJobCount(p_ids,low,high);
 
 		return "job_list";
 	}
@@ -323,7 +335,7 @@ public class JobController {
 	@ResponseBody
 	public JSONObject searchJobs() {
 		JSONObject object = new JSONObject();
-		List<Job> jobs = jobService.searchJobs(null);
+		List<Job> jobs = jobService.searchJobs(null, null, null, null, 0);
 
 		object.put("total", jobs.size());
 		object.put("rows", jobs);

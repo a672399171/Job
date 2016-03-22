@@ -3,9 +3,7 @@ package com.zzu.dao;
 import com.zzu.model.*;
 import com.zzu.service.JobService;
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.session.*;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -227,11 +225,43 @@ public class JobDao {
 	 *
 	 * @return
 	 */
-	public List<Job> searchJobs(int[] c_ids) {
+	public List<Job> searchJobs(int[] p_ids, int l, int h, int page) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("p_ids", p_ids);
+		map.put("l", l);
+		map.put("h", h);
+		map.put("page", page);
+		map.put("start", (page - 1) * Common.COUNT);
+		map.put("count", 10);
+
 		session = factory.openSession();
-		List<Job> jobs = session.selectList("mapping.JobMapper.searchJobs",c_ids);
+		List<Job> jobs = session.selectList("mapping.JobMapper.searchJobs", map);
 		session.commit();
 		return jobs;
+	}
+
+	/**
+	 * 获取总条数
+	 * @param p_ids
+	 * @param l
+	 * @param h
+	 * @return
+	 */
+	public int getJobCount(int[] p_ids, int l, int h) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("p_ids", p_ids);
+		map.put("l", l);
+		map.put("h", h);
+		final int[] count = new int[1];
+
+		session = factory.openSession();
+		session.select("mapping.JobMapper.getJobCount", new ResultHandler() {
+			public void handleResult(ResultContext resultContext) {
+				count[0] = resultContext.getResultCount();
+			}
+		});
+		session.commit();
+		return count[0];
 	}
 
 	/**

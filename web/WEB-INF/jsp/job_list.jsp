@@ -41,14 +41,6 @@
             border-bottom: 1px solid #cccccc;
             background: white;
             padding: 10px;
-        }
-
-        .job_item {
-            width: 100%;
-            height: 100px;
-            border-bottom: 1px solid #cccccc;
-            background: white;
-            padding: 10px;
             cursor: pointer;
         }
 
@@ -65,6 +57,11 @@
             color: dodgerblue;
             font-size: 18px;
         }
+
+        nav {
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
@@ -77,7 +74,10 @@
         </div>
         <div class="col-md-11">
             <ul>
-                <li>不限</li>
+                <li id="0"
+                    <c:if test="${p_id == '0'}">class="on" </c:if>
+                >不限
+                </li>
                 <c:forEach items="${requestScope.positions}" var="item">
                     <li
                             <c:if test="${item.id == p_id}">
@@ -144,9 +144,51 @@
     </c:forEach>
 </div>
 
+<nav>
+    <ul class="pagination pagination-lg">
+        <li><a href="#" aria-label="Previous">«</a></li>
+        <li class="active"><a href="#">1</a></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">4</a></li>
+        <li><a href="#">5</a></li>
+        <li><a href="#" aria-label="Next">»</a></li>
+    </ul>
+</nav>
+
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 
 <script type="application/javascript">
+    //页数
+    var page = ${page};
+
+    $(function () {
+        //初始化工资选中状态
+        $("#salaryDiv li").removeClass("on");
+        for (var i = 0; i < $("#salaryDiv li").length; i++) {
+            if ($("#salaryDiv li").eq(i).attr("low") == "${low}"
+                    && $("#salaryDiv li").eq(i).attr("high") == "${high}") {
+                $("#salaryDiv li").eq(i).addClass("on");
+            }
+        }
+
+        //初始化时间选中状态
+        $("#timeDiv li").removeClass("on");
+        if ("${time}" == "0000000") {
+            $("#first").addClass("on");
+        } else {
+            for (var i = 0; i < "${time}".length; i++) {
+                if ("${time}".charAt(i) == '1') {
+                    $("#timeDiv li").eq(i + 1).addClass("on");
+                }
+            }
+        }
+
+        if(page <= 5) {
+
+        }
+    });
+
     $("#timeDiv li").click(function (e) {
         if ($(e.target)[0].id == "first") {
             $("#timeDiv li").removeClass("on");
@@ -182,16 +224,14 @@
 
     //加载数据，刷新页面
     function loadData() {
-        var url = "${root}/job/job_list.do?c_id=${c_id}&p_id=${p_id}";
-        var position = $("#positionDiv .on").id;
-        if (position == undefined) {
-            position = 0;
-        }
+        var url = "${root}/job/job_list.do?c_id=${c_id}";
+        var p_id = $("#positionDiv .on").eq(0).attr("id");
+
         var time = getWorkTime();
         var low = $("#salaryDiv .on").attr("low");
         var high = $("#salaryDiv .on").attr("high");
 
-        url += "&position=" + position + "&time=" + time + "&low=" + low + "&high=" + high;
+        url += "&p_id=" + p_id + "&time=" + time + "&low=" + low + "&high=" + high;
         window.location = url;
     }
 

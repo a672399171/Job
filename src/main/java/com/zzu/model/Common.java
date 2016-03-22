@@ -22,4 +22,6 @@ public class Common {
 	public static final int APPLYING = 0;
 	public static final int APPLYFILED = 1;
 	public static final int APPLYSUCCESS = 2;
+	//分页常量
+	public static final int COUNT = 10;
 }
