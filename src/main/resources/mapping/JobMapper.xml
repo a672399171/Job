@@ -150,14 +150,14 @@
         <if test="h != -1">
             and j.high_salary &lt;=#{h}
         </if>
-        <if test="page != 0">
-            limit #{start},#{count}
-        </if>
         ORDER BY j.post_time desc
+        <if test="page != 0">
+            limit ${start},${count}
+        </if>
     </select>
 
-    <select id="getJobCount" resultMap="int" parameterType="hashmap">
-        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where
+    <select id="getJobCount" parameterType="hashmap" resultType="int">
+        SELECT count(*) as num FROM tb_job j,tb_company c,tb_position p where
         j.type=p.id and j.post_company=c.id
         <if test="p_ids != null">
             and j.type in

@@ -125,7 +125,10 @@ public class JobController {
 
 	@RequestMapping("/job_list.do")
 	public String jobList(int c_id, int p_id, String time, String low, String high,
-	                      int page, Model model) {
+	                      Integer page, Model model) {
+		if(page == null) {
+			page = 1;
+		}
 		List<Position> positions = jobService.searchPositions(c_id);
 		model.addAttribute("positions", positions);
 		model.addAttribute("p_id", p_id);
@@ -144,6 +147,7 @@ public class JobController {
 		model.addAttribute("jobs", jobs);
 
 		int count = jobService.getJobCount(p_ids,low,high);
+		model.addAttribute("count",count);
 
 		return "job_list";
 	}

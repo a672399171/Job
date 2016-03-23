@@ -33,6 +33,10 @@
 			<tx:method name="*" read-only="true" />
 			<tx:method name="add*" propagation="REQUIRED" />
             <tx:method name="save*" propagation="REQUIRED" />
+            <tx:method name="insert*" propagation="REQUIRED" />
+            <tx:method name="update*" propagation="REQUIRED" />
+            <tx:method name="modify*" propagation="REQUIRED" />
+            <tx:method name="delete*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
 
@@ -64,6 +68,14 @@
         <property name="maxUploadSize" value="2000000"/>
     </bean>
 
-    <!-- spring统一异常处理拦截器 -->
-    <!--<bean id="exceptionHandler" class="com.zzu.exception.SystemExceptionHandler"/>-->
+    <!--配置SqlSessionFactoryBean-->
+    <bean id="factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:SqlMapConfig.xml"></property>
+    </bean>
+
+    <!--配置session-->
+    <bean id="session" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="factory" />
+    </bean>
 </beans>

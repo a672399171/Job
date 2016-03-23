@@ -146,21 +146,23 @@
 
 <nav>
     <ul class="pagination pagination-lg">
-        <li><a href="#" aria-label="Previous">«</a></li>
-        <li class="active"><a href="#">1</a></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">5</a></li>
-        <li><a href="#" aria-label="Next">»</a></li>
+        <li id="pre"><a href="#" aria-label="Previous">«</a></li>
+        <li id="next"><a href="#" aria-label="Next">»</a></li>
     </ul>
 </nav>
 
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 
 <script type="application/javascript">
+    //页码
+    var currentPage = ${page};
+    //条数
+    var count = ${count};
     //页数
-    var page = ${page};
+    var totalPage = ${count}/10;
+    totalPage = Math.floor(totalPage) + 1;
+
+    ${param.page}
 
     $(function () {
         //初始化工资选中状态
@@ -184,8 +186,22 @@
             }
         }
 
-        if(page <= 5) {
-
+        if (currentPage >= 3 && totalPage >= 5) {
+                for(var i = currentPage+3;i>currentPage-3;i--) {
+                    if(i == currentPage) {
+                        $("#pre").after("<li class='active'><a href='#'>" + i + "</a></li>");
+                    } else {
+                        $("#pre").after("<li><a href='#'>" + i + "</a></li>");
+                    }
+                }
+        } else {
+            for(var i = totalPage;i>0;i--) {
+                if(i == currentPage) {
+                    $("#pre").after("<li class='active'><a href='#'>" + i + "</a></li>");
+                } else {
+                    $("#pre").after("<li><a href='#'>" + i + "</a></li>");
+                }
+            }
         }
     });
 

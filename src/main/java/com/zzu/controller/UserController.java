@@ -252,7 +252,6 @@ public class UserController {
 		sos.close();
 	}
 
-
 	/**
 	 * 用户退出
 	 *

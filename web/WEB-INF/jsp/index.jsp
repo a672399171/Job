@@ -36,7 +36,7 @@
                 <div class='hideDiv'>
                     <p class='alink'>
                         <c:forEach items="${item.positions}" var="position">
-                            <a href='${root}/job/job_list.do?c_id=${item.id}&p_id=${position.id}&page=1'>${position.name}</a>
+                            <a href='${root}/job/job_list.do?c_id=${item.id}&p_id=${position.id}&page=1&time=0000000&low=0&high=max'>${position.name}</a>
                         </c:forEach>
                     </p>
                 </div>

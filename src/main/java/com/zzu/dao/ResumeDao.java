@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -16,37 +17,19 @@ import java.io.Reader;
  */
 @Component
 public class ResumeDao {
-	private SqlSessionFactory factory = null;
-	private SqlSession session = null;
-
-	public ResumeDao() {
-		try {
-			Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-			factory = new SqlSessionFactoryBuilder().build(reader);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	@Resource
+	private SqlSession session;
 
 	public Resume getResumeByUid(int u_id) {
-		session = factory.openSession();
-
 		Resume resume = session.selectOne("mapping.ResumeMapper.getResumeByUid", u_id);
-		session.commit();
 		return resume;
 	}
 
 	public void insertResume(Resume resume) {
-		session = factory.openSession();
-
 		session.insert("mapping.ResumeMapper.insertResume", resume);
-		session.commit();
 	}
 
 	public void updateResume(Resume resume) {
-		session = factory.openSession();
-
 		session.update("mapping.ResumeMapper.updateResume", resume);
-		session.commit();
 	}
 }
