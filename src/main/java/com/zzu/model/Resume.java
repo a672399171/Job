@@ -17,7 +17,7 @@ public class Resume {
 	private String province;
 	private String city;
 	private String email;
-	private String spare_time;
+	private int spare_time;
 	private String introduce;
 	private String title;
 	private String job_type;
@@ -111,11 +111,11 @@ public class Resume {
 		this.email = email;
 	}
 
-	public String getSpare_time() {
+	public int getSpare_time() {
 		return spare_time;
 	}
 
-	public void setSpare_time(String spare_time) {
+	public void setSpare_time(int spare_time) {
 		this.spare_time = spare_time;
 	}
 

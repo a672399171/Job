@@ -21,29 +21,29 @@
 <div class="container">
     <div class="row">
         <div class="col-md-3 col-md-offset-1">
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <a href="${root}/user/info.do"><i class="fa fa-user"></i> 我的资料</a>
-                </li>
-                <li class="list-group-item">
-                    <a href="${root}/user/resume.do"><i class="fa fa-files-o"></i> 我的简历</a>
-                </li>
-                <li class="list-group-item">
-                    <a href="#"><i class="fa fa-comments"></i> 求职进展</a>
-                </li>
-                <li class="list-group-item">
-                    <a href="${root}/user/poor.do"><i class="fa fa-user-secret"></i> 贫困生认证</a>
-                </li>
-                <li class="list-group-item">
-                    <a href="${root}/user/collection.do"><i class="fa fa-star"></i> 我的收藏</a>
-                </li>
-                <li class="list-group-item">
-                    <a href="${root}/user/secret.do"><i class="fa fa-lock"></i> 隐私设置</a>
-                </li>
-                <li class="list-group-item" style="color: red;background: grey">
-                    <a href="${root}/user/setting.do"><i class="fa fa-cog"></i> 账号设置</a>
-                </li>
-            </ul>
+            <div class="list-group">
+                <a class="list-group-item" href="${root}/user/info.do">
+                    <i class="fa fa-user fa-fw"></i>&nbsp; 我的资料
+                </a>
+                <a class="list-group-item" href="${root}/user/resume.do">
+                    <i class="fa fa-files-o fa-fw"></i>&nbsp; 我的简历
+                </a>
+                <a class="list-group-item" href="#">
+                    <i class="fa fa-comments fa-fw"></i>&nbsp; 求职进展
+                </a>
+                <a class="list-group-item" href="${root}/user/poor.do">
+                    <i class="fa fa-user-secret fa-fw"></i>&nbsp; 贫困生认证
+                </a>
+                <a class="list-group-item" href="${root}/user/collection.do">
+                    <i class="fa fa-star fa-fw"></i>&nbsp; 我的收藏
+                </a>
+                <a class="list-group-item" href="${root}/user/secret.do">
+                    <i class="fa fa-lock fa-fw"></i>&nbsp; 隐私设置
+                </a>
+                <a class="list-group-item active" href="${root}/user/setting.do">
+                    <i class="fa fa-cog fa-fw"></i>&nbsp; 账号设置
+                </a>
+            </div>
         </div>
         <div class="col-md-8">
             <h4>账号设置</h4>

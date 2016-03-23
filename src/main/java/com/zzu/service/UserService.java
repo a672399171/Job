@@ -108,4 +108,9 @@ public class UserService {
 	public void bindEmail(User user) {
 		userDao.bindEmail(user);
 	}
+
+	//根据学号查找用户
+	public User searchUserBySchoolNum(String school_num) {
+		return userDao.searchUserBySchoolNum(school_num);
+	}
 }

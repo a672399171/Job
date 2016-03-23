@@ -17,7 +17,7 @@ public class Job {
 	private Date post_time;
 	private Company post_company;
 	private String tag;
-	private String work_time;
+	private int work_time;
 	private int status;
 
 	public Position getType() {
@@ -116,11 +116,11 @@ public class Job {
 		this.tag = tag;
 	}
 
-	public String getWork_time() {
+	public int getWork_time() {
 		return work_time;
 	}
 
-	public void setWork_time(String work_time) {
+	public void setWork_time(int work_time) {
 		this.work_time = work_time;
 	}
 }

@@ -24,4 +24,7 @@ public class Common {
 	public static final int APPLYSUCCESS = 2;
 	//分页常量
 	public static final int COUNT = 10;
+	//性别常量
+	public static final String NAN = "男";
+	public static final String NV = "女";
 }

@@ -4,22 +4,17 @@
 <div id="header" class="container">
     <div class="row">
         <div class="col-md-2 col-md-offset-1">
-            <img src="${root}/images/logo.gif"/>
+            <a href="${root}/">
+                <img src="${root}/images/logo.gif"/>
+            </a>
         </div>
-        <%--<div id="hrefs" class="col-md-5">
-            <ul>
-                <li><a href="${root}" class="font1">首页</a></li>
-                <li><a href="#" class="font1">职位</a></li>
-                <li><a href="#" class="font1">校园招聘</a></li>
-            </ul>
-        </div>--%>
-        <div class="col-md-5">
+        <div class="col-md-6">
             <div id="inputDiv">
-                <input type="text" placeholder="输入公司或职位" id="input"/>
-                <input type="button" value="搜 索" id="searchBtn"/>
+                <input type="text" placeholder="输入公司或职位" id="input" value="${requestScope.keyword}"/>
+                <input type="button" value="搜 索" id="searchBtn" onclick="searchJobs()"/>
             </div>
         </div>
-        <div class="col-md-4" id="login">
+        <div class="col-md-3" id="login">
             <c:choose>
                 <c:when test="${sessionScope.user == null}">
                     <a href="${root}/user/toLogin.do?from=${pageContext.request.requestURL}" id="login_href">登录</a> |
@@ -32,14 +27,29 @@
                             <img src="${root}/images/${sessionScope.user.photo_src}" id="photo"/>
                                 ${sessionScope.user.username}
                         </a>
-                        <ul id="list">
-                            <li><a href="${root}/user/info.do"><i class="fa fa-user"></i></i> 我的资料</a></li>
-                            <li><a href="${root}/user/resume.do"><i class="fa fa-files-o"></i> 我的简历</a></li>
-                            <li><a href="${root}/user/poor.do"><i class="fa fa-user-secret"></i> 贫困生认证</a></li>
-                            <li><a href="${root}/user/collection.do"><i class="fa fa-star"></i> 我的收藏</a></li>
-                            <li><a href="${root}/user/secret.do"><i class="fa fa-lock"></i> 隐私设置</a></li>
-                            <li><a href="${root}/user/setting.do"><i class="fa fa-cog"></i> 账号设定</a></li>
-                        </ul>
+                        <div class="list-group" id="list">
+                            <a class="list-group-item" href="${root}/user/info.do">
+                                <i class="fa fa-user fa-fw"></i>&nbsp; 我的资料
+                            </a>
+                            <a class="list-group-item" href="${root}/user/resume.do">
+                                <i class="fa fa-files-o fa-fw"></i>&nbsp; 我的简历
+                            </a>
+                            <a class="list-group-item" href="#">
+                                <i class="fa fa-comments fa-fw"></i>&nbsp; 求职进展
+                            </a>
+                            <a class="list-group-item" href="${root}/user/poor.do">
+                                <i class="fa fa-user-secret fa-fw"></i>&nbsp; 贫困生认证
+                            </a>
+                            <a class="list-group-item" href="${root}/user/collection.do">
+                                <i class="fa fa-star fa-fw"></i>&nbsp; 我的收藏
+                            </a>
+                            <a class="list-group-item" href="${root}/user/secret.do">
+                                <i class="fa fa-lock fa-fw"></i>&nbsp; 隐私设置
+                            </a>
+                            <a class="list-group-item" href="${root}/user/setting.do">
+                                <i class="fa fa-cog fa-fw"></i>&nbsp; 账号设置
+                            </a>
+                        </div>
                     </div>
                     | <a href="javascript:void(0)" onclick="quit()">退出</a>
                 </c:otherwise>
@@ -49,21 +59,33 @@
 </div>
 
 <script type="application/javascript">
-    $(function() {
-        $("#login_href").attr("href","${root}/user/toLogin.do?from=" + window.location.href);
+    $(function () {
+        $("#login_href").attr("href", "${root}/user/toLogin.do?from=" + window.location.href);
     });
 
+    //退出
     function quit() {
-        $.post("${root}/user/quit.do",function(data) {
+        $.post("${root}/user/quit.do", function (data) {
             window.location = "${root}";
         });
     }
 
-    $("#person_href").mouseover(function() {
+    //鼠标滑过
+    $("#person_href").mouseover(function () {
         $("#list").slideDown(500);
     });
 
-    $("#div1").mouseleave(function() {
+    //鼠标离开
+    $("#div1").mouseleave(function () {
         $("#list").slideUp(500);
     });
+
+    //搜索工作
+    function searchJobs() {
+        var val = $("#input").val();
+        if (jQuery.trim(val) != "") {
+            var url = "${root}/job/vague_search_job.do?keyword=" + val;
+            window.location = url;
+        }
+    }
 </script>

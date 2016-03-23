@@ -4,19 +4,8 @@
 <html>
 <head>
     <title>主页</title>
-    <link rel="stylesheet" type="text/css"
-          href="${root}/jquery-easyui-1.4.4/themes/default/easyui.css"/>
-    <link rel="stylesheet" type="text/css"
-          href="${root}/jquery-easyui-1.4.4/themes/icon.css"/>
     <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
-    <script type="text/javascript"
-            src="${root}/js/jquery.fullPage.min.js"></script>
-    <script type="text/javascript"
-            src="${root}/jquery-easyui-1.4.4/jquery.easyui.min.js"></script>
-    <script type="text/javascript"
-            src="${root}/jquery-easyui-1.4.4/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="${root}/js/jquery-1.11.2.js"></script>
     <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
     <link rel="stylesheet" type="text/css" href="${root}/css/style_index.css"/>
@@ -36,7 +25,7 @@
                 <div class='hideDiv'>
                     <p class='alink'>
                         <c:forEach items="${item.positions}" var="position">
-                            <a href='${root}/job/job_list.do?c_id=${item.id}&p_id=${position.id}&page=1&time=0000000&low=0&high=max'>${position.name}</a>
+                            <a href='${root}/job/job_list.do?c_id=${item.id}&p_id=${position.id}&page=1&time=127&low=0&high=max'>${position.name}</a>
                         </c:forEach>
                     </p>
                 </div>

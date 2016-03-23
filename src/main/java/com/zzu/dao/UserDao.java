@@ -91,6 +91,13 @@ public class UserDao {
 		return users;
 	}
 
+	//根据学号查找用户
+	public User searchUserBySchoolNum(String school_num) {
+		User user = null;
+		user = session.selectOne("mapping.UserMapper.searchUserBySchoolNum");
+		return user;
+	}
+
 	public Poor searchPoor(int u_id) {
 		Poor poor = session.selectOne("mapping.UserMapper.searchPoor",u_id);
 		return poor;

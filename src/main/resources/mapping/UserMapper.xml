@@ -10,6 +10,10 @@
         SELECT * FROM tb_user WHERE username=#{username} AND password=#{password}
     </select>
 
+    <select id="searchUserBySchoolNum" resultType="com.zzu.model.User" parameterType="string">
+        SELECT * FROM tb_user WHERE school_num=#{school_num}
+    </select>
+
     <select id="exists" resultType="com.zzu.model.User" parameterType="string">
         SELECT * FROM tb_user WHERE username=#{username}
     </select>

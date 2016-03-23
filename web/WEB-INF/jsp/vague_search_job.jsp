@@ -4,7 +4,7 @@
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <html>
 <head>
-    <title>工作列表</title>
+    <title>搜索结果</title>
     <link rel="stylesheet" type="text/css"
           href="${root}/jquery-easyui-1.4.4/themes/default/easyui.css"/>
     <link rel="stylesheet" type="text/css"
@@ -75,12 +75,12 @@
         <div class="col-md-11">
             <ul>
                 <li id="0"
-                    <c:if test="${p_id == '0'}">class="on" </c:if>
+                    <c:if test="${c_id == '0'}">class="on" </c:if>
                 >不限
                 </li>
-                <c:forEach items="${requestScope.positions}" var="item">
+                <c:forEach items="${requestScope.classifies}" var="item">
                     <li
-                            <c:if test="${item.id == p_id}">
+                            <c:if test="${item.id == c_id}">
                                 class="on"
                             </c:if>
                             id="${item.id}">${item.name}</li>
@@ -254,13 +254,13 @@
 
     //加载数据，刷新页面
     function loadData() {
-        var url = "${root}/job/job_list.do?c_id=${c_id}";
-        var p_id = $("#positionDiv .on").eq(0).attr("id");
+        var url = "${root}/job/vague_search_job.do?keyword=${keyword}";
+        var c_id = $("#positionDiv .on").eq(0).attr("id");
 
         var low = $("#salaryDiv .on").attr("low");
         var high = $("#salaryDiv .on").attr("high");
 
-        url += "&p_id=" + p_id + "&time=" + getWorkTime() + "&low=" + low + "&high=" + high;
+        url += "&c_id=" + c_id + "&time=" + getWorkTime() + "&low=" + low + "&high=" + high;
         window.location = url;
     }
 

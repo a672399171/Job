@@ -3,9 +3,11 @@ package com.zzu.service;
 import com.zzu.dao.JobDao;
 import com.zzu.model.*;
 import com.zzu.util.StringUtil;
+import org.springframework.cglib.core.TinyBitSet;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -32,18 +34,9 @@ public class JobService {
 		return jobDao.getJobById(id);
 	}
 
-	public List<Resume> searchResume(int grade, String spare_time, String salary, int school) {
+	public List<Resume> searchResume(int grade, int spare_time, String salary, int school) {
 		List<Resume> resumes = jobDao.searchResume(grade, spare_time, salary, school);
 
-		for (Resume resume : resumes) {
-			String time1 = resume.getSpare_time();
-			for (int i = 0; i < time1.length(); i += 2) {
-				if (spare_time.charAt(i) == '1' && time1.charAt(i) == '0' && time1.charAt(i + 7) == '0') {
-					resumes.remove(resume);
-					break;
-				}
-			}
-		}
 		return resumes;
 	}
 
@@ -150,50 +143,54 @@ public class JobService {
 	 *
 	 * @return
 	 */
-	public List<Job> searchJobs(int[] p_ids, String time, String low, String high,int page) {
-		int l = -1, h = -1;
-		if (!StringUtil.isEmpty(low) && StringUtil.isNumber(low)) {
-			l = Integer.parseInt(low);
-		}
-		if (!StringUtil.isEmpty(high) && StringUtil.isNumber(high)) {
-			h = Integer.parseInt(high);
-		}
-		List<Job> jobs = jobDao.searchJobs(p_ids, l, h,page);
-		if (!StringUtil.isEmpty(time)) {
-			if (StringUtil.isSpareTimeString(time)) {
-				for (Job job : jobs) {
-					String workTime = job.getWork_time();
-					for (int i = 0; i < time.length(); i++) {
-						if (time.charAt(i) == '1' &&
-								workTime.charAt(i) == '0' && workTime.charAt(i + 7) == '0') {
-							jobs.remove(job);
-							break;
-						}
-					}
-				}
-			} else {
-				jobs = null;
+	public List<Job> searchJobs(int[] p_ids, int time, int low, int high, int page) {
+		List<Job> jobs = jobDao.searchJobs(p_ids, low, high, page, time);
+
+		/*//使用增强的for循环会抛出java.util.ConcurrentModificationException,用iterator替代
+		Iterator<Job> iterator = jobs.iterator();
+		while (iterator.hasNext()) {
+			Job job = iterator.next();
+			int workTime = job.getWork_time();
+			int temp = workTime & time;
+			if (temp == 0) {
+				iterator.remove();
 			}
-		}
+		}*/
 
 		return jobs;
 	}
 
 	/**
 	 * 获取总条数
+	 *
 	 * @param p_ids
 	 * @param low
 	 * @param high
 	 * @return
 	 */
-	public int getJobCount(int[] p_ids, String low, String high) {
-		int l = -1, h = -1;
-		if (!StringUtil.isEmpty(low) && StringUtil.isNumber(low)) {
-			l = Integer.parseInt(low);
-		}
-		if (!StringUtil.isEmpty(high) && StringUtil.isNumber(high)) {
-			h = Integer.parseInt(high);
-		}
-		return jobDao.getJobCount(p_ids, l, h);
+	public int getJobCount(int[] p_ids, int time, int low, int high) {
+		return jobDao.getJobCount(p_ids, time, low, high);
 	}
+
+	/**
+	 * 模糊搜索工作
+	 *
+	 * @param keyword
+	 * @param low
+	 * @param high    @return
+	 */
+	public List<Job> searchJobs(String keyword, int page, int low, int high,int time,int c_id) {
+		return jobDao.searchJobs(keyword, page, low, high,time,c_id);
+	}
+
+	/**
+	 * 获取总条数
+	 *
+	 * @param keyword
+	 * @return
+	 */
+	public int getJobCount(String keyword, int low, int high,int time,int c_id) {
+		return jobDao.getJobCount(keyword, low, high,time,c_id);
+	}
+
 }

@@ -3,6 +3,7 @@ package com.zzu.dao;
 import com.zzu.model.*;
 import org.apache.ibatis.session.*;
 import org.springframework.stereotype.Component;
+
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +35,7 @@ public class JobDao {
 		return job;
 	}
 
-	public List<Resume> searchResume(int grade, String spare_time, String salary, int school) {
+	public List<Resume> searchResume(int grade, int spare_time, String salary, int school) {
 		List<Resume> resumes = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("grade", grade);
@@ -169,7 +170,7 @@ public class JobDao {
 	 *
 	 * @return
 	 */
-	public List<Job> searchJobs(int[] p_ids, int l, int h, int page) {
+	public List<Job> searchJobs(int[] p_ids, int l, int h, int page, int time) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("p_ids", p_ids);
 		map.put("l", l);
@@ -177,6 +178,7 @@ public class JobDao {
 		map.put("page", page);
 		map.put("start", (page - 1) * Common.COUNT);
 		map.put("count", 10);
+		map.put("time", time);
 
 		List<Job> jobs = session.selectList("mapping.JobMapper.searchJobs", map);
 		return jobs;
@@ -190,14 +192,37 @@ public class JobDao {
 	 * @param h
 	 * @return
 	 */
-	public int getJobCount(int[] p_ids, int l, int h) {
+	public int getJobCount(int[] p_ids, int time, int l, int h) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("p_ids", p_ids);
 		map.put("l", l);
 		map.put("h", h);
+		map.put("time", time);
 
 		int count = session.selectOne("mapping.JobMapper.getJobCount", map);
 		return count;
+	}
+
+	/**
+	 * 模糊搜索工作
+	 *
+	 * @param keyword
+	 * @param l
+	 *@param h @return
+	 */
+	public List<Job> searchJobs(String keyword, int page, int l, int h,int time,int c_id) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("keyword", keyword);
+		map.put("page", page);
+		map.put("l", l);
+		map.put("h", h);
+		map.put("start", (page - 1) * Common.COUNT);
+		map.put("count", 10);
+		map.put("c_id", c_id);
+		map.put("time", time);
+
+		List<Job> jobs = session.selectList("mapping.JobMapper.vagueSearchJobs", map);
+		return jobs;
 	}
 
 	/**
@@ -212,5 +237,22 @@ public class JobDao {
 		position.setC_id(c_id);
 		positions = session.selectList("mapping.JobMapper.searchPositions", position);
 		return positions;
+	}
+
+	/**
+	 * 获取总条数
+	 * @param keyword
+	 * @return
+	 */
+	public int getJobCount(String keyword, int l, int h,int time,int c_id) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("keyword", keyword);
+		map.put("l", l);
+		map.put("h", h);
+		map.put("c_id", c_id);
+		map.put("time", time);
+
+		int count = session.selectOne("mapping.JobMapper.getVagueJobCount", map);
+		return count;
 	}
 }

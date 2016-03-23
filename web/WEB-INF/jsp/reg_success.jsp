@@ -14,30 +14,76 @@
     <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <style type="text/css">
+        .well {
+            width: 80%;
+            margin: 0 auto;
+            height: 400px
+        }
+
+        #top1 {
+            margin: 0 auto;
+            width: 50%
+        }
+
+        #top1 img {
+            margin-right: 30px;
+            display: inline-block;
+        }
+
+        #top1 div {
+            display: inline-block;
+        }
+
+        #top2 {
+            margin: 0 auto;
+            width: 50%;
+            text-align: center;
+        }
+
+        .usernameStyle {
+            font-size: 26px;
+            color: #2aabd2;
+        }
+
+        .successStyle {
+            font-size: 26px;
+            color: orange;
+        }
+
+        hr {
+            height: 1px;
+            border: none;
+            border-top: 1px solid grey;
+            width: 80%;
+            margin-top: 20px;
+            margin-bottom: 50px;
+        }
+    </style>
 </head>
 <body>
 <jsp:include page="header.jsp"></jsp:include>
 <div id="body">
-    <div class="well" style="width: 80%;margin: 0 auto;height: 400px">
-        <div style="margin: 0 auto;width: 50%">
-            <img src="${root}/images/icon-succeed.png" style="float: left;margin-right: 30px">
+    <div class="well">
+        <div id="top1">
+            <img src="${root}/images/icon-succeed.png">
+
             <div>
-                <span style="font-size: 26px;color: #2aabd2">${sessionScope.user.username}</span>
-                <span style="font-size: 26px;color: red">注册成功！</span>
+                <span class="usernameStyle">672399171${sessionScope.user.username}</span>
+                <span class="successStyle">恭喜你注册成功！</span>
             </div>
-            <a type="button" class="btn btn-primary">
-                <i class="fa fa-pencil-square-o"></i>&nbsp;填写简历
+        </div>
+        <hr>
+        <div id="top2">
+            <a type="button" class="btn btn-primary" href="${root}/user/info.do">
+                <i class="fa fa-pencil-square-o"></i>&nbsp;完善个人资料
             </a>
-            <a type="button" class="btn btn-info">
-                <i class="fa fa-search"></i>&nbsp;查看兼职信息
+            <a type="button" class="btn btn-info" href="${root}/">
+                <i class="fa fa-home"></i>&nbsp;返回主页查看
             </a>
         </div>
     </div>
 </div>
-
-<script type="application/javascript">
-
-</script>
 </body>
 </html>
 

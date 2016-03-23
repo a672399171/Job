@@ -10,7 +10,8 @@
             <!-- 数据源 -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/job"/>
+                <!--加上编码，防止出现乱码-->
+                <property name="url" value="jdbc:mysql://localhost:3306/job?characterEncoding=utf-8"/>
                 <property name="username" value="root"/>
                 <property name="password" value="admin"/>
             </dataSource>

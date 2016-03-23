@@ -205,7 +205,20 @@ public class UserController {
 			map.put("msg", "用户名已存在");
 		} else if (varify == null || !varify.equalsIgnoreCase((String) session.getAttribute("code"))) {
 			map.put("msg", "验证码错误");
+		} else if (!NetUtil.isZZUStudent(username,jwpwd)) {
+			map.put("msg", "学号或教务系统密码错误");
+		} else if(userService.searchUserBySchoolNum(school_num) != null) {
+			map.put("msg", "该学号已绑定");
 		} else {
+			user = new User();
+			user.setUsername(username);
+			user.setPassword(StringUtil.toMd5(password));
+			user.setNickname("用户" + username);
+			user.setPush(false);
+			user.setSchool_num(school_num);
+			user.setSex(Common.NAN);
+			userService.addUser(user);
+
 			session.setAttribute(Common.USER, user);
 		}
 		return map;
@@ -218,7 +231,6 @@ public class UserController {
 	 */
 	@RequestMapping("/reg_success.do")
 	public String reg_success() {
-
 		return "reg_success";
 	}
 
@@ -486,7 +498,7 @@ public class UserController {
 	 * @return
 	 */
 	@RequestMapping("/validate_result.do")
-	public String validateResult(String u, String s, Model model,HttpSession session) {
+	public String validateResult(String u, String s, Model model, HttpSession session) {
 		User user = (User) session.getAttribute(Common.USER);
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (user == null) {
@@ -500,7 +512,7 @@ public class UserController {
 				user.setEmail(varify.getEmail());
 				userService.bindEmail(user);
 				model.addAttribute("result", "验证成功！");
-				session.setAttribute(Common.USER,user);
+				session.setAttribute(Common.USER, user);
 			} else {
 				model.addAttribute("result", "验证失败！");
 			}

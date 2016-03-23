@@ -19,6 +19,7 @@
 <jsp:include page="header.jsp"></jsp:include>
 <div id="body">
     <div class="well" id="well">
+        <h2 align="center">用户注册</h2>
         <form id="regForm">
             <div class="form-group">
                 <input type="text" class="form-control" id="username" name="username" placeholder="用户名">
@@ -45,12 +46,12 @@
                     <input type="checkbox" checked>我接受服务条款
                 </label>
             </div>
-            <button type="submit" class="btn btn-default" id="zhuce">立即注册</button>
+            <button type="submit" class="btn btn-danger" id="zhuce">立即注册</button>
             <span style="color: red" id="msg"></span>
         </form>
     </div>
 </div>
-
+<jsp:include page="footer.jsp"></jsp:include>
 <script type="application/javascript">
     $(function () {
         $('#regForm').bootstrapValidator({

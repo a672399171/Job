@@ -4,6 +4,7 @@ import com.zzu.model.*;
 import com.zzu.model.Collection;
 import com.zzu.service.JobService;
 import com.zzu.service.UserService;
+import com.zzu.util.StringUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.stereotype.Component;
@@ -124,10 +125,23 @@ public class JobController {
 	}
 
 	@RequestMapping("/job_list.do")
-	public String jobList(int c_id, int p_id, String time, String low, String high,
+	public String jobList(int c_id, int p_id, Integer time, String low, String high,
 	                      Integer page, Model model) {
-		if(page == null) {
+		if (page == null) {
 			page = 1;
+		}
+		if (time > 127) {
+			time = 127;
+		} else if (time < 0) {
+			time = 0;
+		}
+		int l = getSalaryNumber(low);
+		int h = getSalaryNumber(high);
+		if (l <= 0) {
+			low = "0";
+		}
+		if(h == -1) {
+			high = "max";
 		}
 		List<Position> positions = jobService.searchPositions(c_id);
 		model.addAttribute("positions", positions);
@@ -136,20 +150,67 @@ public class JobController {
 		model.addAttribute("time", time);
 		model.addAttribute("low", low);
 		model.addAttribute("high", high);
-		model.addAttribute("page",page);
+		model.addAttribute("page", page);
 
 		int[] p_ids = null;
 		if (p_id != 0) {
 			p_ids = new int[]{p_id};
 		}
 
-		List<Job> jobs = jobService.searchJobs(p_ids, time, low, high, page);
+		List<Job> jobs = jobService.searchJobs(p_ids, time, l, h, page);
 		model.addAttribute("jobs", jobs);
 
-		int count = jobService.getJobCount(p_ids,low,high);
-		model.addAttribute("count",count);
+		int count = jobService.getJobCount(p_ids, time, l, h);
+		model.addAttribute("count", count);
 
 		return "job_list";
+	}
+
+	@RequestMapping("/vague_search_job.do")
+	public String searchJobs(String keyword, Integer page, Integer c_id, Integer time, String low, String high, Model model) {
+		if (page == null || page <= 0) {
+			page = 1;
+		}
+		if (c_id == null || c_id <= 0) {
+			c_id = 0;
+		}
+		if (time == null || time <= 0 || time >= 127) {
+			time = 127;
+		}
+		int l = getSalaryNumber(low);
+		int h = getSalaryNumber(high);
+		if (l <= 0) {
+			low = "0";
+		}
+		if(h == -1) {
+			high = "max";
+		}
+
+		model.addAttribute("time", time);
+		model.addAttribute("c_id", c_id);
+		model.addAttribute("page", page);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("low", low);
+		model.addAttribute("high", high);
+
+		List<Classify> classifies = jobService.getAllClassifies();
+		model.addAttribute("classifies", classifies);
+
+		List<Job> jobs = jobService.searchJobs(keyword, page, l, h,time,c_id);
+		model.addAttribute("jobs", jobs);
+
+		int count = jobService.getJobCount(keyword, l, h,time,c_id);
+		model.addAttribute("count", count);
+
+		return "vague_search_job";
+	}
+
+	private int getSalaryNumber(String str) {
+		int num = -1;
+		if (!StringUtil.isEmpty(str) && StringUtil.isNumber(str)) {
+			num = Integer.parseInt(str);
+		}
+		return num;
 	}
 
 	@RequestMapping("/job_detail.do")
@@ -162,7 +223,10 @@ public class JobController {
 
 	@RequestMapping("/searchResume.do")
 	@ResponseBody
-	public JSONObject searchResume(int grade, String spare_time, String salary, int school) {
+	public JSONObject searchResume(int grade, Integer spare_time, String salary, int school) {
+		if (spare_time > 127 || spare_time <= 0) {
+			spare_time = 127;
+		}
 		JSONObject object = new JSONObject();
 		List<Resume> resumes = jobService.searchResume(grade, spare_time, salary, school);
 		object.put("resumes", resumes);
@@ -339,7 +403,7 @@ public class JobController {
 	@ResponseBody
 	public JSONObject searchJobs() {
 		JSONObject object = new JSONObject();
-		List<Job> jobs = jobService.searchJobs(null, null, null, null, 0);
+		List<Job> jobs = jobService.searchJobs(null, 127, 0, -1, 0);
 
 		object.put("total", jobs.size());
 		object.put("rows", jobs);

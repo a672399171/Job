@@ -92,26 +92,11 @@ a:hover {
     padding: 0;
     margin-left: 10px;
     background: #F8F8F8;
-    border: 1px solid #c0c0c0;
 }
 
-#list li {
-    border-bottom: 1px solid black;
-    height: 40px;
-    line-height: 40px;
-}
-
-#list li a {
-    color: black;
-}
-
-#list li i {
-    margin-left: 10px;
-    color: red;
-}
-
-#list li:hover {
-    background: #999999;
+#list a {
+    color: #555;
+    line-height: 15px;
 }
 
 #inputDiv {
@@ -124,7 +109,7 @@ a:hover {
 #input {
     height: 100%;
     outline: none;
-    width: 450px;
+    width: 520px;
     border: 2px solid red;
     padding-left: 10px;
     font-size: 16px;
@@ -132,7 +117,8 @@ a:hover {
 }
 
 #searchBtn {
-    width: 80px;
+    outline: none;
+    width: 100px;
     background: red;
     color: white;
     float: left;

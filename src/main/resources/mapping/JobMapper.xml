@@ -9,6 +9,7 @@
     <resultMap type="com.zzu.model.Job" id="jobResultMap" autoMapping="true">
         <association property="type" javaType="com.zzu.model.Position">
             <id property="id" column="p_id"/>
+            <result property="c_id" column="classifyId"></result>
             <result property="name" column="p_name"/>
         </association>
         <association property="post_company" javaType="com.zzu.model.Company" autoMapping="true">
@@ -136,7 +137,7 @@
 
     <select id="searchJobs" resultMap="jobResultMap" parameterType="hashmap">
         SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where
-        j.type=p.id and j.post_company=c.id
+        j.type=p.id and j.post_company=c.id and #{time} &amp; j.work_time &lt;&gt; 0
         <if test="p_ids != null">
             and j.type in
             <foreach item="item" index="index" collection="p_ids"
@@ -158,7 +159,7 @@
 
     <select id="getJobCount" parameterType="hashmap" resultType="int">
         SELECT count(*) as num FROM tb_job j,tb_company c,tb_position p where
-        j.type=p.id and j.post_company=c.id
+        j.type=p.id and j.post_company=c.id and #{time} &amp; j.work_time &lt;&gt; 0
         <if test="p_ids != null">
             and j.type in
             <foreach item="item" index="index" collection="p_ids"
@@ -179,6 +180,38 @@
         select * from tb_position
         <if test="c_id != 0">
             where c_id=#{c_id}
+        </if>
+    </select>
+
+    <select id="vagueSearchJobs" resultMap="jobResultMap" parameterType="hashmap">
+        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.*,classify.id as classifyId FROM tb_job j,tb_company c,tb_position p,tb_classify classify where
+        j.type=p.id and j.post_company=c.id and p.c_id=classify.id and (j.name like '%${keyword}%' or c.company_name like '%${keyword}%') and #{time} &amp; j.work_time &lt;&gt; 0
+        <if test="l != -1">
+            and j.low_salary &gt;=${l}
+        </if>
+        <if test="h != -1">
+            and j.high_salary &lt;=${h}
+        </if>
+        <if test="c_id != 0">
+            and classify.id=${c_id}
+        </if>
+        ORDER BY j.post_time desc
+        <if test="page != 0">
+            limit ${start},${count}
+        </if>
+    </select>
+
+    <select id="getVagueJobCount" parameterType="hashmap" resultType="int">
+        SELECT count(*) as num FROM tb_job j,tb_company c,tb_position p,tb_classify classify where
+        j.type=p.id and j.post_company=c.id and p.c_id=classify.id and (j.name like '%${keyword}%' or c.company_name like '%${keyword}%') and #{time} &amp; j.work_time &lt;&gt; 0
+        <if test="l != -1">
+            and j.low_salary &gt;=#{l}
+        </if>
+        <if test="h != -1">
+            and j.high_salary &lt;=#{h}
+        </if>
+        <if test="c_id != 0">
+            and classify.id=#{c_id}
         </if>
     </select>
 
