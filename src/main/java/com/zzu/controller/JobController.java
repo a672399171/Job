@@ -277,8 +277,10 @@ public class JobController {
 
 		Job job = jobService.getJobById(id);
 		model.addAttribute("job", job);
-		List<Comment> comments = jobService.getComments(id);
-		model.addAttribute("comments", comments);
+		//List<Comment> comments = jobService.getComments(id);
+		//model.addAttribute("comments", comments);
+		int count = jobService.getCommentCount(id);
+		model.addAttribute("count", count);
 
 		if (user != null) {
 			collection = jobService.getCollection(user.getId(), id);
@@ -292,6 +294,26 @@ public class JobController {
 		}
 		model.addAttribute("collection", collection);
 		return "job_detail";
+	}
+
+	@RequestMapping("/getComments.do")
+	@ResponseBody
+	public JSONArray getComments(Integer page,int id) {
+		JSONArray array = new JSONArray();
+		if(page == null || page <= 0 ) {
+			page = 1;
+		}
+
+		List<Comment> comments = jobService.getComments(id,page);
+		for(Comment comment : comments) {
+			JSONObject object = new JSONObject();
+			object.put("user",comment.getUser());
+			object.put("id",comment.getId());
+			object.put("c_time",comment.getC_time());
+			object.put("content",comment.getContent());
+			array.add(object);
+		}
+		return array;
 	}
 
 	@RequestMapping("/updateCollection.do")

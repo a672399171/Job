@@ -68,7 +68,7 @@
     </select>
 
     <update id="updateCompany" parameterType="com.zzu.model.Company">
-        update tb_company set company_name=#{company_name},address=#{address},name=#{name},
+        update tb_company set company_name=#{company_name},address=#{address},name=#{name},x=#{x},y=#{y},
          phone=#{phone},introduce=#{introduce},type=#{type},scope=#{scope},email=#{email},logo=#{logo} where id=#{id}
     </update>
 

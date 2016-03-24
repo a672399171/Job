@@ -255,4 +255,32 @@ public class JobDao {
 		int count = session.selectOne("mapping.JobMapper.getVagueJobCount", map);
 		return count;
 	}
+
+	/**
+	 * 获取评论条数
+	 * @param id
+	 * @return
+	 */
+	public int getCommentCount(int id) {
+		int count = session.selectOne("mapping.JobMapper.getCommentCount",id);
+		return count;
+	}
+
+	/**
+	 * 获取指定页的评论
+	 * @param id
+	 * @param page
+	 * @return
+	 */
+	public List<Comment> getComments(int id, int page) {
+		List<Comment> comments = null;
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("id", id);
+		map.put("page", page);
+		map.put("start", (page - 1) * Common.COUNT);
+		map.put("count", 10);
+
+		comments = session.selectList("mapping.JobMapper.getCommentsPage",map);
+		return comments;
+	}
 }

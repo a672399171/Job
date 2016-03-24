@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="${root}/css/style_job_detail.css"/>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
-    <script src="${root}/js/ajaxfileupload.js"></script>
+    <script src="${root}/js/dateformat.js"></script>
 </head>
 <body>
 <jsp:include page="header.jsp"></jsp:include>
@@ -70,7 +70,6 @@
             工作时间：
         <table id="table">
             <tr>
-                <td></td>
                 <td>星期一</td>
                 <td>星期二</td>
                 <td>星期三</td>
@@ -79,18 +78,7 @@
                 <td>星期六</td>
                 <td>星期日</td>
             </tr>
-            <tr id="am">
-                <td>上午</td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-            </tr>
-            <tr id="pm">
-                <td>下午</td>
+            <tr id="week">
                 <td><input type="checkbox"/></td>
                 <td><input type="checkbox"/></td>
                 <td><input type="checkbox"/></td>
@@ -134,15 +122,22 @@
     </div>
     <div class="comment">
         <h4>评论列表</h4>
-        <c:forEach var="item" items="${requestScope.comments}">
-            <div>
-                <img src="${root}/images/${item.user.photo_src}" class="headPhoto">
-                <span><fmt:formatDate value="${item.c_time}" pattern="yyyy-MM-dd"></fmt:formatDate></span>
-            </div>
-            <div class="contentDiv">
-                <p>${item.content}</p>
-            </div>
-        </c:forEach>
+        <div id="content">
+
+        </div>
+        <c:if test="${count != 0}">
+            <nav style="margin: 0 auto" id="page">
+                <ul class="pagination pagination-sm">
+                    <li>
+                        <a href="javascript:void(0)" aria-label="Previous" id="pre">&laquo;</a>
+                    </li>
+                    <li class="active" id="first"><a href="javascript:void(0)" onclick="loadComments(1)">1</a></li>
+                    <li>
+                        <a href="javascript:void(0)" aria-label="Next" id="next">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        </c:if>
     </div>
 </div>
 <jsp:include page="footer.jsp"></jsp:include>
@@ -151,6 +146,11 @@
 
     //记录收藏按钮的状态
     var flag = true;
+    //页数
+    var totalPage =${count}/10;
+    totalPage = Math.floor(totalPage) + 1;
+    //当前页
+    var currentPage = 1;
 
     function initMap() {
         var map = new BMap.Map("container");          // 创建地图实例
@@ -167,21 +167,68 @@
     $(function () {
         flag = ${requestScope.collection != null};
         initMap();
-        var spareStr = "${requestScope.job.work_time}";
+        var spareStr = parseInt(${requestScope.job.work_time}).toString(2);
+        var timeLength = spareStr.length;
+        if (spareStr.length < 7) {
+            for (var i = 0; i < 7 - timeLength; i++) {
+                spareStr = "0" + spareStr;
+            }
+        } else {
+            spareStr = spareStr.substr(spareStr.length - 7);
+        }
 
-        var am = $("#am td :checkbox");
-        var pm = $("#pm td :checkbox");
+        var week = $("#week td :checkbox");
 
         for (var i = 0; i < spareStr.length; i++) {
             var c = spareStr.charAt(i);
-            if (i < 7) {
-                am.eq(i).attr("checked", c == '1');
-            } else {
-                pm.eq(i - 7).attr("checked", c == '1');
-            }
+            week.eq(i).attr("checked", c == '1');
         }
         $(":checkbox").attr("disabled", "disabled");
+
+        loadComments(1);
+
+        for (var i = totalPage; i > 1; i--) {
+            $("#first").after("<li><a href='javascript:void(0)'>" + i + "</a></li>");
+        }
+
+        setPages();
+
+        $(".pagination li a").click(function() {
+            var p = $(this).text();
+            if(jQuery.isNumeric(p)) {
+                loadComments(p);
+                currentPage  = p;
+                setPages();
+            }
+        });
     });
+
+    $("#pre").click(function() {
+        if(currentPage>1) {
+            currentPage -= 1;
+            loadComments(currentPage);
+            setPages();
+        }
+    });
+
+    $("#next").click(function() {
+        if(currentPage < totalPage) {
+            currentPage += 1;
+            loadComments(currentPage);
+            setPages();
+        }
+    });
+
+    //设置上下页码
+    function setPages() {
+        var lis = $("#page li");
+        lis.removeClass("active");
+        for(var i=0;i<lis.length;i++) {
+            if(lis.eq(i).text() == currentPage) {
+                lis.eq(i).addClass("active");
+            }
+        }
+    }
 
     $("#collect").click(function () {
         if (${sessionScope.user == null}) {
@@ -197,7 +244,7 @@
                 collection: flag,
                 j_id:${job.id}
             }, function (data) {
-                if(data.msg) {
+                if (data.msg) {
                     window.location = "${root}/user/toLogin.do?from=" + window.location.href;
                 }
             }, "JSON");
@@ -211,7 +258,7 @@
             $.post("${root}/job/applyJob.do", {
                 j_id:${job.id}
             }, function (data) {
-                if(data.msg) {
+                if (data.msg) {
                     window.location = "${root}/user/toLogin.do?from=" + window.location.href;
                 } else {
                     window.location = "${root}/job/applySuccess.do";
@@ -219,6 +266,28 @@
             }, "JSON");
         }
     });
+
+    //ajax加载评论
+    function loadComments(page) {
+        $.post("${root}/job/getComments.do", {
+            id:${requestScope.job.id},
+            page: page
+        }, function (data) {
+            $("#content").html("");
+            for(var i=0;i<data.length;i++) {
+                var date = new Date(data[i].c_time.time);
+                var time = date.Format("yyyy-MM-dd hh:mm:ss");
+                var str = "<div>" +
+                 "<img src='${root}/images/" + data[i].user.photo_src + "' class='headPhoto'>" +
+                 "<span>" + time + "</span>" +
+                 "</div>" +
+                 "<div class='contentDiv'>" +
+                 "<p>" + data[i].content + "</p>" +
+                 "</div>";
+                $("#content").append(str);
+            }
+        }, "JSON");
+    }
 </script>
 </body>
 </html>

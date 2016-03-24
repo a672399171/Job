@@ -193,4 +193,22 @@ public class JobService {
 		return jobDao.getJobCount(keyword, low, high,time,c_id);
 	}
 
+	/**
+	 * 获取评论数
+	 * @param id
+	 * @return
+	 */
+	public int getCommentCount(int id) {
+		return jobDao.getCommentCount(id);
+	}
+
+	/**
+	 * 获取指定页的评论
+	 * @param id
+	 * @param page
+	 * @return
+	 */
+	public List<Comment> getComments(int id, int page) {
+		return jobDao.getComments(id,page);
+	}
 }

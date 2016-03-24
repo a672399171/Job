@@ -77,6 +77,15 @@
         where m.u_id=u.id and m.j_id=j.id and m.j_id=#{id} ORDER BY m.c_time desc
     </select>
 
+    <select id="getCommentsPage" resultMap="commentResultMap" parameterType="hashmap">
+        SELECT j.id as j_id,m.*,u.id as u_id,u.photo_src
+        FROM tb_job j,tb_user u,tb_comment m
+        where m.u_id=u.id and m.j_id=j.id and m.j_id=#{id} ORDER BY m.c_time desc
+        <if test="page != 0">
+            limit ${start},${count}
+        </if>
+    </select>
+
     <select id="getCollection" resultMap="collectionResultMap" parameterType="hashmap">
         select j.*,u.*,c.* from tb_job j,tb_user u,tb_collection c where j.id=c.j_id and u.id=c.u_id and c.u_id=#{u_id} and c.j_id=#{j_id} limit 1
     </select>
@@ -213,6 +222,11 @@
         <if test="c_id != 0">
             and classify.id=#{c_id}
         </if>
+    </select>
+
+    <select id="getCommentCount" resultType="int" parameterType="int">
+        SELECT count(*) FROM tb_job j,tb_user u,tb_comment m
+        where m.u_id=u.id and m.j_id=j.id and m.j_id=#{id}
     </select>
 
 </mapper>

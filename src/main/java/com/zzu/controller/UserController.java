@@ -75,7 +75,7 @@ public class UserController {
 
 	@RequestMapping("updateCompany.do")
 	public String updateCompany(MultipartFile logo, HttpSession session, String company_name, String address, String name,
-	                            String phone, String introduce, String type, String scope, String email) {
+	                            String phone, String introduce, String type, String scope, String email,double lng,double lat) {
 		Company company = (Company) session.getAttribute(Common.COMPANY);
 		if (company == null) {
 			return "redirect:/user/toCompanyLogin.do";
@@ -123,6 +123,9 @@ public class UserController {
 
 			company.setLogo(newFile);
 		}
+
+		company.setX(lng);
+		company.setY(lat);
 
 		userService.updateCompany(company);
 		company = userService.getCompanyById(company.getId());
