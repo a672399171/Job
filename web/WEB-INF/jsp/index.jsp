@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
     <link rel="stylesheet" type="text/css" href="${root}/css/style_index.css"/>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <script src="${root}/js/dateformat.js"></script>
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
@@ -21,7 +22,6 @@
             <li>
                 <a href="javascript:void(0)">${item.name}</a>
                 <span></span>
-
                 <div class='hideDiv'>
                     <p class='alink'>
                         <c:forEach items="${item.positions}" var="position">
@@ -77,14 +77,14 @@
     <div class="job_item">
         <table>
             <tr>
-                <td width="300"><a href="#" class="link">金融销售</a></td>
-                <td width="200" class="font3">今天</td>
-                <td width="300" class="font5">国晟鸿业(厦门)资产管理有限公司</td>
+                <td width="30%"><a href="#" class="link">金融销售</a></td>
+                <td width="30%" class="font3">今天</td>
+                <td width="30%" class="font5">国晟鸿业(厦门)资产管理有限公司</td>
             </tr>
             <tr>
                 <td class="font5">应届生</td>
                 <td class="font4">3000-6000</td>
-                <td class="font3">民营/私企 | 101－300人</td>
+                <td class="font3">101－300人</td>
             </tr>
         </table>
     </div>
@@ -139,15 +139,22 @@
 
     function getRecentJobs() {
         $.getJSON("${root}/job/getRecentJobs.do", function (data) {
-            console.log(data);
             var jobs = data.jobs;
             for (var i = 0; i < jobs.length; i++) {
                 var job = jobs[i];
                 var item = $(".job_item").eq(0).clone();
+                //工作名称
                 item.find(".link").eq(0).text(job.name);
-                item.find(".font3").eq(0).text(job.post_time);
+                //发布时间
+                item.find(".font3").eq(0).text(new Date(job.post_time.time).Format("yyyy-MM-dd hh:mm"));
+                //公司名
                 item.find(".font5").eq(0).text(job.post_company.company_name);
-                item.find(".font4").eq(0).text(job.low_salary);
+                //职位类型
+                item.find(".font5").eq(1).text(job.type.name);
+                //工资
+                item.find(".font4").eq(0).text(job.low_salary + "-" + job.high_salary);
+                //公司规模
+                item.find(".font3").eq(1).text(job.post_company.scope);
                 item.show();
                 item.click(function () {
                     window.location = "${root}/job/detail.do?id=" + job.id;

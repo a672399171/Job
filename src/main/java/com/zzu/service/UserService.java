@@ -1,5 +1,6 @@
 package com.zzu.service;
 
+import com.zzu.dao.JobDao;
 import com.zzu.dao.UserDao;
 import com.zzu.model.*;
 import org.springframework.stereotype.Component;
@@ -52,8 +53,8 @@ public class UserService {
 		return userDao.adminLogin(username,password);
 	}
 
-	public List<User> searchUsers() {
-		return userDao.searchUsers();
+	public List<User> searchUsers(int page) {
+		return userDao.searchUsers(page);
 	}
 
 	public Poor searchPoor(int u_id) {
@@ -64,18 +65,27 @@ public class UserService {
 		userDao.insertPoor(poor);
 	}
 
+	//根据用户名和密码查找公司
 	public Company searchCompany(String username, String password) {
 		return userDao.searchCompany(username,password);
 	}
 
+	//根据id获取公司
 	public Company getCompanyById(int id) {
 		return userDao.getCompanyById(id);
 	}
 
+	//修改公司信息
 	public void updateCompany(Company company) {
 		userDao.updateCompany(company);
 	}
 
+	//添加公司
+	public void addCompany(Company company) {
+		userDao.addCompany(company);
+	}
+
+	//修改公司的密码
 	public void modifyCompanyPassword(int id, String s) {
 		userDao.modifyCompanyPassword(id,s);
 	}
@@ -91,12 +101,13 @@ public class UserService {
 	}
 
 	//删除用户
-	public void deleteUser(int id) {
-		userDao.deleteUser(id);
+	public int deleteUsers(int[] ids) {
+		return userDao.deleteUsers(ids);
 	}
 
-	public List<Company> searchCompanies() {
-		return userDao.searchCompanies();
+	//查询公司
+	public List<Company> searchCompanies(int page) {
+		return userDao.searchCompanies(page);
 	}
 
 	//修改密码
@@ -112,5 +123,15 @@ public class UserService {
 	//根据学号查找用户
 	public User searchUserBySchoolNum(String school_num) {
 		return userDao.searchUserBySchoolNum(school_num);
+	}
+
+	//判断用户名或学号是否存在重复
+	public boolean isUserOrSchoolNumRepeat(User user) {
+		return userDao.isUserOrSchoolNumRepeat(user);
+	}
+
+	//判断公司的用户名是否存在重复
+	public boolean isUsernameRepeat(Company company) {
+		return userDao.isUsernameRepeat(company);
 	}
 }

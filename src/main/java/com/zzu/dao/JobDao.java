@@ -283,4 +283,15 @@ public class JobDao {
 		comments = session.selectList("mapping.JobMapper.getCommentsPage",map);
 		return comments;
 	}
+
+	/**
+	 * 返回一个公司的所有职位
+	 * @param company_id
+	 * @return
+	 */
+	public List<Job> getAllJobsByCompany(int company_id) {
+		List<Job> jobs = null;
+		jobs = session.selectList("mapping.JobMapper.getAllJobsByCompany",company_id);
+		return jobs;
+	}
 }

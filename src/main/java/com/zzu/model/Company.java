@@ -18,6 +18,15 @@ public class Company {
 	private String logo;
 	private double x;
 	private double y;
+	private int auth;
+
+	public int getAuth() {
+		return auth;
+	}
+
+	public void setAuth(int auth) {
+		this.auth = auth;
+	}
 
 	public double getX() {
 		return x;

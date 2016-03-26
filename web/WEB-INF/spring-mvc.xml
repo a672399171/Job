@@ -38,4 +38,19 @@
         </property>
     </bean>
 
+    <!--处理静态资源请求-->
+    <mvc:resources mapping="/admin/**" location="/admin/" cache-period="2592000"/>
+    <mvc:resources mapping="/bootstrap-3.3.4-dist/**" location="/bootstrap-3.3.4-dist/" cache-period="31536000"/>
+    <mvc:resources mapping="/bootstrap-switch/**" location="/bootstrap-switch/" cache-period="31536000"/>
+    <mvc:resources mapping="/bootstrapvalidator/**" location="/bootstrapvalidator/" cache-period="31536000"/>
+    <mvc:resources mapping="/css/**" location="/css/" cache-period="31536000"/>
+    <mvc:resources mapping="/font-awesome-4.3.0/**" location="/font-awesome-4.3.0/" cache-period="31536000"/>
+    <mvc:resources mapping="/images/**" location="/images/" cache-period="31536000"/>
+    <mvc:resources mapping="/jquery-easyui-1.4.4/**" location="/jquery-easyui-1.4.4/" cache-period="31536000"/>
+    <mvc:resources mapping="/js/**" location="/js/" cache-period="31536000"/>
+    <mvc:resources mapping="/json/**" location="/json/" cache-period="31536000"/>
+    <mvc:resources mapping="/layer/**" location="/layer/" cache-period="31536000"/>
+    <mvc:resources mapping="/test/**" location="/test/" cache-period="31536000"/>
+    <mvc:resources mapping="/upload/**" location="/upload/" cache-period="31536000"/>
+    <mvc:resources mapping="/app/**" location="/app/" cache-period="31536000"/>
 </beans>

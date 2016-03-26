@@ -52,7 +52,8 @@
     </select>
 
     <select id="getAllCompanyJobs" resultMap="jobResultMap" parameterType="int">
-        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where j.type=p.id and j.post_company=c.id and post_company=#{post_company}
+        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where
+        j.type=p.id and j.post_company=c.id and post_company=#{post_company}
     </select>
 
     <select id="getJobById" resultMap="jobResultMap" parameterType="int">

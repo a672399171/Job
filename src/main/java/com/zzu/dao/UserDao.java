@@ -84,9 +84,14 @@ public class UserDao {
 		return admin;
 	}
 
-	public List<User> searchUsers() {
+	public List<User> searchUsers(int page) {
 		List<User> users = null;
-		users = session.selectList("mapping.UserMapper.searchUsers");
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("page", page);
+		map.put("start", (page-1)*Common.COUNT);
+		map.put("count",Common.COUNT);
+
+		users = session.selectList("mapping.UserMapper.searchUsers",map);
 
 		return users;
 	}
@@ -115,15 +120,23 @@ public class UserDao {
 		return company;
 	}
 
+	//根据id返回公司
 	public Company getCompanyById(int id) {
 		Company company = session.selectOne("mapping.UserMapper.getCompanyById",id);
 		return company;
 	}
 
+	//更新公司信息
 	public void updateCompany(Company company) {
 		session.update("mapping.UserMapper.updateCompany",company);
 	}
 
+	//添加公司
+	public void addCompany(Company company) {
+		session.insert("mapping.UserMapper.addCompany",company);
+	}
+
+	//公司修改密码
 	public void modifyCompanyPassword(int id, String s) {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("id",id);
@@ -142,13 +155,20 @@ public class UserDao {
 	}
 
 	//删除用户
-	public void deleteUser(int id) {
-		session.delete("mapping.UserMapper.deleteUser",id);
+	public int deleteUsers(int[] ids) {
+		int count = 0;
+		count = session.delete("mapping.UserMapper.deleteUsers",ids);
+		return count;
 	}
 
-	public List<Company> searchCompanies() {
+	public List<Company> searchCompanies(int page) {
 		List<Company> companies = null;
-		companies = session.selectList("mapping.UserMapper.searchCompanies");
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("page", page);
+		map.put("start", (page-1)*Common.COUNT);
+		map.put("count",Common.COUNT);
+
+		companies = session.selectList("mapping.UserMapper.searchCompanies",map);
 		return companies;
 	}
 
@@ -160,5 +180,25 @@ public class UserDao {
 	//绑定email
 	public void bindEmail(User user) {
 		session.update("mapping.UserMapper.bindEmail",user);
+	}
+
+	//判断用户名或学号是否存在重复
+	public boolean isUserOrSchoolNumRepeat(User user) {
+		User u = session.selectOne("mapping.UserMapper.isUserOrSchoolNumRepeat",user);
+		if(u != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	//判断公司用户名是否存在重复
+	public boolean isUsernameRepeat(Company company) {
+		Company c = session.selectOne("mapping.UserMapper.isUsernameRepeat",company);
+		if(c != null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

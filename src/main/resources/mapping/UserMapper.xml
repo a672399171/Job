@@ -46,8 +46,11 @@
         SELECT * FROM tb_admin WHERE username=#{username} AND password=#{password}
     </select>
 
-    <select id="searchUsers" resultType="com.zzu.model.User">
+    <select id="searchUsers" resultType="com.zzu.model.User" parameterType="hashmap">
         SELECT * FROM tb_user
+        <if test="page != 0">
+            limit ${start},${count}
+        </if>
     </select>
 
     <select id="searchPoor" resultType="com.zzu.model.Poor">
@@ -68,9 +71,14 @@
     </select>
 
     <update id="updateCompany" parameterType="com.zzu.model.Company">
-        update tb_company set company_name=#{company_name},address=#{address},name=#{name},x=#{x},y=#{y},
+        update tb_company set username=#{username},company_name=#{company_name},address=#{address},name=#{name},x=#{x},y=#{y},
          phone=#{phone},introduce=#{introduce},type=#{type},scope=#{scope},email=#{email},logo=#{logo} where id=#{id}
     </update>
+
+    <insert id="addCompany" parameterType="com.zzu.model.Company">
+        insert into tb_company(username,password,company_name,address,name,phone,email,introduce,type,scope)
+        values(#{username},#{password},#{company_name},#{address},#{name},#{phone},#{email},#{introduce},#{type},#{scope})
+    </insert>
 
     <update id="modifyCompanyPassword" parameterType="hashmap">
         update tb_company set password=#{password} where id=#{id}
@@ -82,16 +90,22 @@
     </insert>
 
     <update id="modifyUser" parameterType="com.zzu.model.User">
-        update tb_user set password=#{password},school_num=#{school_num},nickname=#{nickname},
+        update tb_user set username=#{username},password=#{password},school_num=#{school_num},nickname=#{nickname},
         phone=#{phone},email=#{email},sex=#{sex},push=#{push} where id=#{id}
     </update>
 
-    <delete id="deleteUser" parameterType="int">
-        delete from tb_user where id=#{id}
+    <delete id="deleteUsers" parameterType="int[]">
+        delete from tb_user where id in
+        <foreach collection="array" index="index" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
     </delete>
 
-    <select id="searchCompanies" resultType="com.zzu.model.Company">
+    <select id="searchCompanies" resultType="com.zzu.model.Company" parameterType="hashmap">
         SELECT * FROM tb_company
+        <if test="page != 0">
+            limit ${start},${count}
+        </if>
     </select>
 
     <update id="changePassword" parameterType="com.zzu.model.User">
@@ -101,4 +115,18 @@
     <update id="bindEmail" parameterType="com.zzu.model.User">
         update tb_user set email=#{email} where id=#{id}
     </update>
+    <select id="isUserOrSchoolNumRepeat" parameterType="com.zzu.model.User" resultType="com.zzu.model.User">
+        select * from tb_user where (username=#{username} or school_num=#{school_num})
+         <if test="id > 0">
+             and id!=#{id}
+         </if>
+    </select>
+
+    <select id="isUsernameRepeat" parameterType="com.zzu.model.Company" resultType="com.zzu.model.Company">
+        select * from tb_company where username=#{username}
+        <if test="id > 0">
+            and id!=#{id}
+        </if>
+    </select>
+
 </mapper>

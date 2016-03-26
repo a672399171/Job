@@ -140,7 +140,7 @@ public class JobController {
 		if (l <= 0) {
 			low = "0";
 		}
-		if(h == -1) {
+		if (h == -1) {
 			high = "max";
 		}
 		List<Position> positions = jobService.searchPositions(c_id);
@@ -182,7 +182,7 @@ public class JobController {
 		if (l <= 0) {
 			low = "0";
 		}
-		if(h == -1) {
+		if (h == -1) {
 			high = "max";
 		}
 
@@ -196,10 +196,10 @@ public class JobController {
 		List<Classify> classifies = jobService.getAllClassifies();
 		model.addAttribute("classifies", classifies);
 
-		List<Job> jobs = jobService.searchJobs(keyword, page, l, h,time,c_id);
+		List<Job> jobs = jobService.searchJobs(keyword, page, l, h, time, c_id);
 		model.addAttribute("jobs", jobs);
 
-		int count = jobService.getJobCount(keyword, l, h,time,c_id);
+		int count = jobService.getJobCount(keyword, l, h, time, c_id);
 		model.addAttribute("count", count);
 
 		return "vague_search_job";
@@ -277,8 +277,7 @@ public class JobController {
 
 		Job job = jobService.getJobById(id);
 		model.addAttribute("job", job);
-		//List<Comment> comments = jobService.getComments(id);
-		//model.addAttribute("comments", comments);
+
 		int count = jobService.getCommentCount(id);
 		model.addAttribute("count", count);
 
@@ -292,25 +291,29 @@ public class JobController {
 				}
 			}
 		}
+
+		List<Job> jobs = jobService.getAllCompanyJobs(job.getPost_company().getId());
+		model.addAttribute("jobs", jobs);
+
 		model.addAttribute("collection", collection);
 		return "job_detail";
 	}
 
 	@RequestMapping("/getComments.do")
 	@ResponseBody
-	public JSONArray getComments(Integer page,int id) {
+	public JSONArray getComments(Integer page, int id) {
 		JSONArray array = new JSONArray();
-		if(page == null || page <= 0 ) {
+		if (page == null || page <= 0) {
 			page = 1;
 		}
 
-		List<Comment> comments = jobService.getComments(id,page);
-		for(Comment comment : comments) {
+		List<Comment> comments = jobService.getComments(id, page);
+		for (Comment comment : comments) {
 			JSONObject object = new JSONObject();
-			object.put("user",comment.getUser());
-			object.put("id",comment.getId());
-			object.put("c_time",comment.getC_time());
-			object.put("content",comment.getContent());
+			object.put("user", comment.getUser());
+			object.put("id", comment.getId());
+			object.put("c_time", comment.getC_time());
+			object.put("content", comment.getContent());
 			array.add(object);
 		}
 		return array;
@@ -361,64 +364,71 @@ public class JobController {
 		return "apply_success";
 	}
 
-	@RequestMapping("/admin/addClassify.do")
+	/**
+	 * 增加或删除类型
+	 * @param id
+	 * @param c_id
+	 * @param label
+	 * @param type
+	 * @param isNew
+	 * @return
+	 */
+	@RequestMapping("/admin/saveOrUpdateType.do")
 	@ResponseBody
-	public Map<String, Object> addClassify(String text) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		Classify classify = new Classify();
-		classify.setName(text);
-		jobService.addClassify(classify);
-		map.put("c_id", classify.getId());
-		return map;
+	public JSONObject saveOrUpdateType(int id, Integer c_id, String label, String type, boolean isNew) {
+		JSONObject object = new JSONObject();
+		object.put("success",false);
+
+		if (type.equals(Common.CLASSIFY)) {
+			Classify classify = new Classify();
+			classify.setId(id);
+			classify.setName(label);
+			if (isNew) {
+				// impossible
+			} else {
+				jobService.updateClassify(classify);
+				object.put("success",true);
+			}
+		} else if (type.equals(Common.POSITION) && c_id != null) {
+			Position position = new Position();
+			position.setId(id);
+			position.setC_id(c_id);
+			position.setName(label);
+			if (isNew) {
+				jobService.addPosition(position);
+			} else {
+				jobService.updatePosition(position);
+			}
+			object.put("success",true);
+		}
+
+		return object;
 	}
 
-	@RequestMapping("/admin/updateClassify.do")
+	/**
+	 * 删除类型
+	 * @param id
+	 * @param type
+	 * @param isNew
+	 * @return
+	 */
+	@RequestMapping("/admin/deleteType.do")
 	@ResponseBody
-	public Map<String, Object> updateClassify(int id, String text) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		Classify classify = new Classify();
-		classify.setId(id);
-		classify.setName(text);
-		jobService.updateClassify(classify);
-		return map;
-	}
+	public JSONObject deleteType(int id, String type, boolean isNew) {
+		JSONObject object = new JSONObject();
+		object.put("success",true);
 
-	@RequestMapping("/admin/deleteClassify.do")
-	@ResponseBody
-	public Map<String, Object> deleteClassify(int id) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		jobService.deleteClassify(id);
-		return map;
-	}
+		if(isNew) {
+			return object;
+		}
 
-	@RequestMapping("/admin/addPosition.do")
-	@ResponseBody
-	public Map<String, Object> addPosition(int c_id, String text) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		Position position = new Position();
-		position.setC_id(c_id);
-		position.setName(text);
-		jobService.addPosition(position);
-		return map;
-	}
+		if (type.equals(Common.CLASSIFY)) {
+			jobService.deleteClassify(id);
+		} else if (type.equals(Common.POSITION)) {
+			jobService.deletePosition(id);
+		}
 
-	@RequestMapping("/admin/updatePosition.do")
-	@ResponseBody
-	public Map<String, Object> updatePosition(int id, String text) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		Position position = new Position();
-		position.setId(id);
-		position.setName(text);
-		jobService.updatePosition(position);
-		return map;
-	}
-
-	@RequestMapping("/admin/deletePosition.do")
-	@ResponseBody
-	public Map<String, Object> deletePosition(int id) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		jobService.deletePosition(id);
-		return map;
+		return object;
 	}
 
 	@RequestMapping("/admin/searchJobs.do")

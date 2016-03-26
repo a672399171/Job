@@ -27,4 +27,11 @@ public class Common {
 	//性别常量
 	public static final String NAN = "男";
 	public static final String NV = "女";
+	//公司认证状态
+	public static final int UNAUTH = 0;
+	public static final int AUTHING = 1;
+	public static final int AUTHED = 2;
+	//treenode的类型
+	public static final String CLASSIFY = "classify";
+	public static final String POSITION = "position";
 }

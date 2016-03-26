@@ -1,0 +1,41 @@
+<div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="AbnTestController">
+    <div class="col w-lg bg-light b-r bg-auto">
+        <div class="wrapper-md">
+            <div class="line b-b line-lg"></div>
+            <button ng-click="try_changing_the_tree_data()" class="btn btn-success btn-sm"><i
+                    class="fa fa-fw m-r-xs fa-plus"></i>刷新
+            </button>
+            <button ng-click="try_adding_a_branch()" class="btn btn-success btn-sm"><i
+                    class="fa fa-fw m-r-xs fa-plus"></i>添加
+            </button>
+        </div>
+    </div>
+    <div class="col">
+        <div class="wrapper-md">
+            <div class="b-a bg-light dk r r-2x">
+                <span ng-if="doing_async">...loading...</span>
+                <abn-tree
+                        tree-data="my_data"
+                        tree-control="my_tree"
+                        on-select="my_tree_handler(branch)"
+                        expand-level="2"
+                        initial-selection="Granny Smith"
+                        icon-leaf="fa fa-file-o"
+                        icon-expand="fa fa-plus"
+                        icon-collapse="fa fa-minus"
+                >
+                </abn-tree>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="wrapper-md">
+            <div class="alert alert-info">
+                <input type="text" class="form-control" ng-model="currentNode.id" value="">
+                <input type="text" class="form-control" ng-model="currentNode.label">
+                <button class="btn m-b-xs btn-sm btn-info btn-addon" ng-click="delete_node()"><i class="fa fa-trash-o"></i>删除</button>
+                <button class="btn m-b-xs btn-sm btn-default btn-addon" ng-click="save_modify()"><i class="fa fa-plus"></i>保存修改</button>
+            </div>
+        </div>
+    </div>
+</div>

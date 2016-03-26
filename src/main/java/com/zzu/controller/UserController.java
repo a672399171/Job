@@ -10,10 +10,7 @@ import net.sf.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -75,7 +72,7 @@ public class UserController {
 
 	@RequestMapping("updateCompany.do")
 	public String updateCompany(MultipartFile logo, HttpSession session, String company_name, String address, String name,
-	                            String phone, String introduce, String type, String scope, String email,double lng,double lat) {
+	                            String phone, String introduce, String type, String scope, String email, double lng, double lat) {
 		Company company = (Company) session.getAttribute(Common.COMPANY);
 		if (company == null) {
 			return "redirect:/user/toCompanyLogin.do";
@@ -208,9 +205,9 @@ public class UserController {
 			map.put("msg", "用户名已存在");
 		} else if (varify == null || !varify.equalsIgnoreCase((String) session.getAttribute("code"))) {
 			map.put("msg", "验证码错误");
-		} else if (!NetUtil.isZZUStudent(username,jwpwd)) {
+		} else if (!NetUtil.isZZUStudent(username, jwpwd)) {
 			map.put("msg", "学号或教务系统密码错误");
-		} else if(userService.searchUserBySchoolNum(school_num) != null) {
+		} else if (userService.searchUserBySchoolNum(school_num) != null) {
 			map.put("msg", "该学号已绑定");
 		} else {
 			user = new User();
@@ -608,26 +605,6 @@ public class UserController {
 		return map;
 	}
 
-	@RequestMapping("/admin/user_manage.do")
-	public String userManage() {
-		return "admin/user_manage";
-	}
-
-	@RequestMapping("/admin/type_manage.do")
-	public String typeManage() {
-		return "admin/type_manage";
-	}
-
-	@RequestMapping("/admin/job_manage.do")
-	public String jobManage() {
-		return "admin/job_manage";
-	}
-
-	@RequestMapping("/admin/company_manage.do")
-	public String companyManage() {
-		return "admin/company_manage";
-	}
-
 	@RequestMapping("/admin/tree_data.do")
 	@ResponseBody
 	public JSONArray getTreeData() {
@@ -638,16 +615,20 @@ public class UserController {
 		List<Position> positions = jobService.searchPositions(0);
 		for (Classify classify : classifies) {
 			object = new JSONObject();
-			object.put("id", "c" + classify.getId());
-			object.put("text", classify.getName());
-			object.put("state", "closed");
+			object.put("id", classify.getId());
+			object.put("label", classify.getName());
+			object.put("type", Common.CLASSIFY);
+			object.put("isNew", false);
 			JSONArray children = new JSONArray();
 
 			for (Position position : positions) {
 				if (position.getC_id() == classify.getId()) {
 					JSONObject jsonObject = new JSONObject();
-					jsonObject.put("id", "p" + position.getId());
-					jsonObject.put("text", position.getName());
+					jsonObject.put("id", position.getId());
+					jsonObject.put("label", position.getName());
+					jsonObject.put("type", Common.POSITION);
+					jsonObject.put("isNew", false);
+					jsonObject.put("c_id", classify.getId());
 					children.add(jsonObject);
 				}
 			}
@@ -662,11 +643,11 @@ public class UserController {
 	 *
 	 * @return
 	 */
-	@RequestMapping("/admin/searchUsers.do")
+	@RequestMapping(value = "/admin/users/list/{page}", method = RequestMethod.GET)
 	@ResponseBody
-	public JSONObject searchUsers() {
+	public JSONObject searchUsers(@PathVariable("page") Integer page) {
 		JSONObject object = new JSONObject();
-		List<User> users = userService.searchUsers();
+		List<User> users = userService.searchUsers(page);
 		object.put("total", users.size());
 		object.put("rows", users);
 
@@ -674,17 +655,42 @@ public class UserController {
 	}
 
 	/**
-	 * 查找公司
+	 * 根据id返回用户
 	 *
+	 * @param id
 	 * @return
 	 */
-	@RequestMapping("/admin/searchCompanies.do")
+	@RequestMapping(value = "/admin/users/detail/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public JSONObject searchCompanies() {
+	public JSONObject getUserById(@PathVariable("id") Integer id) {
+		JSONObject object = null;
+		User user = userService.getUserById(id);
+		object = JSONObject.fromObject(user);
+
+		return object;
+	}
+
+	/**
+	 * 更新用户信息
+	 *
+	 * @param id
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/users/update/{id}", method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject updateUser(@PathVariable("id") Integer id,
+	                             @ModelAttribute("user") User user, BindingResult result) {
 		JSONObject object = new JSONObject();
-		List<Company> companies = userService.searchCompanies();
-		object.put("total", companies.size());
-		object.put("rows", companies);
+
+		boolean b = userService.isUserOrSchoolNumRepeat(user);
+		if (!b) {
+			userService.modifyUser(user);
+			object.put("msg", "修改成功");
+		} else {
+			object.put("msg", "修改失败：用户名或学号重复！");
+		}
+		object.put("success", b);
 
 		return object;
 	}
@@ -696,44 +702,143 @@ public class UserController {
 	 * @param result
 	 * @return
 	 */
-	@RequestMapping("/admin/addUser.do")
+	@RequestMapping(value = "/admin/users/create", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addUser(@Valid @ModelAttribute("user") User user, BindingResult result) {
-		Map<String, Object> map = new HashMap<String, Object>();
+	public JSONObject addUser(@Valid @ModelAttribute("user") User user, BindingResult result) {
+		JSONObject object = new JSONObject();
+		user.setId(0);
 
-		userService.addUser(user);
-		return map;
-	}
+		boolean b = userService.isUserOrSchoolNumRepeat(user);
+		if (!b) {
+			user.setPassword(StringUtil.toMd5(user.getPassword()));
+			userService.addUser(user);
+			object.put("msg", "添加成功");
+		} else {
+			object.put("msg", "添加失败：用户名或学号重复！");
+		}
+		object.put("success", !b);
 
-	/**
-	 * 修改用户
-	 *
-	 * @param user
-	 * @param result
-	 * @return
-	 */
-	@RequestMapping("/admin/modifyUser.do")
-	@ResponseBody
-	public Map<String, Object> modifyUser(@Valid @ModelAttribute("user") User user, BindingResult result) {
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		userService.modifyUser(user);
-		return map;
+		return object;
 	}
 
 	/**
 	 * 删除用户
 	 *
+	 * @param ids
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/users/delete", method = RequestMethod.POST)
+	@ResponseBody
+	//接收int型数组
+	public JSONObject deleteUser(@RequestParam(value = "ids[]") int[] ids) {
+		JSONObject object = new JSONObject();
+		int count = userService.deleteUsers(ids);
+		if (count == ids.length) {
+			object.put("msg", "删除成功");
+		} else {
+			object.put("msg", "未完全删除");
+		}
+		return object;
+	}
+
+	/**
+	 * 查找公司
+	 *
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/companies/list/{page}", method = RequestMethod.GET)
+	@ResponseBody
+	public JSONObject searchCompanies(@PathVariable("page") Integer page) {
+		JSONObject object = new JSONObject();
+		List<Company> companies = userService.searchCompanies(page);
+		object.put("total", companies.size());
+		object.put("rows", companies);
+		return object;
+	}
+
+	/**
+	 * 根据id返回公司
+	 *
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping("/admin/deleteUser.do")
+	@RequestMapping(value = "/admin/companies/detail/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> deleteUser(int id) {
-		Map<String, Object> map = new HashMap<String, Object>();
+	public JSONObject getCompanyById(@PathVariable("id") Integer id) {
+		JSONObject object = null;
+		Company company = userService.getCompanyById(id);
+		object = JSONObject.fromObject(company);
 
-		userService.deleteUser(id);
-		return map;
+		return object;
+	}
+
+	/**
+	 * 更新公司信息
+	 * @param id
+	 * @param company
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/companies/update/{id}", method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject updateCompany(@PathVariable("id") Integer id,
+	                                @ModelAttribute("company") Company company, BindingResult result) {
+		JSONObject object = new JSONObject();
+
+		boolean b = userService.isUsernameRepeat(company);
+		if (!b) {
+			userService.updateCompany(company);
+			object.put("msg", "修改成功");
+		} else {
+			object.put("msg", "修改失败：用户名重复！");
+		}
+		object.put("success", !b);
+
+		return object;
+	}
+
+	/**
+	 * 创建公司
+	 * @param company
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/companies/create", method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject addCompany(@Valid @ModelAttribute("company") Company company, BindingResult result) {
+		JSONObject object = new JSONObject();
+		company.setId(0);
+
+		boolean b = userService.isUsernameRepeat(company);
+		if (!b) {
+			company.setPassword(StringUtil.toMd5(company.getPassword()));
+			userService.addCompany(company);
+			object.put("msg", "添加成功");
+		} else {
+			object.put("msg", "添加失败：用户名或学号重复！");
+		}
+		object.put("success", !b);
+
+		return object;
+	}
+
+	/**
+	 * 删除公司
+	 * @param ids
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/companies/delete", method = RequestMethod.POST)
+	@ResponseBody
+	//接收int型数组
+	public JSONObject deleteCompany(@RequestParam(value = "ids[]") int[] ids) {
+		JSONObject object = new JSONObject();
+		int count = userService.deleteUsers(ids);
+		if (count == ids.length) {
+			object.put("msg", "删除成功");
+		} else {
+			object.put("msg", "未完全删除");
+		}
+		return object;
 	}
 
 	/**

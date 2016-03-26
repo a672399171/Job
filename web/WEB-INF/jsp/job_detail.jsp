@@ -111,6 +111,24 @@
     </div>
     <div class="allJobs">
         <h4>该公司所有职位</h4>
+        <c:forEach var="item" items="${requestScope.jobs}">
+            <div class="job_item" style="display: block">
+                <table>
+                    <tr>
+                        <td width="30%"><a href="#" class="link">${item.name}</a></td>
+                        <td width="30%" class="font3">
+                            <fmt:formatDate value="${item.post_time}" pattern="yyyy-MM-dd HH:mm"></fmt:formatDate>
+                        </td>
+                        <td width="30%" class="font5">${item.post_company.company_name}</td>
+                    </tr>
+                    <tr>
+                        <td class="font5">${item.type.name}</td>
+                        <td class="font4">${item.low_salary}-${item.high_salary}</td>
+                        <td class="font3">${item.post_company.scope}</td>
+                    </tr>
+                </table>
+            </div>
+        </c:forEach>
     </div>
     <div class="otherJobs">
         <h4>职位推荐</h4>
@@ -122,6 +140,7 @@
     </div>
     <div class="comment">
         <h4>评论列表</h4>
+
         <div id="content">
 
         </div>
@@ -147,7 +166,9 @@
     //记录收藏按钮的状态
     var flag = true;
     //页数
-    var totalPage =${count}/10;
+    var totalPage =
+    ${count}/
+    10;
     totalPage = Math.floor(totalPage) + 1;
     //当前页
     var currentPage = 1;
@@ -162,6 +183,8 @@
         map.addControl(top_left_control);
         map.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
         map.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
+        var marker = new BMap.Marker(point);        // 创建标注
+        map.addOverlay(marker);                     // 将标注添加到地图中
     }
 
     $(function () {
@@ -193,26 +216,26 @@
 
         setPages();
 
-        $(".pagination li a").click(function() {
+        $(".pagination li a").click(function () {
             var p = $(this).text();
-            if(jQuery.isNumeric(p)) {
+            if (jQuery.isNumeric(p)) {
                 loadComments(p);
-                currentPage  = p;
+                currentPage = p;
                 setPages();
             }
         });
     });
 
-    $("#pre").click(function() {
-        if(currentPage>1) {
+    $("#pre").click(function () {
+        if (currentPage > 1) {
             currentPage -= 1;
             loadComments(currentPage);
             setPages();
         }
     });
 
-    $("#next").click(function() {
-        if(currentPage < totalPage) {
+    $("#next").click(function () {
+        if (currentPage < totalPage) {
             currentPage += 1;
             loadComments(currentPage);
             setPages();
@@ -223,8 +246,8 @@
     function setPages() {
         var lis = $("#page li");
         lis.removeClass("active");
-        for(var i=0;i<lis.length;i++) {
-            if(lis.eq(i).text() == currentPage) {
+        for (var i = 0; i < lis.length; i++) {
+            if (lis.eq(i).text() == currentPage) {
                 lis.eq(i).addClass("active");
             }
         }
@@ -274,16 +297,16 @@
             page: page
         }, function (data) {
             $("#content").html("");
-            for(var i=0;i<data.length;i++) {
+            for (var i = 0; i < data.length; i++) {
                 var date = new Date(data[i].c_time.time);
                 var time = date.Format("yyyy-MM-dd hh:mm:ss");
                 var str = "<div>" +
-                 "<img src='${root}/images/" + data[i].user.photo_src + "' class='headPhoto'>" +
-                 "<span>" + time + "</span>" +
-                 "</div>" +
-                 "<div class='contentDiv'>" +
-                 "<p>" + data[i].content + "</p>" +
-                 "</div>";
+                        "<img src='${root}/images/" + data[i].user.photo_src + "' class='headPhoto'>" +
+                        "<span>" + time + "</span>" +
+                        "</div>" +
+                        "<div class='contentDiv'>" +
+                        "<p>" + data[i].content + "</p>" +
+                        "</div>";
                 $("#content").append(str);
             }
         }, "JSON");
