@@ -1,6 +1,9 @@
 package com.zzu.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/3/4.
@@ -10,6 +13,7 @@ public class Resume {
 	private int u_id;
 	private String name;
 	private String sex;
+	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date birthday;
 	private String phone;
 	private Major major;
@@ -22,6 +26,15 @@ public class Resume {
 	private String title;
 	private String job_type;
 	private String salary;
+	private List<Position> positions;
+
+	public List<Position> getPositions() {
+		return positions;
+	}
+
+	public void setPositions(List<Position> positions) {
+		this.positions = positions;
+	}
 
 	public int getId() {
 		return id;

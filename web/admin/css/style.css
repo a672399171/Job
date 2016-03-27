@@ -96,3 +96,12 @@
     background: grey;
     cursor: pointer;
 }
+
+#userDiv {
+    width: 200px;
+    height: 300px;
+}
+
+#userDiv ul ,#userDiv input {
+    width: 100%;
+}

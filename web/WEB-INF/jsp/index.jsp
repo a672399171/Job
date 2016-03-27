@@ -92,6 +92,7 @@
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 
 <script type="application/javascript">
+
     $(function () {
         $("#login_href").attr("href", "${root}/user/toLogin.do?from=" + window.location.href);
         //getClassifies();

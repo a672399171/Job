@@ -45,6 +45,15 @@
         </association>
     </resultMap>
 
+    <resultMap id="majorResultMap" type="com.zzu.model.Major">
+        <id property="id" column="id"></id>
+        <result property="major" column="major"></result>
+        <association property="school" javaType="com.zzu.model.School">
+            <id property="id" column="s_id"></id>
+            <result property="school" column="school"></result>
+        </association>
+    </resultMap>
+
     <select id="getAllClassifies" resultType="com.zzu.model.Classify">
         SELECT * FROM tb_classify
     </select>
@@ -259,4 +268,12 @@
             #{item}
         </foreach>
     </update>
+
+    <select id="getPositionById" parameterType="int" resultType="com.zzu.model.Position">
+        select * from tb_position where id=#{id}
+    </select>
+
+    <select id="getSchoolsAndMajors" resultMap="majorResultMap" >
+        select s.id as s_id,s.school,m.* from tb_school s,tb_major m where s.id = m.s_id
+    </select>
 </mapper>

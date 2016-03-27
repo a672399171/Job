@@ -168,10 +168,12 @@ app.controller('AbnTestController', function ($scope, $http) {
                     //return $scope.currentNode = branch;
                 }
             }
+            $scope.my_data = treedata_avm;
         });
     treedata_avm = [];
 
     $scope.my_data = treedata_avm;
+
     $scope.try_changing_the_tree_data = function () {
         return $scope.my_data = treedata_avm;
     };

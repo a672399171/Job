@@ -4,16 +4,34 @@
             <form class="form-horizontal ng-pristine ng-valid ng-valid-date ng-valid-required ng-valid-parse ng-valid-date-disabled"
                   ng-submit="submit()">
                 <div class="panel-body">
+                    <div class="form-group" ng-if="!edit_mode">
+                        <label class="col-sm-2 control-label">用户</label>
+
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="data.u_id" ng-click="showUserDiv()"
+                                   readonly required>
+
+                            <div class="typeDiv" id="userDiv">
+                                <input type="text" ng-model="query" placeholder="输入查询"/>
+                                <ul ng-repeat="item in users | filter:query">
+                                    <li ng-click="setUser(item)">id:{{item.id}} username:{{item.username}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">姓名</label>
 
-                        <div class="col-sm-4">
+                        <div class="col-sm-2">
                             <input type="text" class="form-control" ng-model="data.name" required>
-                            <a ui-sref="app.users.detail({id:data.u_id})" class="active">查看该用户</a>
+                        </div>
+                        <div class="col-sm-2">
+                            <a ui-sref="app.users.detail({id:data.u_id})" class="active" ng-if="edit_mode">查看该用户</a>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">性别</label>
+
                         <div class="col-sm-4">
                             <select class="input-sm form-control w-sm inline v-middle" ng-model="data.sex">
                                 <option value="男">男</option>
@@ -22,23 +40,31 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-2 control-label">出生日期</label>
+
+                        <div class="col-sm-4">
+                            <input type="date" ng-model="data.birthday" class="form-control"
+                                   placeholder="yyyy-MM-dd" min="1920-01-01" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-2 control-label">专业</label>
 
                         <div class="col-sm-4">
                             <!--readonly使得输入框不能编辑-->
                             <input type="text" class="form-control" ng-model="data.major.major" readonly required
-                                   ng-click="showDiv()"/>
+                                   ng-click="showSchoolDiv()"/>
 
                             <div class="mask"></div>
-                            <div class="typeDiv" id="typeDiv">
+                            <div class="typeDiv" id="schoolDiv">
                                 <div class="left">
-                                    <ul ng-repeat="item in types">
-                                        <li ng-click="changeRightItem(item.id)">{{item.label}}</li>
+                                    <ul ng-repeat="item in schools">
+                                        <li ng-click="changeMajor(item.id)">{{item.school}}</li>
                                     </ul>
                                 </div>
                                 <div class="right">
-                                    <ul ng-repeat="item in children">
-                                        <li ng-click="setData(item)">{{item.label}}</li>
+                                    <ul ng-repeat="item in majors">
+                                        <li ng-click="setMajor(item)">{{item.major}}</li>
                                     </ul>
                                 </div>
                             </div>
@@ -68,8 +94,16 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">籍贯</label>
 
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" ng-model="data.province" required>
+                        <div class="col-sm-2">
+                            <select class="input-sm form-control w-sm inline v-middle" ng-model="data.province"
+                                    ng-options="item.province as item.province for item in provinces"
+                                    ng-change="changeCityList()">
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="input-sm form-control w-sm inline v-middle" ng-model="data.city"
+                                    ng-options="item as item for item in cities">
+                            </select>
                         </div>
                     </div>
                     <div class="form-group">
@@ -90,11 +124,32 @@
                         <label class="col-sm-2 control-label">期望工作类型</label>
 
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" ng-model="data.job_type" required>
+                            <p class="form-control-static" ng-repeat="item in data.positions">
+                                {{item.name}}
+                            </p>
+                            <a ng-click="showDiv()">选择</a>
+
+                            <div class="typeDiv" id="typeDiv">
+                                <div class="left">
+                                    <ul ng-repeat="item in types">
+                                        <li ng-click="changeRightItem(item.id)">{{item.label}}</li>
+                                    </ul>
+                                </div>
+                                <div class="right">
+                                    <ul ng-repeat="item in children">
+                                        <li>
+                                            <input type="checkbox" ng-checked="inArray(item.id)"
+                                                   ng-model="item.checked" ng-click="changePosition(item)"
+                                                   ng-true-value="true" ng-true-value="false"/>
+                                            {{item.label}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">title</label>
+                        <label class="col-sm-2 control-label">标题</label>
 
                         <div class="col-sm-4">
                             <input type="text" class="form-control" ng-model="data.title" required>
@@ -144,12 +199,13 @@
                             <textarea rows="5" class="form-control" ng-model="data.introduce" required></textarea>
                         </div>
                     </div>
+                    <footer class="panel-footer text-right bg-light lter">
+                        <input type="button" ng-click="delete(data.id)" ng-if="edit_mode"
+                               class="btn btn-danger pull-left"
+                               value="删除"/>
+                        <input type="submit" class="btn btn-success" value="提交"/>
+                    </footer>
                 </div>
-                <footer class="panel-footer text-right bg-light lter">
-                    <input type="button" ng-click="delete(data.id)" ng-if="edit_mode" class="btn btn-danger pull-left"
-                           value="删除"/>
-                    <input type="submit" class="btn btn-success" value="提交"/>
-                </footer>
             </form>
         </div>
     </div>

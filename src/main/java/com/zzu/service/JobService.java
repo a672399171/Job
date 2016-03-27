@@ -221,6 +221,15 @@ public class JobService {
 	}
 
 	/**
+	 * 根据id返回小类
+	 * @param id
+	 * @return
+	 */
+	public Position getPositionById(int id) {
+		return jobDao.getPositionById(id);
+	}
+
+	/**
 	 * 获取评论数
 	 *
 	 * @param id
@@ -239,5 +248,13 @@ public class JobService {
 	 */
 	public List<Comment> getComments(int id, int page) {
 		return jobDao.getComments(id, page);
+	}
+
+	/**
+	 * 获取所有的学院和专业信息
+	 * @return
+	 */
+	public List<Major> getSchoolsAndMajors() {
+		return jobDao.getSchoolsAndMajors();
 	}
 }

@@ -118,6 +118,23 @@ app.controller('ResumeDetailController', function ($rootScope, $scope, $resource
     $scope.edit_mode = !!$stateParams.id;
 
     $scope.types = [];
+    $scope.mytypes = [];
+    $scope.schools = [];
+    $scope.majors = [];
+
+    $scope.provinces = [];
+    $scope.cities = [];
+    //获取省市信息
+    $http.get($scope.app.host + "/json/city.json")
+        .success(function (d) {
+            $scope.provinces = d;
+        });
+
+    //获取院系信息
+    $http.get($scope.app.host + "/job/school_data.do")
+        .success(function (d) {
+            $scope.schools = d;
+        });
 
     //获取类型分组信息
     $http.get($scope.app.host + "/user/admin/tree_data.do")
@@ -130,29 +147,43 @@ app.controller('ResumeDetailController', function ($rootScope, $scope, $resource
         var $com = $resource($scope.app.host + "/job/admin/resumes/detail/:id", {id: '@id'});
         var resp = $com.get({id: $stateParams.id}, function (data) {
             $scope.data = resp;
-            $scope.chars = numberToDateString(resp.work_time);
+            $scope.chars = numberToDateString(resp.spare_time);
+            $scope.mytypes = data.job_type.split("#");
+            $scope.data.birthday = new Date($scope.data.birthday.time);
+
+            //初始化选中city
+            for (var i = 0; i < $scope.provinces.length; i++) {
+                if ($scope.provinces[i].province == $scope.data.province) {
+                    $scope.cities = $scope.provinces[i].citys;
+                    break;
+                }
+            }
         });
     } else {
-        $scope.companies = [];
-        //获取所有的公司
-        $http.get($scope.app.host + "/user/admin/companies/list/0")
-            .success(function (d) {
-                $scope.companies = d.rows;
-            });
         //初始化字符数组
         $scope.chars = ['0', '0', '0', '0', '0', '0', '0'];
         $scope.data = {};
+        $scope.data.positions = [];
+        $scope.users = [];
+
+        //获取所有用户
+        $http.get($scope.app.host + "/user/admin/users/list/0")
+            .success(function (d) {
+                $scope.users = d.rows;
+            });
     }
 
     $scope.submit = function () {
-        $scope.data.work_time = dateStringToNumber($scope.chars);
+        $scope.data.spare_time = dateStringToNumber($scope.chars);
 
-        $scope.data.company = $scope.data.post_company.id;
-        $scope.data.position = $scope.data.type.id;
+        $scope.data.major_id = $scope.data.major.id;
+        $scope.data.birth = moment($scope.data.birthday).format("YYYY-MM-DD");
 
-        delete $scope.data.post_company;
-        delete $scope.data.type;
-        delete $scope.data.post_time;
+        delete $scope.data.positions;
+        delete $scope.data.major;
+        delete $scope.data.birthday;
+
+        $scope.data.job_type = $scope.data.mytypes.join("#");
 
         if ($scope.edit_mode) {
             var $com = $resource($scope.app.host + "/job/admin/resumes/update/:id", {id: '@id'}, {
@@ -210,20 +241,32 @@ app.controller('ResumeDetailController', function ($rootScope, $scope, $resource
             for (var i = 0; i < $scope.types.length; i++) {
                 if ($scope.types[i].id == id) {
                     $scope.children = $scope.types[i].children;
+                    for (var j = 0; j < $scope.types[i].children.length; j++) {
+                        if ($scope.types[i].children[j].checked == undefined) {
+                            $scope.types[i].children[j].checked = false;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    };
+    //改变右侧院系内容
+    $scope.changeMajor = function (id) {
+        if ($scope.schools) {
+            for (var i = 0; i < $scope.schools.length; i++) {
+                if ($scope.schools[i].id == id) {
+                    $scope.majors = $scope.schools[i].majors;
                     break;
                 }
             }
         }
     };
     //点击右侧项目时设置数据
-    $scope.setData = function (item) {
-        $scope.data.type = {
-            id: item.id,
-            c_id: item.c_id,
-            name: item.label
-        };
+    $scope.setMajor = function (item) {
+        $scope.data.major = item;
 
-        $("#typeDiv").hide();
+        $("#schoolDiv").hide();
         $(".mask").hide();
     };
     //显示隐藏div
@@ -236,24 +279,77 @@ app.controller('ResumeDetailController', function ($rootScope, $scope, $resource
             $(".mask").hide();
         });
     };
-    //显示公司div
-    $scope.showCompanyDiv = function() {
-        $("#companyDiv").show();
+    //显示院系div
+    $scope.showSchoolDiv = function () {
+        $("#schoolDiv").show();
         $(".mask").show();
 
         $(".mask").click(function () {
-            $("#companyDiv").hide();
+            $("#schoolDiv").hide();
             $(".mask").hide();
         });
     };
-    //点击公司时设置数据
-    $scope.setCompany = function (item) {
-        $scope.data.post_company = {
-            id: item.id,
-            company_name: item.company_name
-        };
-
-        $("#companyDiv").hide();
-        $(".mask").hide();
+    //判断当前position是否存在于用户的types中
+    $scope.inArray = function (id) {
+        for (var i = 0; i < $scope.mytypes.length; i++) {
+            if (id == $scope.mytypes[i]) {
+                return true;
+            }
+        }
+        return false;
     };
+    //改变所选类型
+    $scope.changePosition = function (item) {
+        if (item.checked) {
+            if ($scope.mytypes.length >= 3) {
+                alert("最多3个");
+                item.checked = false;
+                return;
+            }
+
+            $scope.mytypes.push(item.id);
+            $scope.data.positions.push({
+                id: item.id,
+                c_id: item.c_id,
+                name: item.label
+            });
+        } else {
+            for (var i = 0; i < $scope.mytypes.length; i++) {
+                if ($scope.mytypes[i] == item.id) {
+                    $scope.mytypes.splice(i, 1);
+                }
+            }
+            for (var i = 0; i < $scope.data.positions.length; i++) {
+                if ($scope.data.positions[i].id == item.id) {
+                    $scope.data.positions.splice(i, 1);
+                }
+            }
+        }
+    };
+    //改变城市
+    $scope.changeCityList = function () {
+        for (var i = 0; i < $scope.provinces.length; i++) {
+            if ($scope.provinces[i].province == $scope.data.province) {
+                $scope.cities = $scope.provinces[i].citys;
+                break;
+            }
+        }
+    };
+    //显示选择用户div
+    $scope.showUserDiv = function () {
+        $("#userDiv").show();
+        $(".mask").show();
+
+        $(".mask").click(function () {
+            $("#userDiv").hide();
+            $(".mask").hide();
+        });
+    };
+    //设置用户
+    $scope.setUser = function(item) {
+        $scope.data.u_id = item.id;
+
+        $("#userDiv").hide();
+        $(".mask").hide();
+    }
 });

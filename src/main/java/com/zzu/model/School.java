@@ -1,5 +1,7 @@
 package com.zzu.model;
 
+import java.util.List;
+
 /**
  * Created by Administrator on 2016/3/10.
  */
@@ -22,4 +24,5 @@ public class School {
 	public void setSchool(String school) {
 		this.school = school;
 	}
+
 }

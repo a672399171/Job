@@ -330,4 +330,24 @@ public class JobDao {
 		jobs = session.selectList("mapping.JobMapper.getAllJobsByCompany", company_id);
 		return jobs;
 	}
+
+	/**
+	 * 根据id返回小类
+	 * @param id
+	 * @return
+	 */
+	public Position getPositionById(int id) {
+		Position position = session.selectOne("mapping.JobMapper.getPositionById",id);
+		return position;
+	}
+
+	/**
+	 * 获取所有的院系信息
+	 * @return
+	 */
+	public List<Major> getSchoolsAndMajors() {
+		List<Major> majors = null;
+		majors = session.selectList("mapping.JobMapper.getSchoolsAndMajors");
+		return majors;
+	}
 }
