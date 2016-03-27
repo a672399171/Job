@@ -34,8 +34,8 @@ public class JobService {
 		return jobDao.getJobById(id);
 	}
 
-	public List<Resume> searchResume(int grade, int spare_time, String salary, int school) {
-		List<Resume> resumes = jobDao.searchResume(grade, spare_time, salary, school);
+	public List<Resume> searchResume(int grade, int spare_time, String salary, int school,int page) {
+		List<Resume> resumes = jobDao.searchResume(grade, spare_time, salary, school,page);
 
 		return resumes;
 	}
@@ -144,7 +144,7 @@ public class JobService {
 	 * @return
 	 */
 	public List<Job> searchJobs(int[] p_ids, int time, int low, int high, int page) {
-		List<Job> jobs = jobDao.searchJobs(p_ids, low, high, page, time);
+		List<Job> jobs = jobDao.searchJobs(p_ids, time, low, high, page);
 
 		/*//使用增强的for循环会抛出java.util.ConcurrentModificationException,用iterator替代
 		Iterator<Job> iterator = jobs.iterator();
@@ -179,8 +179,8 @@ public class JobService {
 	 * @param low
 	 * @param high    @return
 	 */
-	public List<Job> searchJobs(String keyword, int page, int low, int high,int time,int c_id) {
-		return jobDao.searchJobs(keyword, page, low, high,time,c_id);
+	public List<Job> searchJobs(String keyword, int page, int low, int high, int time, int c_id) {
+		return jobDao.searchJobs(keyword, page, low, high, time, c_id);
 	}
 
 	/**
@@ -189,12 +189,40 @@ public class JobService {
 	 * @param keyword
 	 * @return
 	 */
-	public int getJobCount(String keyword, int low, int high,int time,int c_id) {
-		return jobDao.getJobCount(keyword, low, high,time,c_id);
+	public int getJobCount(String keyword, int low, int high, int time, int c_id) {
+		return jobDao.getJobCount(keyword, low, high, time, c_id);
+	}
+
+	/**
+	 * 更新职位信息
+	 *
+	 * @param job
+	 */
+	public void updateJob(Job job) {
+		jobDao.updateJob(job);
+	}
+
+	/**
+	 * 增加职位
+	 *
+	 * @param job
+	 */
+	public void addJob(Job job) {
+		jobDao.addJob(job);
+	}
+
+	/**
+	 * 删除职位
+	 *
+	 * @param ids
+	 */
+	public int deleteJobs(int[] ids) {
+		return jobDao.deleteJobs(ids);
 	}
 
 	/**
 	 * 获取评论数
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -204,11 +232,12 @@ public class JobService {
 
 	/**
 	 * 获取指定页的评论
+	 *
 	 * @param id
 	 * @param page
 	 * @return
 	 */
 	public List<Comment> getComments(int id, int page) {
-		return jobDao.getComments(id,page);
+		return jobDao.getComments(id, page);
 	}
 }

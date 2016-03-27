@@ -1,10 +1,14 @@
-<div class="wrapper-md" ng-controller="ListController">
+<div class="wrapper-md" ng-controller="ResumeListController">
     <div class="panel panel-default">
         <div class="panel-heading">
             <ul class="nav nav-pills pull-right">
-                <li style=" padding-top:4px; padding-right:4px"><button class="btn m-b-xs btn-sm btn-primary btn-addon" ui-sref="app.users.create()"><i class="fa fa-plus"></i>新增</button></li>
+                <li style=" padding-top:4px; padding-right:4px">
+                    <button class="btn m-b-xs btn-sm btn-primary btn-addon" ui-sref="app.resumes.create()"><i
+                            class="fa fa-plus"></i>新增
+                    </button>
+                </li>
             </ul>
-            用户列表
+            简历列表
         </div>
         <div class="row wrapper">
             <div class="col-sm-5 m-b-xs">
@@ -34,28 +38,27 @@
                             <input type="checkbox" ng-click="selectAll()"><i></i>
                         </label>
                     </th>
-                    <th>用户名</th>
-                    <th>学号</th>
-                    <th>昵称</th>
-                    <th>手机号</th>
-                    <th>邮箱</th>
+                    <th>姓名</th>
                     <th>性别</th>
-                    <th>推送</th>
+                    <th>生日</th>
+                    <th>专业</th>
+                    <th>年级</th>
+                    <th>薪资要求</th>
                     <th style="width:30px;"></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="data in data.rows">
-                    <td><label class="i-checks m-b-none"><input type="checkbox" ng-model="data.selected"><i></i></label></td>
-                    <td>{{data.username}}</td>
-                    <td>{{data.school_num}}</td>
-                    <td>{{data.nickname}}</td>
-                    <td>{{data.phone}}</td>
-                    <td>{{data.email}}</td>
+                    <td><label class="i-checks m-b-none"><input type="checkbox" ng-model="data.selected"><i></i></label>
+                    </td>
+                    <td>{{data.name}}</td>
                     <td>{{data.sex}}</td>
-                    <td>{{data.push}}</td>
+                    <td>{{formatDate(data.birthday) | date:'yyyy-MM-dd'}}</td>
+                    <td>{{data.major.major}}</td>
+                    <td>{{data.grade}}</td>
+                    <td>{{data.salary}}</td>
                     <td>
-                        <a ui-sref="app.users.detail({id:data.id})" class="active"><i class="fa fa-edit"></i></a>
+                        <a ui-sref="app.resumes.detail({id:data.id})" class="active"><i class="fa fa-edit"></i></a>
                     </td>
                 </tr>
                 </tbody>
@@ -68,24 +71,17 @@
                 </div>
                 <div ng-if="data.page>1" class="col-sm-4 text-right text-center-xs">
                     <ul class="pagination pagination-sm m-t-none m-b-none">
-                        <li ng-class="{disabled:!data.previous}"><a ui-sref="app.users.list({page:data.page_index-1,search:search_context})"><i class="fa fa-chevron-left"></i></a></li>
-                        <li ng-repeat="page in data.pages" ng-class="{active:page==data.page_index}"><a ui-sref="app.users.list({page:page,search:search_context})">{{page}}</a></li>
-                        <li ng-class="{disabled:!data.next}"><a ui-sref="app.users.list({page:data.page_index+1,search:search_context})"><i class="fa fa-chevron-right"></i></a></li>
+                        <li ng-class="{disabled:!data.previous}"><a
+                                ui-sref="app.users.list({page:data.page_index-1,search:search_context})"><i
+                                class="fa fa-chevron-left"></i></a></li>
+                        <li ng-repeat="page in data.pages" ng-class="{active:page==data.page_index}"><a
+                                ui-sref="app.users.list({page:page,search:search_context})">{{page}}</a></li>
+                        <li ng-class="{disabled:!data.next}"><a
+                                ui-sref="app.users.list({page:data.page_index+1,search:search_context})"><i
+                                class="fa fa-chevron-right"></i></a></li>
                     </ul>
                 </div>
             </div>
         </footer>
     </div>
 </div>
-
-<!--
-<script src="../js/jquery-1.11.2.js"></script>
-<script type="application/javascript">
-    function deleteUsers() {
-        $.post("http://localhost:8888/Job/user/admin/users/delete",{
-            ids:[1,2,3]
-        },function(data) {
-
-        },"JSON");
-    }
-</script>-->

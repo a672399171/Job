@@ -57,17 +57,17 @@ a:hover {
     margin-bottom: 15px;
 }
 
-#table {
+.weekTable {
     font-size: 15px;
     text-align: center;
 }
 
-#table tr {
+.weekTable tr {
     height: 30px;
     line-height: 30px;
 }
 
-#table tr td {
+.weekTable tr td {
     border: 1px solid #999999;
     width: 100px;
 }

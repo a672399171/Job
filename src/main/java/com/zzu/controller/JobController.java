@@ -10,9 +10,7 @@ import net.sf.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -30,6 +28,11 @@ public class JobController {
 	@Resource
 	private JobService jobService;
 
+	/**
+	 * 加载主页
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/index.do")
 	public String index(Model model) {
 		JSONArray array = new JSONArray();
@@ -54,6 +57,10 @@ public class JobController {
 		return "index";
 	}
 
+	/**
+	 * 获取所有大类
+	 * @return
+	 */
 	@RequestMapping("/classifies.do")
 	@ResponseBody
 	public JSONObject getClassifies() {
@@ -67,6 +74,12 @@ public class JobController {
 		return object;
 	}
 
+	/**
+	 * 公司用户职位管理
+	 * @param session
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/job_manage.do")
 	public String jobManage(HttpSession session, Model model) {
 		Company company = (Company) session.getAttribute(Common.COMPANY);
@@ -80,11 +93,20 @@ public class JobController {
 		return "company/job_manage";
 	}
 
+	/**
+	 * 公司简历管理
+	 * @return
+	 */
 	@RequestMapping("/resume_manage.do")
 	public String resumeManage() {
 		return "company/resume_manage";
 	}
 
+	/**
+	 * 公司查找简历
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/search_resume.do")
 	public String toSearchResume(Model model) {
 		List<School> schools = jobService.getSchools();
@@ -92,6 +114,12 @@ public class JobController {
 		return "company/search_resume";
 	}
 
+	/**
+	 * 公司账号设置
+	 * @param session
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/account_setting.do")
 	public String AccountSetting(HttpSession session, Model model) {
 		Company company = (Company) session.getAttribute(Common.COMPANY);
@@ -106,11 +134,22 @@ public class JobController {
 		return "company/account_setting";
 	}
 
+	/**
+	 * 转到发布职位界面
+	 * @return
+	 */
 	@RequestMapping("/toPost.do")
 	public String toPost() {
 		return "company/post";
 	}
 
+	/**
+	 * 公司发布职位
+	 * @param job
+	 * @param result
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/post_job.do")
 	public String postJob(@Valid @ModelAttribute("job") Job job, BindingResult result, HttpSession session) {
 		Company company = (Company) session.getAttribute(Common.COMPANY);
@@ -124,6 +163,17 @@ public class JobController {
 		return "redirect:job_manage.do";
 	}
 
+	/**
+	 * 查找职位列表
+	 * @param c_id
+	 * @param p_id
+	 * @param time
+	 * @param low
+	 * @param high
+	 * @param page
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/job_list.do")
 	public String jobList(int c_id, int p_id, Integer time, String low, String high,
 	                      Integer page, Model model) {
@@ -166,6 +216,17 @@ public class JobController {
 		return "job_list";
 	}
 
+	/**
+	 * 模糊搜索职位
+	 * @param keyword
+	 * @param page
+	 * @param c_id
+	 * @param time
+	 * @param low
+	 * @param high
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/vague_search_job.do")
 	public String searchJobs(String keyword, Integer page, Integer c_id, Integer time, String low, String high, Model model) {
 		if (page == null || page <= 0) {
@@ -213,6 +274,12 @@ public class JobController {
 		return num;
 	}
 
+	/**
+	 * 职位详细信息
+	 * @param id
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/job_detail.do")
 	public String jobDetail(int id, Model model) {
 		Job job = jobService.getJobById(id);
@@ -221,6 +288,14 @@ public class JobController {
 		return "company/job_detail";
 	}
 
+	/**
+	 * 查找简历
+	 * @param grade
+	 * @param spare_time
+	 * @param salary
+	 * @param school
+	 * @return
+	 */
 	@RequestMapping("/searchResume.do")
 	@ResponseBody
 	public JSONObject searchResume(int grade, Integer spare_time, String salary, int school) {
@@ -228,12 +303,18 @@ public class JobController {
 			spare_time = 127;
 		}
 		JSONObject object = new JSONObject();
-		List<Resume> resumes = jobService.searchResume(grade, spare_time, salary, school);
+		List<Resume> resumes = jobService.searchResume(grade, spare_time, salary, school,0);
 		object.put("resumes", resumes);
 
 		return object;
 	}
 
+	/**
+	 * 简历详情
+	 * @param id
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/resume_detail.do")
 	public String resumeDetail(int id, Model model) {
 		Resume resume = jobService.getResumeById(id);
@@ -259,6 +340,10 @@ public class JobController {
 		return object;
 	}
 
+	/**
+	 * 最新职位信息
+	 * @return
+	 */
 	@RequestMapping("/getRecentJobs.do")
 	@ResponseBody
 	public JSONObject getRecentJobs() {
@@ -270,6 +355,13 @@ public class JobController {
 		return object;
 	}
 
+	/**
+	 * 用户界面查看职位详情
+	 * @param id
+	 * @param model
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/detail.do")
 	public String detail(int id, Model model, HttpSession session) {
 		User user = (User) session.getAttribute(Common.USER);
@@ -299,6 +391,12 @@ public class JobController {
 		return "job_detail";
 	}
 
+	/**
+	 * 获取评论列表
+	 * @param page
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping("/getComments.do")
 	@ResponseBody
 	public JSONArray getComments(Integer page, int id) {
@@ -431,27 +529,137 @@ public class JobController {
 		return object;
 	}
 
-	@RequestMapping("/admin/searchJobs.do")
+	/**
+	 * 查找职位
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/jobs/list/{page}",method = RequestMethod.GET)
 	@ResponseBody
-	public JSONObject searchJobs() {
+	public JSONObject searchJobs(@PathVariable("page") Integer page) {
 		JSONObject object = new JSONObject();
-		List<Job> jobs = jobService.searchJobs(null, 127, 0, -1, 0);
+		List<Job> jobs = jobService.searchJobs(null, 127, 0, -1, page);
 
 		object.put("total", jobs.size());
 		object.put("rows", jobs);
-		JSONArray array = object.getJSONArray("rows");
-		for (int i = 0; i < array.size(); i++) {
-			JSONObject jsonObject = array.getJSONObject(i);
-			int status = jsonObject.getInt("status");
-			switch (status) {
-				case Common.STOP:
-					jsonObject.put("status", "停止中");
-					break;
-				case Common.RUNNING:
-					jsonObject.put("status", "运行中");
-					break;
-			}
+		return object;
+	}
+
+	/**
+	 * 根据id返回职位详情
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/jobs/detail/{id}",method = RequestMethod.GET)
+	@ResponseBody
+	public JSONObject getJobById(@PathVariable("id") Integer id) {
+		Job job = jobService.getJobById(id);
+		JSONObject object = JSONObject.fromObject(job);
+
+		return object;
+	}
+
+	/**
+	 * 更新职位信息
+	 * @param id
+	 * @param job
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/jobs/update/{id}", method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject updateJob(@PathVariable("id") Integer id,int company,int position,
+	                             @ModelAttribute("job") Job job, BindingResult result) {
+		JSONObject object = new JSONObject();
+
+		Position p = new Position();
+		p.setId(position);
+		job.setType(p);
+
+		Company c = new Company();
+		c.setId(company);
+		job.setPost_company(c);
+
+		jobService.updateJob(job);
+		object.put("success", true);
+
+		return object;
+	}
+
+	/**
+	 * 新建职位
+	 * @param company
+	 * @param position
+	 * @param job
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/jobs/create", method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject updateJob(int company,int position, @ModelAttribute("job") Job job, BindingResult result) {
+		JSONObject object = new JSONObject();
+
+		Position p = new Position();
+		p.setId(position);
+		job.setType(p);
+
+		Company c = new Company();
+		c.setId(company);
+		job.setPost_company(c);
+
+		job.setPost_time(new Date());
+
+		jobService.addJob(job);
+		object.put("success", true);
+
+		return object;
+	}
+
+	/**
+	 * 删除职位
+	 * @param ids
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/jobs/delete", method = RequestMethod.POST)
+	@ResponseBody
+	//接收int型数组
+	public JSONObject deleteCompany(@RequestParam(value = "ids[]") int[] ids) {
+		JSONObject object = new JSONObject();
+		int count = jobService.deleteJobs(ids);
+		if (count == ids.length) {
+			object.put("msg", "删除成功");
+		} else {
+			object.put("msg", "未完全删除");
 		}
+		return object;
+	}
+
+	/**
+	 * 查找简历
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/resumes/list/{page}",method = RequestMethod.GET)
+	@ResponseBody
+	public JSONObject searchResumes(@PathVariable("page") Integer page) {
+		JSONObject object = new JSONObject();
+		List<Resume> resumes = jobService.searchResume(0,127,null,0,page);
+
+		object.put("total", resumes.size());
+		object.put("rows", resumes);
+		return object;
+	}
+
+	/**
+	 * 根据id返回简历
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/resumes/detail/{id}",method = RequestMethod.GET)
+	@ResponseBody
+	public JSONObject getResumeById(@PathVariable("id") Integer id) {
+		Resume resume = jobService.getResumeById(id);
+		JSONObject object = JSONObject.fromObject(resume);
 
 		return object;
 	}

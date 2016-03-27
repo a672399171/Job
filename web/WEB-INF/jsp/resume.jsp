@@ -161,7 +161,7 @@
                     <label class="col-sm-2 control-label">空余时间:</label>
 
                     <div class="col-sm-10">
-                        <table id="table">
+                        <table id="table" class="weekTable">
                             <tr>
                                 <td></td>
                                 <td>星期一</td>

@@ -20,15 +20,15 @@
         SELECT * FROM tb_resume WHERE u_id=#{u_id}
     </select>
 
-    <!--<insert id="insertResume" parameterType="com.zzu.model.Resume">
+    <insert id="insertResume" parameterType="com.zzu.model.Resume">
         insert into tb_resume (u_id,name,sex,birthday,phone,major,grade,province,city,email,spare_time,introduce,title,job_type,salary)
-        values (#{u_id},#{name},#{sex},#{birthday},#{phone},#{major},#{grade},#{province},#{city},#{email},#{spare_time},#{introduce},#{title},#{job_type},#{salary})
-    </insert>-->
+        values (#{u_id},#{name},#{sex},#{birthday},#{phone},#{major.id,jdbcType=NUMERIC},#{grade},#{province},#{city},#{email},#{spare_time},#{introduce},#{title},#{job_type},#{salary})
+    </insert>
 
-    <!--<update id="updateResume" parameterType="com.zzu.model.Resume">
-        update tb_resume set name=#{name},sex=#{sex},birthday=#{birthday},phone=#{phone},major=#{major},grade=#{grade},
+    <update id="updateResume" parameterType="com.zzu.model.Resume">
+        update tb_resume set name=#{name},sex=#{sex},birthday=#{birthday},phone=#{phone},major=#{major.id,jdbcType=NUMERIC},grade=#{grade},
           province=#{province},city=#{city},email=#{email},spare_time=#{spare_time},introduce=#{introduce},title=#{title},job_type=#{job_type},salary=#{salary} where u_id=#{u_id}
-    </update>-->
+    </update>
 
     <select id="searchResume" resultMap="resumeResultMap" parameterType="hashmap">
         SELECT r.*,s.id as s_id,s.school as s_school,m.id as m_id,m.major as m_major,m.s_id as s_id FROM tb_resume
@@ -41,6 +41,9 @@
         </if>
         <if test="school != 0">
             and s_id=#{school}
+        </if>
+        <if test="page > 0">
+            limit ${start},${count}
         </if>
     </select>
 

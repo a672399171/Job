@@ -73,7 +73,7 @@ app.run(
             .state('app.dashboard', {
                 url: '/dashboard',
                 templateUrl: 'tpl/blocks/dashboard.html'
-            })
+            })//用户管理
             .state('app.users', {
                 abstract: true,
                 url: '/users',
@@ -96,7 +96,7 @@ app.run(
             .state('app.users.create', {
                 url: '/create',
                 templateUrl: 'users/detail.html'
-            })
+            })//公司管理
             .state('app.companies', {
                 abstract: true,
                 url: '/companies',
@@ -119,7 +119,7 @@ app.run(
             .state('app.companies.create', {
                 url: '/create',
                 templateUrl: 'companies/detail.html'
-            })
+            })//职位类型管理
             .state('app.classifies', {
                 abstract: true,
                 url: '/classifies',
@@ -137,7 +137,53 @@ app.run(
             })
             .state('app.classifies.list', {
                 url: '/list?page',
-                templateUrl: 'classifies/ui_tree.html',
+                templateUrl: 'classifies/ui_tree.html'
+            })//职位管理
+            .state('app.jobs', {
+                abstract: true,
+                url: '/jobs',
+                template: '<div ui-view class="fade-in"></div>',
+                resolve: {
+                    deps: ['$ocLazyLoad',
+                        function ($ocLazyLoad) {
+                            return $ocLazyLoad.load('jobs/ctrl.js');
+                        }]
+                }
+            })
+            .state('app.jobs.list', {
+                url: '/list?page',
+                templateUrl: 'jobs/list.html'
+            })
+            .state('app.jobs.detail', {
+                url: '/detail/{id}',
+                templateUrl: 'jobs/detail.html'
+            })
+            .state('app.jobs.create', {
+                url: '/create',
+                templateUrl: 'jobs/detail.html'
+            })//简历管理
+            .state('app.resumes', {
+                abstract: true,
+                url: '/resumes',
+                template: '<div ui-view class="fade-in"></div>',
+                resolve: {
+                    deps: ['$ocLazyLoad',
+                        function ($ocLazyLoad) {
+                            return $ocLazyLoad.load('resumes/ctrl.js');
+                        }]
+                }
+            })
+            .state('app.resumes.list', {
+                url: '/list?page',
+                templateUrl: 'resumes/list.html'
+            })
+            .state('app.resumes.detail', {
+                url: '/detail/{id}',
+                templateUrl: 'resumes/detail.html'
+            })
+            .state('app.resumes.create', {
+                url: '/create',
+                templateUrl: 'resumes/detail.html'
             })
     }
 );

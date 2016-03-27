@@ -4,7 +4,7 @@
 
 'use strict';
 
-app.controller('ListController', function ($scope, $resource, $stateParams, $modal, $state) {
+app.controller('UserListController', function ($scope, $resource, $stateParams, $modal, $state) {
     //查询
     $scope.query = function (page, filter) {
         var $com = $resource($scope.app.host + "/user/admin/users/list/:page", {page: '@page'});
@@ -83,7 +83,7 @@ app.controller('ConfirmController', ['$scope', '$modalInstance', function ($scop
     };
 }]);
 
-app.controller('DetailController', function ($rootScope, $scope, $resource, $stateParams, $state, $modal) {
+app.controller('UserDetailController', function ($rootScope, $scope, $resource, $stateParams, $state, $modal) {
     $scope.edit_mode = !!$stateParams.id;
     if ($scope.edit_mode) {
         var $com = $resource($scope.app.host + "/user/admin/users/detail/:id", {id: '@id'});

@@ -1,0 +1,156 @@
+<div ng-controller="ResumeDetailController">
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <form class="form-horizontal ng-pristine ng-valid ng-valid-date ng-valid-required ng-valid-parse ng-valid-date-disabled"
+                  ng-submit="submit()">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">姓名</label>
+
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="data.name" required>
+                            <a ui-sref="app.users.detail({id:data.u_id})" class="active">查看该用户</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">性别</label>
+                        <div class="col-sm-4">
+                            <select class="input-sm form-control w-sm inline v-middle" ng-model="data.sex">
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">专业</label>
+
+                        <div class="col-sm-4">
+                            <!--readonly使得输入框不能编辑-->
+                            <input type="text" class="form-control" ng-model="data.major.major" readonly required
+                                   ng-click="showDiv()"/>
+
+                            <div class="mask"></div>
+                            <div class="typeDiv" id="typeDiv">
+                                <div class="left">
+                                    <ul ng-repeat="item in types">
+                                        <li ng-click="changeRightItem(item.id)">{{item.label}}</li>
+                                    </ul>
+                                </div>
+                                <div class="right">
+                                    <ul ng-repeat="item in children">
+                                        <li ng-click="setData(item)">{{item.label}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">年级</label>
+
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" ng-model="data.grade" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">手机号</label>
+
+                        <div class="col-sm-4">
+                            <input type="tel" class="form-control" ng-model="data.phone" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">邮箱</label>
+
+                        <div class="col-sm-4">
+                            <input type="email" class="form-control" ng-model="data.email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">籍贯</label>
+
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="data.province" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">薪资</label>
+
+                        <div class="col-sm-4">
+                            <select class="input-sm form-control w-sm inline v-middle" ng-model="data.salary">
+                                <option value="500元以下">500元以下</option>
+                                <option value="500-1000">500-1000</option>
+                                <option value="1000-2000">1000-2000</option>
+                                <option value="2000-3000">2000-3000</option>
+                                <option value="3000-4000">3000-4000</option>
+                                <option value="4000元以上">4000元以上</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">期望工作类型</label>
+
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="data.job_type" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">title</label>
+
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="data.title" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">空余时间</label>
+
+                        <div class="col-sm-4">
+                            <table class="weekTable">
+                                <thead>
+                                <tr>
+                                    <td>周一</td>
+                                    <td>周二</td>
+                                    <td>周三</td>
+                                    <td>周四</td>
+                                    <td>周五</td>
+                                    <td>周六</td>
+                                    <td>周日</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><input type="checkbox" ng-model="chars[0]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[1]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[2]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[3]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[4]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[5]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[6]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">自我评价</label>
+
+                        <div class="col-sm-4">
+                            <textarea rows="5" class="form-control" ng-model="data.introduce" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer text-right bg-light lter">
+                    <input type="button" ng-click="delete(data.id)" ng-if="edit_mode" class="btn btn-danger pull-left"
+                           value="删除"/>
+                    <input type="submit" class="btn btn-success" value="提交"/>
+                </footer>
+            </form>
+        </div>
+    </div>
+</div>

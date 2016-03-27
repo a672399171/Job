@@ -68,7 +68,7 @@
 
         <p>
             工作时间：
-        <table id="table">
+        <table id="table" class="weekTable">
             <tr>
                 <td>星期一</td>
                 <td>星期二</td>

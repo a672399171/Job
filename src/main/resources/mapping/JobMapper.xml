@@ -7,13 +7,15 @@
 <mapper namespace="mapping.JobMapper">
     <!-- 使用resultMap映射实体类和字段之间的一一对应关系 -->
     <resultMap type="com.zzu.model.Job" id="jobResultMap" autoMapping="true">
+        <id property="id" column="id"></id>
         <association property="type" javaType="com.zzu.model.Position">
-            <id property="id" column="p_id"/>
-            <result property="c_id" column="classifyId"></result>
+            <id property="id" column="type"/>
             <result property="name" column="p_name"/>
         </association>
         <association property="post_company" javaType="com.zzu.model.Company" autoMapping="true">
-            <id property="id" column="c_id"/>
+            <id property="id" column="post_company"/>
+            <result property="type" column="company_type"></result>
+            <result property="name" column="person_name"></result>
         </association>
     </resultMap>
 
@@ -52,12 +54,16 @@
     </select>
 
     <select id="getAllCompanyJobs" resultMap="jobResultMap" parameterType="int">
-        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where
+        SELECT j.*,p.name as p_name,c.id as post_company,
+        c.username,c.password,c.company_name,c.address,c.name as person_name,c.phone,c.introduce,c.type as company_type,c.scope,c.email,c.logo,c.x,c.y,c.auth
+        FROM tb_job j,tb_company c,tb_position p where
         j.type=p.id and j.post_company=c.id and post_company=#{post_company}
     </select>
 
     <select id="getJobById" resultMap="jobResultMap" parameterType="int">
-        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where j.type=p.id and j.post_company=c.id and j.id=#{id}
+        SELECT j.*,p.name as p_name,c.id as post_company,
+        c.username,c.password,c.company_name,c.address,c.name as person_name,c.phone,c.introduce,c.type as company_type,c.scope,c.email,c.logo,c.x,c.y,c.auth
+        FROM tb_job j,tb_company c,tb_position p where j.type=p.id and j.post_company=c.id and j.id=#{id}
     </select>
 
     <select id="getSchools" resultType="com.zzu.model.School">
@@ -65,7 +71,9 @@
     </select>
 
     <select id="getRecentJobs" resultMap="jobResultMap" parameterType="int">
-        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where j.type=p.id and j.post_company=c.id ORDER BY j.post_time desc limit #{num}
+        SELECT j.*,p.name as p_name,c.id as post_company,
+        c.username,c.password,c.company_name,c.address,c.name as person_name,c.phone,c.introduce,c.type as company_type,c.scope,c.email,c.logo,c.x,c.y,c.auth
+        FROM tb_job j,tb_company c,tb_position p where j.type=p.id and j.post_company=c.id ORDER BY j.post_time desc limit #{num}
     </select>
 
     <update id="addSchool" parameterType="string">
@@ -146,7 +154,9 @@
     </delete>
 
     <select id="searchJobs" resultMap="jobResultMap" parameterType="hashmap">
-        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.* FROM tb_job j,tb_company c,tb_position p where
+        SELECT j.*,p.name as p_name,c.id as post_company,
+        c.username,c.password,c.company_name,c.address,c.name as person_name,c.phone,c.introduce,c.type as company_type,c.scope,c.email,c.logo,c.x,c.y,c.auth
+        FROM tb_job j,tb_company c,tb_position p where
         j.type=p.id and j.post_company=c.id and #{time} &amp; j.work_time &lt;&gt; 0
         <if test="p_ids != null">
             and j.type in
@@ -194,8 +204,10 @@
     </select>
 
     <select id="vagueSearchJobs" resultMap="jobResultMap" parameterType="hashmap">
-        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.*,classify.id as classifyId FROM tb_job j,tb_company c,tb_position p,tb_classify classify where
-        j.type=p.id and j.post_company=c.id and p.c_id=classify.id and (j.name like '%${keyword}%' or c.company_name like '%${keyword}%') and #{time} &amp; j.work_time &lt;&gt; 0
+        SELECT j.*,p.id as p_id,p.name as p_name,c.id as c_id,c.*,classify.id as classifyId FROM tb_job j,tb_company
+        c,tb_position p,tb_classify classify where
+        j.type=p.id and j.post_company=c.id and p.c_id=classify.id and (j.name like '%${keyword}%' or c.company_name
+        like '%${keyword}%') and #{time} &amp; j.work_time &lt;&gt; 0
         <if test="l != -1">
             and j.low_salary &gt;=${l}
         </if>
@@ -213,7 +225,8 @@
 
     <select id="getVagueJobCount" parameterType="hashmap" resultType="int">
         SELECT count(*) as num FROM tb_job j,tb_company c,tb_position p,tb_classify classify where
-        j.type=p.id and j.post_company=c.id and p.c_id=classify.id and (j.name like '%${keyword}%' or c.company_name like '%${keyword}%') and #{time} &amp; j.work_time &lt;&gt; 0
+        j.type=p.id and j.post_company=c.id and p.c_id=classify.id and (j.name like '%${keyword}%' or c.company_name
+        like '%${keyword}%') and #{time} &amp; j.work_time &lt;&gt; 0
         <if test="l != -1">
             and j.low_salary &gt;=#{l}
         </if>
@@ -230,4 +243,20 @@
         where m.u_id=u.id and m.j_id=j.id and m.j_id=#{id}
     </select>
 
+    <update id="updateJob" parameterType="com.zzu.model.Job">
+        update tb_job set type=#{type.id,jdbcType=NUMERIC},name=#{name},description=#{description},person_count=#{person_count},
+        skill=#{skill},high_salary=#{high_salary},low_salary=#{low_salary},tag=#{tag},work_time=#{work_time},status=#{status} where id=#{id}
+    </update>
+
+    <update id="addJob" parameterType="com.zzu.model.Job">
+        insert into tb_job(type,name,description,person_count,skill,high_salary,low_salary,post_time,post_company,tag,work_time,status)
+        values(#{type.id,jdbcType=NUMERIC},#{name},#{description},#{person_count},#{skill},#{high_salary},#{low_salary},#{post_time},#{post_company.id,jdbcType=NUMERIC},#{tag},#{work_time},#{status})
+    </update>
+
+    <update id="deleteJobs" parameterType="int[]">
+        delete from tb_job where id in
+        <foreach collection="array" index="index" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

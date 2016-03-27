@@ -1,0 +1,165 @@
+<div ng-controller="JobDetailController">
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <form class="form-horizontal ng-pristine ng-valid ng-valid-date ng-valid-required ng-valid-parse ng-valid-date-disabled"
+                  ng-submit="submit()">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">名称</label>
+
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="data.name" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">类型</label>
+
+                        <div class="col-sm-4">
+                            <!--readonly使得输入框不能编辑-->
+                            <input type="text" class="form-control" ng-model="data.type.name" readonly required
+                                   ng-click="showDiv()"/>
+
+                            <div class="mask"></div>
+                            <div class="typeDiv" id="typeDiv">
+                                <div class="left">
+                                    <ul ng-repeat="item in types">
+                                        <li ng-click="changeRightItem(item.id)">{{item.label}}</li>
+                                    </ul>
+                                </div>
+                                <div class="right">
+                                    <ul ng-repeat="item in children">
+                                        <li ng-click="setData(item)">{{item.label}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">招聘人数</label>
+
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" ng-model="data.person_count" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">技能要求</label>
+
+                        <div class="col-sm-4">
+                            <textarea rows="5" class="form-control" ng-model="data.skill" required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">最低月薪</label>
+
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" ng-model="data.low_salary" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">最高月薪</label>
+
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" ng-model="data.high_salary" required>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="edit_mode">
+                        <label class="col-sm-2 control-label">发布时间</label>
+
+                        <div class="col-sm-4">
+                            <p class="form-control-static">{{formatDate(data.post_time) | date:'yyyy-MM-ddHH:mm:ss'}}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">公司</label>
+
+                        <div class="col-sm-4">
+                            <p class="form-control-static" ng-if="edit_mode">
+                                <a ui-sref="app.companies.detail({id:data.post_company.id})" style="color: #00b3ee">
+                                    {{data.post_company.company_name}}
+                                </a>
+                            </p>
+                            <input type="text" class="form-control" ng-model="data.post_company.company_name" readonly
+                                   required ng-click="showCompanyDiv()" ng-if="!edit_mode"/>
+
+                            <div id="companyDiv">
+                                <input type="text" ng-model="query" placeholder="输入公司名查询">
+
+                                <div>
+                                    <ul ng-repeat="item in companies | filter:query">
+                                        <li ng-click="setCompany(item)">{{item.company_name}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">标签</label>
+
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="data.tag" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">工作时间</label>
+
+                        <div class="col-sm-4">
+                            <table class="weekTable">
+                                <thead>
+                                <tr>
+                                    <td>周一</td>
+                                    <td>周二</td>
+                                    <td>周三</td>
+                                    <td>周四</td>
+                                    <td>周五</td>
+                                    <td>周六</td>
+                                    <td>周日</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><input type="checkbox" ng-model="chars[0]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[1]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[2]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[3]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[4]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[5]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                    <td><input type="checkbox" ng-model="chars[6]" ng-true-value="'1'"
+                                               ng-false-value="'0'"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态</label>
+
+                        <div class="col-sm-4">
+                            <select class="input-sm form-control w-sm inline v-middle" ng-model="data.status">
+                                <option value="0">未运行</option>
+                                <option value="1">运行中</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">描述</label>
+
+                        <div class="col-sm-4">
+                            <textarea rows="5" class="form-control" ng-model="data.description" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer text-right bg-light lter">
+                    <input type="button" ng-click="delete(data.id)" ng-if="edit_mode" class="btn btn-danger pull-left"
+                           value="删除"/>
+                    <input type="submit" class="btn btn-success" value="提交"/>
+                </footer>
+            </form>
+        </div>
+    </div>
+</div>

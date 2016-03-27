@@ -35,13 +35,16 @@ public class JobDao {
 		return job;
 	}
 
-	public List<Resume> searchResume(int grade, int spare_time, String salary, int school) {
+	public List<Resume> searchResume(int grade, int spare_time, String salary, int school, int page) {
 		List<Resume> resumes = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("grade", grade);
 		map.put("spare_time", spare_time);
 		map.put("salary", salary);
 		map.put("school", school);
+		map.put("page", page);
+		map.put("start", (page - 1) * Common.COUNT);
+		map.put("count", Common.COUNT);
 		resumes = session.selectList("mapping.ResumeMapper.searchResume", map);
 
 		return resumes;
@@ -170,18 +173,47 @@ public class JobDao {
 	 *
 	 * @return
 	 */
-	public List<Job> searchJobs(int[] p_ids, int l, int h, int page, int time) {
+	public List<Job> searchJobs(int[] p_ids, int time, int l, int h, int page) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("p_ids", p_ids);
 		map.put("l", l);
 		map.put("h", h);
 		map.put("page", page);
 		map.put("start", (page - 1) * Common.COUNT);
-		map.put("count", 10);
+		map.put("count", Common.COUNT);
 		map.put("time", time);
 
 		List<Job> jobs = session.selectList("mapping.JobMapper.searchJobs", map);
 		return jobs;
+	}
+
+	/**
+	 * 更新职位信息
+	 *
+	 * @param job
+	 */
+	public void updateJob(Job job) {
+		session.update("mapping.JobMapper.updateJob", job);
+	}
+
+	/**
+	 * 增加职位
+	 *
+	 * @param job
+	 */
+	public void addJob(Job job) {
+		session.insert("mapping.JobMapper.addJob", job);
+	}
+
+	/**
+	 * 删除职位
+	 *
+	 * @param ids
+	 */
+	public int deleteJobs(int[] ids) {
+		int count = 0;
+		count = session.delete("mapping.JobMapper.deleteJobs", ids);
+		return count;
 	}
 
 	/**
@@ -208,9 +240,9 @@ public class JobDao {
 	 *
 	 * @param keyword
 	 * @param l
-	 *@param h @return
+	 * @param h       @return
 	 */
-	public List<Job> searchJobs(String keyword, int page, int l, int h,int time,int c_id) {
+	public List<Job> searchJobs(String keyword, int page, int l, int h, int time, int c_id) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("keyword", keyword);
 		map.put("page", page);
@@ -241,10 +273,11 @@ public class JobDao {
 
 	/**
 	 * 获取总条数
+	 *
 	 * @param keyword
 	 * @return
 	 */
-	public int getJobCount(String keyword, int l, int h,int time,int c_id) {
+	public int getJobCount(String keyword, int l, int h, int time, int c_id) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("keyword", keyword);
 		map.put("l", l);
@@ -258,16 +291,18 @@ public class JobDao {
 
 	/**
 	 * 获取评论条数
+	 *
 	 * @param id
 	 * @return
 	 */
 	public int getCommentCount(int id) {
-		int count = session.selectOne("mapping.JobMapper.getCommentCount",id);
+		int count = session.selectOne("mapping.JobMapper.getCommentCount", id);
 		return count;
 	}
 
 	/**
 	 * 获取指定页的评论
+	 *
 	 * @param id
 	 * @param page
 	 * @return
@@ -280,18 +315,19 @@ public class JobDao {
 		map.put("start", (page - 1) * Common.COUNT);
 		map.put("count", 10);
 
-		comments = session.selectList("mapping.JobMapper.getCommentsPage",map);
+		comments = session.selectList("mapping.JobMapper.getCommentsPage", map);
 		return comments;
 	}
 
 	/**
 	 * 返回一个公司的所有职位
+	 *
 	 * @param company_id
 	 * @return
 	 */
 	public List<Job> getAllJobsByCompany(int company_id) {
 		List<Job> jobs = null;
-		jobs = session.selectList("mapping.JobMapper.getAllJobsByCompany",company_id);
+		jobs = session.selectList("mapping.JobMapper.getAllJobsByCompany", company_id);
 		return jobs;
 	}
 }

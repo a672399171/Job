@@ -1,14 +1,14 @@
-<div class="wrapper-md" ng-controller="CompanyListController">
+<div class="wrapper-md" ng-controller="JobListController">
     <div class="panel panel-default">
         <div class="panel-heading">
             <ul class="nav nav-pills pull-right">
                 <li style=" padding-top:4px; padding-right:4px">
-                    <button class="btn m-b-xs btn-sm btn-primary btn-addon" ui-sref="app.companies.create()"><i
+                    <button class="btn m-b-xs btn-sm btn-primary btn-addon" ui-sref="app.jobs.create()"><i
                             class="fa fa-plus"></i>新增
                     </button>
                 </li>
             </ul>
-            公司列表
+            职位列表
         </div>
         <div class="row wrapper">
             <div class="col-sm-5 m-b-xs">
@@ -19,9 +19,6 @@
                 <button class="btn btn-sm btn-default" ng-click="exec()">执行</button>
             </div>
             <div class="col-sm-4">
-                <label class="i-checks m-b-none">
-                    <input type="checkbox" ><i></i>隐藏未认证公司
-                </label>
             </div>
             <div class="col-sm-3">
                 <div class="input-group">
@@ -41,15 +38,13 @@
                             <input type="checkbox" ng-click="selectAll()"><i></i>
                         </label>
                     </th>
-                    <th>用户名</th>
-                    <th>公司名</th>
-                    <th>地址</th>
-                    <th>联系人</th>
-                    <th>手机号</th>
+                    <th>名称</th>
                     <th>类型</th>
-                    <th>规模</th>
-                    <th>邮箱</th>
-                    <th>认证状态</th>
+                    <th>最低月薪</th>
+                    <th>最高月薪</th>
+                    <th>发布时间</th>
+                    <th>公司</th>
+                    <th>状态</th>
                     <th style="width:30px;"></th>
                 </tr>
                 </thead>
@@ -57,21 +52,18 @@
                 <tr ng-repeat="data in data.rows">
                     <td><label class="i-checks m-b-none"><input type="checkbox" ng-model="data.selected"><i></i></label>
                     </td>
-                    <td>{{data.username}}</td>
-                    <td>{{data.company_name}}</td>
-                    <td>{{data.address}}</td>
                     <td>{{data.name}}</td>
-                    <td>{{data.phone}}</td>
-                    <td>{{data.type}}</td>
-                    <td>{{data.scope}}</td>
-                    <td>{{data.email}}</td>
+                    <td>{{data.type.name}}</td>
+                    <td>{{data.low_salary}}</td>
+                    <td>{{data.high_salary}}</td>
+                    <td>{{formatDate(data.post_time) | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                    <td>{{data.post_company.company_name}}</td>
                     <td>
-                        <span class="label bg-success" ng-if="data.auth == 2" title="Active">已认证</span>
-                        <span class="label bg-light" ng-if="data.auth == 0" title="Active">未认证</span>
-                        <span class="label bg-warning" ng-if="data.auth == 1" title="Suspended">认证中</span>
+                        <span class="label bg-success" ng-if="data.status == 1" title="Active">运行中</span>
+                        <span class="label bg-warning" ng-if="data.status == 0" title="Suspended">未运行</span>
                     </td>
                     <td>
-                        <a ui-sref="app.companies.detail({id:data.id})" class="active"><i class="fa fa-edit"></i></a>
+                        <a ui-sref="app.jobs.detail({id:data.id})" class="active"><i class="fa fa-edit"></i></a>
                     </td>
                 </tr>
                 </tbody>
@@ -98,15 +90,3 @@
         </footer>
     </div>
 </div>
-
-<!--
-<script src="../js/jquery-1.11.2.js"></script>
-<script type="application/javascript">
-    function deleteUsers() {
-        $.post("http://localhost:8888/Job/user/admin/users/delete",{
-            ids:[1,2,3]
-        },function(data) {
-
-        },"JSON");
-    }
-</script>-->
