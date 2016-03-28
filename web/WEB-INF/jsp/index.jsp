@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <html>
 <head>
@@ -74,29 +75,32 @@
 <div id="middle">
     <h2>最新招聘</h2>
     <hr>
-    <div class="job_item">
-        <table>
-            <tr>
-                <td width="30%"><a href="#" class="link">金融销售</a></td>
-                <td width="30%" class="font3">今天</td>
-                <td width="30%" class="font5">国晟鸿业(厦门)资产管理有限公司</td>
-            </tr>
-            <tr>
-                <td class="font5">应届生</td>
-                <td class="font4">3000-6000</td>
-                <td class="font3">101－300人</td>
-            </tr>
-        </table>
-    </div>
+    <c:forEach var="item" items="${requestScope.recentJobs}">
+        <div class="job_item" style="display: block" url="${root}/job/detail.do?id=${item.id}">
+            <table>
+                <tr>
+                    <td width="30%"><a href="#" class="link">${item.name}</a></td>
+                    <td width="30%" class="font3">
+                        <fmt:formatDate value="${item.post_time}" pattern="yyyy-MM-dd HH:mm"/>
+                    </td>
+                    <td width="30%" class="font5">${item.post_company.company_name}</td>
+                </tr>
+                <tr>
+                    <td class="font5">${item.type.name}</td>
+                    <td class="font4">${item.low_salary}-${item.high_salary}</td>
+                    <td class="font3">${item.post_company.scope}</td>
+                </tr>
+            </table>
+        </div>
+    </c:forEach>
 </div>
+
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 
 <script type="application/javascript">
 
     $(function () {
         $("#login_href").attr("href", "${root}/user/toLogin.do?from=" + window.location.href);
-        //getClassifies();
-        getRecentJobs();
 
         $("#list1 ul li").mouseover(function () {
             $(this).children(".hideDiv").show();
@@ -135,33 +139,6 @@
                 $(this).children(".hideDiv").hide();
                 $(this).children("span").hide();
             });
-        });
-    }
-
-    function getRecentJobs() {
-        $.getJSON("${root}/job/getRecentJobs.do", function (data) {
-            var jobs = data.jobs;
-            for (var i = 0; i < jobs.length; i++) {
-                var job = jobs[i];
-                var item = $(".job_item").eq(0).clone();
-                //工作名称
-                item.find(".link").eq(0).text(job.name);
-                //发布时间
-                item.find(".font3").eq(0).text(new Date(job.post_time.time).Format("yyyy-MM-dd hh:mm"));
-                //公司名
-                item.find(".font5").eq(0).text(job.post_company.company_name);
-                //职位类型
-                item.find(".font5").eq(1).text(job.type.name);
-                //工资
-                item.find(".font4").eq(0).text(job.low_salary + "-" + job.high_salary);
-                //公司规模
-                item.find(".font3").eq(1).text(job.post_company.scope);
-                item.show();
-                item.click(function () {
-                    window.location = "${root}/job/detail.do?id=" + job.id;
-                });
-                $("#middle").append(item);
-            }
         });
     }
 

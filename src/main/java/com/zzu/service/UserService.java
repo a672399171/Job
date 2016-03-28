@@ -106,8 +106,8 @@ public class UserService {
 	}
 
 	//查询公司
-	public List<Company> searchCompanies(int page) {
-		return userDao.searchCompanies(page);
+	public List<Company> searchCompanies(int page, boolean audit) {
+		return userDao.searchCompanies(page,audit);
 	}
 
 	//修改密码
@@ -133,5 +133,20 @@ public class UserService {
 	//判断公司的用户名是否存在重复
 	public boolean isUsernameRepeat(Company company) {
 		return userDao.isUsernameRepeat(company);
+	}
+
+	//查找所有贫困生信息
+	public List<Poor> searchPoors(int page) {
+		return userDao.searchPoors(page);
+	}
+
+	//认证贫困信息
+	public void authPoor(int u_id, int status) {
+		userDao.authPoor(u_id,status);
+	}
+
+	//审核公司
+	public void auditCompany(int id, int audit) {
+		userDao.auditCompany(id,audit);
 	}
 }

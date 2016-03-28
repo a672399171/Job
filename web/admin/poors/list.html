@@ -1,14 +1,14 @@
-<div class="wrapper-md" ng-controller="CompanyListController">
+<div class="wrapper-md" ng-controller="PoorListController">
     <div class="panel panel-default">
         <div class="panel-heading">
             <ul class="nav nav-pills pull-right">
                 <li style=" padding-top:4px; padding-right:4px">
-                    <button class="btn m-b-xs btn-sm btn-primary btn-addon" ui-sref="app.companies.create()"><i
+                    <button class="btn m-b-xs btn-sm btn-primary btn-addon" ui-sref="app.poors.create()"><i
                             class="fa fa-plus"></i>新增
                     </button>
                 </li>
             </ul>
-            公司列表
+            贫困生认定列表
         </div>
         <div class="row wrapper">
             <div class="col-sm-5 m-b-xs">
@@ -19,9 +19,6 @@
                 <button class="btn btn-sm btn-default" ng-click="exec()">执行</button>
             </div>
             <div class="col-sm-4">
-                <label class="i-checks m-b-none">
-                    <input type="checkbox"><i></i>隐藏未认证公司
-                </label>
             </div>
             <div class="col-sm-3">
                 <div class="input-group">
@@ -41,37 +38,27 @@
                             <input type="checkbox" ng-click="selectAll()"><i></i>
                         </label>
                     </th>
-                    <th>用户名</th>
-                    <th>公司名</th>
-                    <th>地址</th>
-                    <th>联系人</th>
-                    <th>手机号</th>
-                    <th>类型</th>
-                    <th>规模</th>
+                    <th>姓名</th>
                     <th>邮箱</th>
-                    <th>认证状态</th>
+                    <th>专业</th>
+                    <th>状态</th>
                     <th style="width:30px;"></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="data in data.rows">
+                <tr ng-repeat="data in data.rows" ng-class="{isNew:data.new}">
                     <td><label class="i-checks m-b-none"><input type="checkbox" ng-model="data.selected"><i></i></label>
                     </td>
-                    <td>{{data.username}}</td>
-                    <td>{{data.company_name}}</td>
-                    <td>{{data.address}}</td>
                     <td>{{data.name}}</td>
-                    <td>{{data.phone}}</td>
-                    <td>{{data.type}}</td>
-                    <td>{{data.scope}}</td>
                     <td>{{data.email}}</td>
+                    <td>{{data.major.major}}</td>
                     <td>
-                        <span class="label bg-success" ng-if="data.auth == 2" title="Active">已认证</span>
-                        <span class="label bg-light" ng-if="data.auth == 0" title="Active">未认证</span>
-                        <span class="label bg-warning" ng-if="data.auth == 1" title="Suspended">认证中</span>
+                        <span class="label bg-success" ng-if="data.status == 2" title="Active">已认证</span>
+                        <span class="label bg-light" ng-if="data.status == 0" title="Active">未认证</span>
+                        <span class="label bg-warning" ng-if="data.status == 1" title="Suspended">认证中</span>
                     </td>
                     <td>
-                        <a ui-sref="app.companies.detail({id:data.id})" class="active"><i class="fa fa-edit"></i></a>
+                        <a ui-sref="app.poors.detail({id:data.u_id})" class="active"><i class="fa fa-edit"></i></a>
                     </td>
                 </tr>
                 </tbody>
@@ -85,12 +72,12 @@
                 <div ng-if="data.page>1" class="col-sm-4 text-right text-center-xs">
                     <ul class="pagination pagination-sm m-t-none m-b-none">
                         <li ng-class="{disabled:!data.previous}"><a
-                                ui-sref="app.users.list({page:data.page_index-1,search:search_context})"><i
+                                ui-sref="app.poors.list({page:data.page_index-1,search:search_context})"><i
                                 class="fa fa-chevron-left"></i></a></li>
                         <li ng-repeat="page in data.pages" ng-class="{active:page==data.page_index}"><a
-                                ui-sref="app.users.list({page:page,search:search_context})">{{page}}</a></li>
+                                ui-sref="app.poors.list({page:page,search:search_context})">{{page}}</a></li>
                         <li ng-class="{disabled:!data.next}"><a
-                                ui-sref="app.users.list({page:data.page_index+1,search:search_context})"><i
+                                ui-sref="app.poors.list({page:data.page_index+1,search:search_context})"><i
                                 class="fa fa-chevron-right"></i></a></li>
                     </ul>
                 </div>
@@ -98,15 +85,3 @@
         </footer>
     </div>
 </div>
-
-<!--
-<script src="../js/jquery-1.11.2.js"></script>
-<script type="application/javascript">
-    function deleteUsers() {
-        $.post("http://localhost:8888/Job/user/admin/users/delete",{
-            ids:[1,2,3]
-        },function(data) {
-
-        },"JSON");
-    }
-</script>-->

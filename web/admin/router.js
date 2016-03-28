@@ -184,6 +184,48 @@ app.run(
             .state('app.resumes.create', {
                 url: '/create',
                 templateUrl: 'resumes/detail.html'
+            })//贫困生管理
+            .state('app.poors', {
+                abstract: true,
+                url: '/poors',
+                template: '<div ui-view class="fade-in"></div>',
+                resolve: {
+                    deps: ['$ocLazyLoad',
+                        function ($ocLazyLoad) {
+                            return $ocLazyLoad.load('poors/ctrl.js');
+                        }]
+                }
+            })
+            .state('app.poors.list', {
+                url: '/list?page',
+                templateUrl: 'poors/list.html'
+            })
+            .state('app.poors.detail', {
+                url: '/detail/{id}',
+                templateUrl: 'poors/detail.html'
+            })
+            .state('app.poors.create', {
+                url: '/create',
+                templateUrl: 'poors/detail.html'
+            })//公司审核
+            .state('app.audits', {
+                abstract: true,
+                url: '/audits',
+                template: '<div ui-view class="fade-in"></div>',
+                resolve: {
+                    deps: ['$ocLazyLoad',
+                        function ($ocLazyLoad) {
+                            return $ocLazyLoad.load('audits/ctrl.js');
+                        }]
+                }
+            })
+            .state('app.audits.list', {
+                url: '/list?page',
+                templateUrl: 'audits/list.html'
+            })
+            .state('app.audits.detail', {
+                url: '/detail/{id}',
+                templateUrl: 'audits/detail.html'
             })
     }
 );

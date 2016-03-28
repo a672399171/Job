@@ -12,7 +12,7 @@ angular.module('app')
 
             // config
             $scope.app = {
-                name: 'Angulr',
+                name: '后台管理',
                 host: "http://localhost:8888/Job",
                 version: '1.3.3',
                 // for chart colors

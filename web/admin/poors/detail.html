@@ -1,0 +1,67 @@
+<div ng-controller="PoorDetailController">
+    <div class="wrapper-md" >
+        <div class="panel panel-default">
+            <form class="form-horizontal ng-pristine ng-valid ng-valid-date ng-valid-required ng-valid-parse ng-valid-date-disabled" ng-submit="submit()">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">姓名</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" ng-model="data.name" required>
+                        </div>
+                        <div class="col-sm-2">
+                            <a ui-sref="app.users.detail({id:data.u_id})">查看用户信息</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">邮箱</label>
+                        <div class="col-sm-4">
+                            <input type="email" class="form-control" ng-model="data.email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">专业</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="data.major.major"
+                                  ng-click="showSchoolDiv()" readonly required>
+                            <div class="mask"></div>
+                            <div class="typeDiv" id="schoolDiv">
+                                <div class="left">
+                                    <ul ng-repeat="item in schools">
+                                        <li ng-click="changeMajor(item.id)">{{item.school}}</li>
+                                    </ul>
+                                </div>
+                                <div class="right">
+                                    <ul ng-repeat="item in majors">
+                                        <li ng-click="setMajor(item)">{{item.major}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-4">
+                            <select class="input-sm form-control w-sm inline v-middle" ng-model="data.status">
+                                <option value="2">已认证</option>
+                                <option value="0">未认证</option>
+                                <option value="1">认证中</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">证明照片</label>
+                        <div class="col-sm-4">
+                            <img src="{{app.host}}/images/{{data.src}}" alt="找不到图片">
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer text-right bg-light lter">
+                    <input type="button" ng-click="delete(data.u_id)" ng-if="edit_mode" class="btn btn-danger pull-left" value="删除"/>
+                    <input type="button" class="btn btn-info" value="通过认证" ng-click="auth(data.u_id,2)"/>
+                    <input type="button" class="btn btn-warning" value="驳回认证" ng-click="auth(data.u_id,0)"/>
+                    <input type="submit" class="btn btn-success" value="提交"/>
+                </footer>
+            </form>
+        </div>
+    </div>
+</div>

@@ -536,7 +536,7 @@ public class UserController {
 	}
 
 	@RequestMapping("/poor_confirm.do")
-	public String poorConfirm(String name, String email, String school, @RequestParam("file") MultipartFile myfile,
+	public String poorConfirm(String name, String email, int major, @RequestParam("file") MultipartFile myfile,
 	                          HttpSession session) {
 		User user = (User) session.getAttribute(Common.USER);
 		if (user == null) {
@@ -555,11 +555,14 @@ public class UserController {
 			e.printStackTrace();
 		}
 
+		Major m = new Major();
+		m.setId(major);
+
 		Poor poor = new Poor();
 		poor.setU_id(user.getId());
 		poor.setName(name);
 		poor.setEmail(email);
-		poor.setSchool(school);
+		poor.setMajor(m);
 		poor.setSrc(newFile);
 		poor.setStatus(Common.AUDIT);
 		userService.insertPoor(poor);
@@ -748,9 +751,12 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/admin/companies/list/{page}", method = RequestMethod.GET)
 	@ResponseBody
-	public JSONObject searchCompanies(@PathVariable("page") Integer page) {
+	public JSONObject searchCompanies(@PathVariable("page") Integer page,Boolean audit) {
 		JSONObject object = new JSONObject();
-		List<Company> companies = userService.searchCompanies(page);
+		if(audit == null) {
+			audit = false;
+		}
+		List<Company> companies = userService.searchCompanies(page,audit);
 		object.put("total", companies.size());
 		object.put("rows", companies);
 		return object;
@@ -838,6 +844,87 @@ public class UserController {
 		} else {
 			object.put("msg", "未完全删除");
 		}
+		return object;
+	}
+
+	/**
+	 * 查询所有贫困信息
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/poors/list/{page}", method = RequestMethod.GET)
+	@ResponseBody
+	public JSONObject searchPoors(@PathVariable("page") Integer page) {
+		JSONObject object = new JSONObject();
+		List<Poor> poors = userService.searchPoors(page);
+		object.put("total", poors.size());
+		object.put("rows", poors);
+		return object;
+	}
+
+	/**
+	 * 根据id返回贫困生信息
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/poors/detail/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public JSONObject getPoorById(@PathVariable("id") Integer id) {
+		JSONObject object = null;
+		Poor poor = userService.searchPoor(id);
+		object = JSONObject.fromObject(poor);
+
+		return object;
+	}
+
+	/**
+	 * 认证贫困生
+	 * @param u_id
+	 * @param status
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/auth.do", method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject authPoor(int u_id,int status) {
+		JSONObject object = new JSONObject();
+		userService.authPoor(u_id,status);
+
+		return object;
+	}
+
+	/**
+	 * 审核公司信息
+	 * @param id
+	 * @param audit
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/audit.do", method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject auditCompany(int id,int audit) {
+		JSONObject object = new JSONObject();
+		userService.auditCompany(id,audit);
+
+		return object;
+	}
+
+	/**
+	 * 修改或增加贫困生信息
+	 * @param major_id
+	 * @param poor
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/poors/saveOrUpdatePoor.do", method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject updateCompany(int major_id, @ModelAttribute("poor") Poor poor, BindingResult result) {
+		JSONObject object = new JSONObject();
+
+		Major major = new Major();
+		major.setId(major_id);
+
+		poor.setMajor(major);
+		userService.insertPoor(poor);
+
 		return object;
 	}
 

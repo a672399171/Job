@@ -1,36 +1,12 @@
-<div class="wrapper-md" ng-controller="CompanyListController">
+<div class="wrapper-md" ng-controller="AuditListController">
     <div class="panel panel-default">
         <div class="panel-heading">
             <ul class="nav nav-pills pull-right">
                 <li style=" padding-top:4px; padding-right:4px">
-                    <button class="btn m-b-xs btn-sm btn-primary btn-addon" ui-sref="app.companies.create()"><i
-                            class="fa fa-plus"></i>新增
-                    </button>
+
                 </li>
             </ul>
-            公司列表
-        </div>
-        <div class="row wrapper">
-            <div class="col-sm-5 m-b-xs">
-                <select class="input-sm form-control w-sm inline v-middle" ng-model="operate" ng-init="operate=0">
-                    <option value="0">---</option>
-                    <option value="1">删除所选记录</option>
-                </select>
-                <button class="btn btn-sm btn-default" ng-click="exec()">执行</button>
-            </div>
-            <div class="col-sm-4">
-                <label class="i-checks m-b-none">
-                    <input type="checkbox"><i></i>隐藏未认证公司
-                </label>
-            </div>
-            <div class="col-sm-3">
-                <div class="input-group">
-                    <input type="text" class="input-sm form-control" placeholder="Search" ng-model="search_context">
-          <span class="input-group-btn">
-            <button class="btn btn-sm btn-default" ng-click="search()" type="button">Go!</button>
-          </span>
-                </div>
-            </div>
+            待审核公司列表
         </div>
         <div class="table-responsive" ng-if="data.total>0">
             <table class="table table-striped b-t b-light">
@@ -71,7 +47,7 @@
                         <span class="label bg-warning" ng-if="data.auth == 1" title="Suspended">认证中</span>
                     </td>
                     <td>
-                        <a ui-sref="app.companies.detail({id:data.id})" class="active"><i class="fa fa-edit"></i></a>
+                        <a ui-sref="app.audits.detail({id:data.id})" class="active"><i class="fa fa-edit"></i></a>
                     </td>
                 </tr>
                 </tbody>
@@ -99,14 +75,3 @@
     </div>
 </div>
 
-<!--
-<script src="../js/jquery-1.11.2.js"></script>
-<script type="application/javascript">
-    function deleteUsers() {
-        $.post("http://localhost:8888/Job/user/admin/users/delete",{
-            ids:[1,2,3]
-        },function(data) {
-
-        },"JSON");
-    }
-</script>-->

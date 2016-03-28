@@ -7,9 +7,18 @@ public class Poor {
 	private int u_id;
 	private String name;
 	private String email;
-	private String school;
+	private Major major;
 	private String src;
 	private int status;
+	private boolean isNew;
+
+	public boolean isNew() {
+		return isNew;
+	}
+
+	public void setNew(boolean aNew) {
+		isNew = aNew;
+	}
 
 	public int getU_id() {
 		return u_id;
@@ -35,12 +44,12 @@ public class Poor {
 		this.email = email;
 	}
 
-	public String getSchool() {
-		return school;
+	public Major getMajor() {
+		return major;
 	}
 
-	public void setSchool(String school) {
-		this.school = school;
+	public void setMajor(Major major) {
+		this.major = major;
 	}
 
 	public String getSrc() {

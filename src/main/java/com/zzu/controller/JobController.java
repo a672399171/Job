@@ -45,6 +45,10 @@ public class JobController {
 
 		List<Classify> classifies = jobService.getAllClassifies();
 		List<Position> positions = jobService.searchPositions(0);
+
+		List<Job> jobs = jobService.getRecentJobs(5);
+		model.addAttribute("recentJobs",jobs);
+
 		for (Classify classify : classifies) {
 			object = JSONObject.fromObject(classify);
 			List<Position> positionList = new ArrayList<Position>();
@@ -735,6 +739,14 @@ public class JobController {
 		return object;
 	}
 
+	/**
+	 * 新建简历
+	 * @param major_id
+	 * @param birth
+	 * @param resume
+	 * @param result
+	 * @return
+	 */
 	@RequestMapping(value = "/admin/resumes/create", method = RequestMethod.POST)
 	@ResponseBody
 	public JSONObject updateJob(int major_id, String birth,

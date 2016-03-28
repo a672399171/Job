@@ -1,4 +1,4 @@
-<div ng-controller="CompanyDetailController">
+<div ng-controller="AuditDetailController">
     <div class="wrapper-md" >
         <div class="panel panel-default">
             <form class="form-horizontal ng-pristine ng-valid ng-valid-date ng-valid-required ng-valid-parse ng-valid-date-disabled" ng-submit="submit()">
@@ -52,16 +52,6 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">状态</label>
-                        <div class="col-sm-4">
-                            <select class="input-sm form-control w-sm inline v-middle" ng-model="data.auth">
-                                <option value="0">未审核</option>
-                                <option value="1">审核中</option>
-                                <option value="2">已审核</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <label class="col-sm-2 control-label">规模</label>
                         <div class="col-sm-4">
                             <input type="text" class="form-control" ng-model="data.scope" required>
@@ -75,8 +65,8 @@
                     </div>
                 </div>
                 <footer class="panel-footer text-right bg-light lter">
-                    <input type="button" ng-click="delete(data.id)" ng-if="edit_mode" class="btn btn-danger pull-left" value="删除"/>
-                    <input type="submit" class="btn btn-success" value="提交"/>
+                    <input type="button" class="btn btn-info" value="通过认证" ng-click="audit(data.id,2)"/>
+                    <input type="button" class="btn btn-warning" value="驳回认证" ng-click="audit(data.id,0)"/>
                 </footer>
             </form>
         </div>
