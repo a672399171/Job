@@ -17,8 +17,9 @@
         </association>
     </resultMap>
 
-    <select id="getResumeByUid" resultType="com.zzu.model.Resume" parameterType="int">
-        SELECT * FROM tb_resume WHERE u_id=#{u_id}
+    <select id="getResumeByUid" resultMap="resumeResultMap" parameterType="int">
+        SELECT r.*,s.id as s_id,s.school as s_school,m.id as major,m.major as m_major,m.s_id as s_id FROM tb_resume
+        r,tb_school s,tb_major m where r.major=m.id and m.s_id=s.id and u_id=#{u_id}
     </select>
 
     <insert id="insertResume" parameterType="com.zzu.model.Resume">

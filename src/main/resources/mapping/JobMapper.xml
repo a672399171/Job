@@ -31,7 +31,7 @@
         <association property="user" javaType="com.zzu.model.User">
             <id property="id" column="u_id"></id>
         </association>
-        <association property="job" javaType="com.zzu.model.Job">
+        <association property="job" resultMap="jobResultMap" autoMapping="true">
             <id property="id" column="j_id"></id>
         </association>
     </resultMap>
@@ -105,8 +105,22 @@
     </select>
 
     <select id="getCollection" resultMap="collectionResultMap" parameterType="hashmap">
-        select j.*,u.*,c.* from tb_job j,tb_user u,tb_collection c where j.id=c.j_id and u.id=c.u_id and c.u_id=#{u_id} and c.j_id=#{j_id} limit 1
+        select j.*,c.*,com.company_name,com.name as person_name,com.phone from tb_job j,tb_user u,tb_collection c,tb_company com where j.id=c.j_id and u.id=c.u_id and com.id=j.post_company
+         and c.u_id=#{u_id} and c.j_id=#{j_id} limit 1
     </select>
+
+    <select id="searchCollections" resultMap="collectionResultMap" parameterType="hashmap">
+        select j.*,c.*,com.company_name,com.name as person_name,com.phone from tb_job j,tb_user u,tb_collection
+        c,tb_company com where j.id=c.j_id and u.id=c.u_id and com.id=j.post_company
+        and c.u_id=#{u_id}
+        <if test="page != 0">
+            limit ${start},${count}
+        </if>
+    </select>
+
+    <delete id="deleteCollection" parameterType="hashmap">
+        delete from tb_collection where u_id=#{u_id} and j_id=#{j_id}
+    </delete>
 
     <select id="getApplies" resultMap="applyResultMap" parameterType="hashmap">
         select * from tb_apply a,tb_user u,tb_job j where a.u_id=u.id and a.j_id=j.id and a.u_id=#{u_id}
@@ -164,7 +178,8 @@
 
     <select id="searchJobs" resultMap="jobResultMap" parameterType="hashmap">
         SELECT j.*,p.name as p_name,c.id as post_company,
-        c.username,c.password,c.company_name,c.address,c.name as person_name,c.phone,c.introduce,c.type as company_type,c.scope,c.email,c.logo,c.x,c.y,c.auth
+        c.username,c.password,c.company_name,c.address,c.name as person_name,c.phone,c.introduce,c.type as
+        company_type,c.scope,c.email,c.logo,c.x,c.y,c.auth
         FROM tb_job j,tb_company c,tb_position p where
         j.type=p.id and j.post_company=c.id and #{time} &amp; j.work_time &lt;&gt; 0
         <if test="p_ids != null">
@@ -273,7 +288,7 @@
         select * from tb_position where id=#{id}
     </select>
 
-    <select id="getSchoolsAndMajors" resultMap="majorResultMap" >
+    <select id="getSchoolsAndMajors" resultMap="majorResultMap">
         select s.id as s_id,s.school,m.* from tb_school s,tb_major m where s.id = m.s_id
     </select>
 </mapper>

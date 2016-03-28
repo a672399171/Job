@@ -15,6 +15,25 @@
     <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <style type="text/css">
+        .hideDialog {
+            display: none;
+        }
+
+        .hideDialog table {
+            margin: 0 auto;
+        }
+
+        .hideDialog tr {
+            margin-bottom: 10px;
+        }
+
+        .hideDialog input {
+            height: 25px;
+            line-height: 25px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 <jsp:include page="header.jsp"></jsp:include>
@@ -89,38 +108,38 @@
     </div>
 </div>
 
-<div id="changePassword" class="hideDiv1">
-    <table style="margin: 0 auto">
-        <tr style="height: 30px;line-height: 30px;margin-top: 10px">
+<div id="changePassword" class="hideDialog">
+    <table>
+        <tr>
             <td>
                 <input type="password" placeholder="输入当前密码" id="originPwd"/>
             </td>
         </tr>
-        <tr style="height: 30px;line-height: 30px;margin-top: 10px">
+        <tr>
             <td>
                 <input type="password" placeholder="输入新密码" id="newPwd"/>
             </td>
         </tr>
-        <tr style="text-align: center;height: 30px;line-height: 30px;margin-top: 10px">
+        <tr style="text-align: center;height: 60px">
             <td>
-                <input type="button" class="btn btn-default" value="确认" onclick="changePassword()"/>
-                <input type="button" class="btn btn-default" value="取消" onclick="layer.closeAll();"/>
+                <button type="button" class="btn btn-default" onclick="changePassword()">确认</button>
+                <button type="button" class="btn btn-default" onclick="layer.closeAll();">取消</button>
             </td>
         </tr>
     </table>
 </div>
 
-<div id="emailDiv" class="hideDiv1">
-    <table style="margin: 0 auto">
-        <tr style="height: 30px;line-height: 30px;margin-top: 10px">
+<div id="emailDiv" class="hideDialog">
+    <table>
+        <tr>
             <td>
                 <input type="email" placeholder="输入要绑定的邮箱" id="email"/>
             </td>
         </tr>
-        <tr style="text-align: center;height: 30px;line-height: 30px;margin-top: 10px">
+        <tr style="text-align: center;height: 60px">
             <td>
-                <input type="button" class="btn btn-default" value="确认" onclick="bindEmail()"/>
-                <input type="button" class="btn btn-default" value="取消" onclick="layer.closeAll();"/>
+                <button type="button" class="btn btn-default" onclick="bindEmail()">确认</button>
+                <button type="button" class="btn btn-default" onclick="layer.closeAll();">取消</button>
             </td>
         </tr>
     </table>

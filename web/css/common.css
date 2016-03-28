@@ -10,7 +10,6 @@ a {
 
 body {
     background: #F8F8F8;
-    padding-bottom: 100px;
 }
 
 .font1 {
@@ -265,10 +264,6 @@ a:hover {
 
 #resumeTable {
     margin-top: 20px;
-}
-
-.hideDiv1 {
-    display: none;
 }
 
 .job_item {

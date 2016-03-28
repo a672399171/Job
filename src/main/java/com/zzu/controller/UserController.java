@@ -1,6 +1,7 @@
 package com.zzu.controller;
 
 import com.zzu.model.*;
+import com.zzu.model.Collection;
 import com.zzu.service.JobService;
 import com.zzu.service.ResumeService;
 import com.zzu.service.UserService;
@@ -348,11 +349,15 @@ public class UserController {
 	 */
 	@RequestMapping("/saveOrUpdateResume.do")
 	public String saveOrUpdateResume(@Valid @ModelAttribute("resume") Resume resume, BindingResult result,
-	                                 String birthday, HttpSession session) {
+	                                 String birthday,int major_id, HttpSession session) {
 		User user = (User) session.getAttribute(Common.USER);
 		if (user == null) {
 			return "login";
 		}
+
+		Major major = new Major();
+		major.setId(major_id);
+		resume.setMajor(major);
 
 		resume.setBirthday(DateUtil.toDate(birthday));
 		resume.setU_id(user.getId());
@@ -437,13 +442,38 @@ public class UserController {
 	 * @return
 	 */
 	@RequestMapping("/collection.do")
-	public String collection(HttpSession session) {
+	public String collection(HttpSession session,Model model) {
 		User user = (User) session.getAttribute(Common.USER);
 		if (user == null) {
 			return "login";
 		}
 
+		List<Collection> collections = userService.searchCollections(user.getId(),1);
+		model.addAttribute("collections",collections);
+
 		return "collection";
+	}
+
+	/**
+	 * 取消收藏
+	 * @param session
+	 * @param u_id
+	 * @param j_id
+	 * @return
+	 */
+	@RequestMapping("/cancelCollection.do")
+	@ResponseBody
+	public JSONObject cancelCollection(HttpSession session,int u_id,int j_id) {
+		JSONObject object = new JSONObject();
+		object.put("success",true);
+		User user = (User) session.getAttribute(Common.USER);
+		if (user == null) {
+			object.put("success",false);
+		} else {
+			userService.deleteCollection(u_id,j_id);
+		}
+
+		return object;
 	}
 
 	/**

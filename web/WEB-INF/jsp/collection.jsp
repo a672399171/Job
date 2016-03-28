@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <html>
 <head>
@@ -14,6 +15,31 @@
     <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <script src="${root}/js/moment-with-locales.js"></script>
+    <style type="text/css">
+        .list_item {
+            padding: 5px;
+            border-bottom: 1px #dddddd solid;
+        }
+
+        .list_item table:hover {
+            cursor: pointer;
+            background: white;
+        }
+
+        .list_item table {
+            width: 100%;
+        }
+
+        .list_item tr {
+            height: 30px;
+            line-height: 20px;
+        }
+
+        .date {
+            margin-right: 50px;
+        }
+    </style>
 </head>
 <body>
 <jsp:include page="header.jsp"></jsp:include>
@@ -47,57 +73,67 @@
         <div class="col-md-8">
             <h4>我的收藏</h4>
             <hr>
-            <div class="list_item container">
-                <div class="row">
-                    <a href="#" class="font1 col-sm-4">理财顾问<span class="font2">(2000-3000元/月)</span></a>
-                    <a href="#" class="font1 col-sm-4">深圳腾讯科技有限公司</a>
+            <c:forEach items="${requestScope.collections}" var="item">
+                <div class="list_item">
+                    <table url="${root}/job/detail.do?id=${item.job.id}">
+                        <tr>
+                            <td width="40%">
+                                <span class="font4" style="font-size:15px;color: black">${item.job.name}</span>
+                                <span class="font2"
+                                      style="font-size: 15px">(${item.job.low_salary}-${item.job.high_salary})</span>
+                            </td>
+                            <td width="30%">
+                                <span class="font3">${item.job.post_company.company_name}</span>
+                            </td>
+                            <td width="30%">
+                                <span class="font3">${item.job.post_company.name}:${item.job.post_company.phone}</span>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="width: 100%;text-align: right;padding-right: 30px">
+                        <span class="date">
+                            <fmt:formatDate value="${item.collect_time}" pattern="yyyy-MM-dd HH:mm"/>
+                        </span>
+                        <a href="javascript:void(0)" onclick="cancelCollection(${item.user.id},${item.job.id})">取消收藏</a>
+                    </div>
                 </div>
-                <div class="row" style="margin-top: 10px;margin-bottom: 10px">
-                    <div class="col-sm-4">张小姐:14789632501</div>
-                    <div class="col-sm-4">14:25收藏</div>
-                </div>
-                <div class="row" style="margin-top: 10px;margin-bottom: 10px">
-                    <a href="#" class="col-sm-1 col-sm-offset-5">取消收藏</a>
-                    <a href="#" class="col-sm-1">申请职位</a>
-                </div>
-            </div>
-            <hr style="margin-top: -4px">
-            <div class="list_item container">
-                <div class="row">
-                    <a href="#" class="font1 col-sm-4">理财顾问<span class="font2">(2000-3000元/月)</span></a>
-                    <a href="#" class="font1 col-sm-4">深圳腾讯科技有限公司</a>
-                </div>
-                <div class="row" style="margin-top: 10px;margin-bottom: 10px">
-                    <div class="col-sm-4">张小姐:14789632501</div>
-                    <div class="col-sm-4">14:25收藏</div>
-                </div>
-                <div class="row" style="margin-top: 10px;margin-bottom: 10px">
-                    <a href="#" class="col-sm-1 col-sm-offset-5">取消收藏</a>
-                    <a href="#" class="col-sm-1">申请职位</a>
-                </div>
-            </div>
-            <hr style="margin-top: -4px">
-            <div class="list_item container">
-                <div class="row">
-                    <a href="#" class="font1 col-sm-4">理财顾问<span class="font2">(2000-3000元/月)</span></a>
-                    <a href="#" class="font1 col-sm-4">深圳腾讯科技有限公司</a>
-                </div>
-                <div class="row" style="margin-top: 10px;margin-bottom: 10px">
-                    <div class="col-sm-4">张小姐:14789632501</div>
-                    <div class="col-sm-4">14:25收藏</div>
-                </div>
-                <div class="row" style="margin-top: 10px;margin-bottom: 10px">
-                    <a href="#" class="col-sm-1 col-sm-offset-5">取消收藏</a>
-                    <a href="#" class="col-sm-1">申请职位</a>
-                </div>
-            </div>
-            <hr style="margin-top: -4px">
+            </c:forEach>
         </div>
     </div>
 </div>
 
 <script type="application/javascript">
+    $(formatDate);
 
+    $(".list_item table").click(function () {
+        window.location = $(this).attr("url");
+    });
+
+    //取消收藏
+    function cancelCollection(u_id, j_id) {
+        $.post("${root}/user/cancelCollection.do", {
+            u_id: u_id,
+            j_id: j_id
+        }, function (data) {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                window.location = "${root}/user/toLogin.do";
+            }
+
+        }, "JSON");
+    }
+
+    //格式化时间
+    function formatDate() {
+        moment.locale("zh_cn");
+
+        var dates = $(".date");
+        for (var i = 0; i < dates.length; i++) {
+            var dText = dates.eq(i).text();
+            dates.eq(i).text(moment(dText, "YYYY-MM-DD hh:mm").fromNow() + "收藏");
+        }
+    }
 </script>
 </body>
 </html>

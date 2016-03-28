@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="${root}/css/style_index.css"/>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/js/dateformat.js"></script>
+    <script src="${root}/js/moment-with-locales.js"></script>
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
@@ -80,7 +81,7 @@
             <table>
                 <tr>
                     <td width="30%"><a href="#" class="link">${item.name}</a></td>
-                    <td width="30%" class="font3">
+                    <td width="30%" class="font3 date">
                         <fmt:formatDate value="${item.post_time}" pattern="yyyy-MM-dd HH:mm"/>
                     </td>
                     <td width="30%" class="font5">${item.post_company.company_name}</td>
@@ -102,6 +103,8 @@
     $(function () {
         $("#login_href").attr("href", "${root}/user/toLogin.do?from=" + window.location.href);
 
+        formatDate();
+
         $("#list1 ul li").mouseover(function () {
             $(this).children(".hideDiv").show();
             $(this).children("span").css("display", "inline-block");
@@ -111,6 +114,17 @@
             $(this).children("span").hide();
         });
     });
+
+    //格式化时间
+    function formatDate() {
+        moment.locale("zh_cn");
+
+        var dates = $(".date");
+        for(var i=0;i<dates.length;i++) {
+            var dText = dates.eq(i).text();
+            dates.eq(i).text(moment(dText, "YYYY-MM-DD hh:mm").fromNow());
+        }
+    }
 
     function getClassifies() {
         $.getJSON("${root}/job/classifies.do", function (data) {

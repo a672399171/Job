@@ -220,9 +220,9 @@ public class UserDao {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("u_id", u_id);
 		map.put("status", status);
-		map.put("isNew",false);
+		map.put("isNew", false);
 
-		session.update("mapping.UserMapper.authPoor",map);
+		session.update("mapping.UserMapper.authPoor", map);
 	}
 
 	//审核公司
@@ -231,6 +231,28 @@ public class UserDao {
 		map.put("id", id);
 		map.put("audit", audit);
 
-		session.update("mapping.UserMapper.auditCompany",map);
+		session.update("mapping.UserMapper.auditCompany", map);
+	}
+
+	//查找该用户的收藏
+	public List<Collection> searchCollections(int id, int page) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("u_id", id);
+		map.put("page", page);
+		map.put("start", (page - 1) * Common.COUNT);
+		map.put("count", Common.COUNT);
+
+		List<Collection> collections = null;
+		collections = session.selectList("mapping.JobMapper.searchCollections",map);
+		return collections;
+	}
+
+	//取消收藏
+	public void deleteCollection(int u_id, int j_id) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("u_id", u_id);
+		map.put("j_id", j_id);
+
+		session.delete("mapping.JobMapper.deleteCollection",map);
 	}
 }

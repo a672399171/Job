@@ -149,4 +149,14 @@ public class UserService {
 	public void auditCompany(int id, int audit) {
 		userDao.auditCompany(id,audit);
 	}
+
+	//查找该用户的收藏
+	public List<Collection> searchCollections(int id, int page) {
+		return userDao.searchCollections(id,page);
+	}
+
+	//取消收藏
+	public void deleteCollection(int u_id, int j_id) {
+		userDao.deleteCollection(u_id,j_id);
+	}
 }
