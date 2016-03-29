@@ -98,7 +98,7 @@ public class JobController {
 			return "redirect:/user/toCompanyLogin.do";
 		}
 
-		List<Job> jobs = jobService.getAllCompanyJobs(company.getId());
+		List<Job> jobs = jobService.getCompanyJobs(company.getId(),0);
 		model.addAttribute("jobs", jobs);
 
 		return "company/job_manage";
@@ -393,9 +393,6 @@ public class JobController {
 		Job job = jobService.getJobById(id);
 		model.addAttribute("job", job);
 
-		int count = jobService.getCommentCount(id);
-		model.addAttribute("count", count);
-
 		if (user != null) {
 			collection = jobService.getCollection(user.getId(), id);
 			List<Apply> applies = jobService.getApplies(user.getId(), id);
@@ -406,9 +403,6 @@ public class JobController {
 				}
 			}
 		}
-
-		List<Job> jobs = jobService.getAllCompanyJobs(job.getPost_company().getId());
-		model.addAttribute("jobs", jobs);
 
 		model.addAttribute("collection", collection);
 		return "job_detail";
@@ -423,13 +417,16 @@ public class JobController {
 	 */
 	@RequestMapping("/getComments.do")
 	@ResponseBody
-	public JSONArray getComments(Integer page, int id) {
-		JSONArray array = new JSONArray();
+	public JSONObject getComments(Integer page, int id) {
+		JSONObject jsonObject = new JSONObject();
 		if (page == null || page <= 0) {
 			page = 1;
 		}
 
+		JSONArray array = new JSONArray();
+		int count = jobService.getCommentCount(id);
 		List<Comment> comments = jobService.getComments(id, page);
+
 		for (Comment comment : comments) {
 			JSONObject object = new JSONObject();
 			object.put("user", comment.getUser());
@@ -438,7 +435,28 @@ public class JobController {
 			object.put("content", comment.getContent());
 			array.add(object);
 		}
-		return array;
+
+		jsonObject.put("rows",array);
+		jsonObject.put("total",count);
+		return jsonObject;
+	}
+
+	@RequestMapping("/getJobsByCompany.do")
+	@ResponseBody
+	public JSONObject getJobsByCompany(Integer page, int id) {
+		JSONObject jsonObject = new JSONObject();
+		if (page == null || page <= 0) {
+			page = 1;
+		}
+
+		List<Job> jobs = jobService.getCompanyJobs(id,page);
+		JSONArray array = JSONArray.fromObject(jobs);
+
+		int count = jobService.getCompanyJobCount(id);
+
+		jsonObject.put("rows",array);
+		jsonObject.put("total",count);
+		return jsonObject;
 	}
 
 	@RequestMapping("/updateCollection.do")

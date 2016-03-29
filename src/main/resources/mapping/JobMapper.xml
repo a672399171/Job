@@ -62,11 +62,19 @@
         SELECT * FROM tb_position
     </select>
 
-    <select id="getAllCompanyJobs" resultMap="jobResultMap" parameterType="int">
+    <select id="getJobsByCompany" resultMap="jobResultMap" parameterType="hashmap">
         SELECT j.*,p.name as p_name,c.id as post_company,
         c.username,c.password,c.company_name,c.address,c.name as person_name,c.phone,c.introduce,c.type as company_type,c.scope,c.email,c.logo,c.x,c.y,c.auth
         FROM tb_job j,tb_company c,tb_position p where
-        j.type=p.id and j.post_company=c.id and post_company=#{post_company}
+        j.type=p.id and j.post_company=c.id and post_company=#{id}
+        <if test="page != 0" >
+            limit ${start},${count}
+        </if>
+    </select>
+
+    <select id="getCompanyJobCount" resultType="int" parameterType="int">
+        SELECT count(*) FROM tb_job j,tb_company c,tb_position p where
+        j.type=p.id and j.post_company=c.id and post_company=#{id}
     </select>
 
     <select id="getJobById" resultMap="jobResultMap" parameterType="int">
@@ -117,10 +125,6 @@
             limit ${start},${count}
         </if>
     </select>
-
-    <delete id="deleteCollection" parameterType="hashmap">
-        delete from tb_collection where u_id=#{u_id} and j_id=#{j_id}
-    </delete>
 
     <select id="getApplies" resultMap="applyResultMap" parameterType="hashmap">
         select * from tb_apply a,tb_user u,tb_job j where a.u_id=u.id and a.j_id=j.id and a.u_id=#{u_id}

@@ -26,8 +26,12 @@ public class JobService {
 		return jobDao.searchPositions(c_id);
 	}
 
-	public List<Job> getAllCompanyJobs(int post_company) {
-		return jobDao.getAllCompanyJobs(post_company);
+	public List<Job> getCompanyJobs(int post_company,int page) {
+		return jobDao.getJobsByCompany(post_company,page);
+	}
+
+	public int getCompanyJobCount(int id) {
+		return jobDao.getCompanyJobCount(id);
 	}
 
 	public Job getJobById(int id) {

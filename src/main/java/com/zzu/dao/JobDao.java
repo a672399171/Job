@@ -312,8 +312,8 @@ public class JobDao {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("id", id);
 		map.put("page", page);
-		map.put("start", (page - 1) * Common.COUNT);
-		map.put("count", 10);
+		map.put("start", (page - 1) * Common.SMALL_COUNT);
+		map.put("count", Common.SMALL_COUNT);
 
 		comments = session.selectList("mapping.JobMapper.getCommentsPage", map);
 		return comments;
@@ -325,9 +325,14 @@ public class JobDao {
 	 * @param company_id
 	 * @return
 	 */
-	public List<Job> getAllJobsByCompany(int company_id) {
+	public List<Job> getJobsByCompany(int company_id,int page) {
 		List<Job> jobs = null;
-		jobs = session.selectList("mapping.JobMapper.getAllJobsByCompany", company_id);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("id", company_id);
+		map.put("page", page);
+		map.put("start", (page - 1) * Common.SMALL_COUNT);
+		map.put("count", Common.SMALL_COUNT);
+		jobs = session.selectList("mapping.JobMapper.getJobsByCompany", map);
 		return jobs;
 	}
 
@@ -349,5 +354,15 @@ public class JobDao {
 		List<Major> majors = null;
 		majors = session.selectList("mapping.JobMapper.getSchoolsAndMajors");
 		return majors;
+	}
+
+	/**
+	 * 获取一个公司的职位数量
+	 * @param id
+	 * @return
+	 */
+	public int getCompanyJobCount(int id) {
+		int count = session.selectOne("mapping.JobMapper.getCompanyJobCount", id);
+		return count;
 	}
 }

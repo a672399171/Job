@@ -20,9 +20,43 @@ import java.util.Iterator;
 public class PictureUtil {
 	public static final int newWidth = 100;
 
-	public static void cutPicture(String filePath) {
+	//先裁剪再缩放
+	public static void cutPicture(String src) {
+		File file = new File(src);
+		ImageIcon ii = null;
+		try {
+			ii = new ImageIcon(file.getCanonicalPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String format = src.substring(src.lastIndexOf(".") + 1);
+
+		Image i = ii.getImage();
+
+		int iWidth = i.getWidth(null);
+		int iHeight = i.getHeight(null);
+		int x = 0, y = 0, w = 0;
+
+		if (iWidth > iHeight) {
+			y = 0;
+			x = (iWidth - iHeight) / 2;
+			w = iHeight;
+		} else {
+			x = 0;
+			y = (iHeight - iWidth) / 2;
+			w = iWidth;
+		}
+
+		//裁剪图片
+		cut(src, x, y, w, w,format);
+
 		//缩放图片
-		File file = new File(filePath);
+		zoomPicture(src);
+	}
+
+	//缩放图片
+	private static void zoomPicture(String src) {
+		File file = new File(src);
 		ImageIcon ii = null;
 		try {
 			ii = new ImageIcon(file.getCanonicalPath());
@@ -32,21 +66,7 @@ public class PictureUtil {
 		Image i = ii.getImage();
 		Image resizedImage = null;
 
-		int iWidth = i.getWidth(null);
-		int iHeight = i.getHeight(null);
-		int x = 0, y = 0;
-
-		if (iWidth < iHeight) {
-			resizedImage = i.getScaledInstance(newWidth, (newWidth * iHeight)
-					/ iWidth, Image.SCALE_SMOOTH);
-			x = 0;
-			y = ((newWidth * iHeight) / iWidth - newWidth) / 2;
-		} else {
-			resizedImage = i.getScaledInstance((newWidth * iWidth) / iHeight,
-					newWidth, Image.SCALE_SMOOTH);
-			x = ((newWidth * iWidth) / iHeight - newWidth) / 2;
-			y = 0;
-		}
+		resizedImage = i.getScaledInstance(newWidth, newWidth, Image.SCALE_SMOOTH);
 
 		// This code ensures that all the pixels in the image are loaded.
 		Image temp = new ImageIcon(resizedImage).getImage();
@@ -67,7 +87,7 @@ public class PictureUtil {
 		// Write the jpeg to a file.
 		FileOutputStream out = null;
 		try {
-			out = new FileOutputStream(filePath);
+			out = new FileOutputStream(src);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -86,16 +106,14 @@ public class PictureUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		//裁剪图片
-		cut(filePath, x, y);
 	}
 
-	private static void cut(String src, int x, int y) {
-		Iterator iterator = ImageIO.getImageReadersByFormatName("jpg");
+	private static void cut(String src, int x, int y, int w, int h,String format) {
+		Iterator iterator = ImageIO.getImageReadersByFormatName(format);
 		ImageReader reader = (ImageReader) iterator.next();
 		InputStream in = null;
 		ImageInputStream iis = null;
+		BufferedImage bi = null;
 
 		try {
 			in = new FileInputStream(src);
@@ -107,17 +125,25 @@ public class PictureUtil {
 			iis = ImageIO.createImageInputStream(in);
 			reader.setInput(iis, true);
 			ImageReadParam param = reader.getDefaultReadParam();
-			Rectangle rect = new Rectangle(x, y, newWidth, newWidth);
+			Rectangle rect = new Rectangle(x, y, w, h);
 			param.setSourceRegion(rect);
-			BufferedImage bi = null;
+
 			bi = reader.read(0, param);
-			ImageIO.write(bi, "jpg", new File(src));
+			ImageIO.write(bi, format, new File(src));
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (iis != null) {
+				try {
+					iis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
 	public static void main(String[] args) {
-		cutPicture("C:\\Users\\Administrator\\Desktop\\1.png");
+		cutPicture("C:\\Users\\Administrator\\Desktop\\1.jpg");
 	}
 }
