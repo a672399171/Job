@@ -251,13 +251,13 @@ a:hover {
 }
 
 .selectType ul li:hover {
-    background: #666;
+    background: #337ab7;
     color: white;
     border-radius: 5px;
 }
 
 .on {
-    background: #666;
+    background: #337ab7;
     color: white;
     border-radius: 5px;
 }

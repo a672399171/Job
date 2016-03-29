@@ -2,25 +2,18 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
-<html>
+<html ng-app="searchJobResult">
 <head>
     <title>搜索结果</title>
-    <link rel="stylesheet" type="text/css"
-          href="${root}/jquery-easyui-1.4.4/themes/default/easyui.css"/>
-    <link rel="stylesheet" type="text/css"
-          href="${root}/jquery-easyui-1.4.4/themes/icon.css"/>
     <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
     <script type="text/javascript"
             src="${root}/js/jquery-1.11.2.js"></script>
     <script type="text/javascript"
             src="${root}/js/jquery.fullPage.min.js"></script>
-    <script type="text/javascript"
-            src="${root}/jquery-easyui-1.4.4/jquery.easyui.min.js"></script>
-    <script type="text/javascript"
-            src="${root}/jquery-easyui-1.4.4/locale/easyui-lang-zh_CN.js"></script>
     <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
     <style type="text/css">
         .row {
             clear: both;
@@ -62,9 +55,17 @@
             text-align: center;
         }
 
+        #emptyDiv {
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 25px;
+            color: orangered;
+        }
+
     </style>
 </head>
-<body>
+<body ng-controller="JobListController">
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 
 <div class="container">
@@ -74,17 +75,11 @@
         </div>
         <div class="col-md-11">
             <ul>
-                <li id="0"
-                    <c:if test="${c_id == '0'}">class="on" </c:if>
-                >不限
+                <li ng-class="{on:params.c_id==0}" ng-click="changeCid(0)">不限</li>
+                <li ng-class="{on:item.id == params.c_id}" ng-repeat="item in classifies"
+                    ng-click="changeCid(item.id)">
+                    {{item.name}}
                 </li>
-                <c:forEach items="${requestScope.classifies}" var="item">
-                    <li
-                            <c:if test="${item.id == c_id}">
-                                class="on"
-                            </c:if>
-                            id="${item.id}">${item.name}</li>
-                </c:forEach>
             </ul>
         </div>
     </div>
@@ -94,14 +89,14 @@
         </div>
         <div class="col-md-11">
             <ul>
-                <li class="on" id="first">不限</li>
-                <li>周一</li>
-                <li>周二</li>
-                <li>周三</li>
-                <li>周四</li>
-                <li>周五</li>
-                <li>周六</li>
-                <li>周日</li>
+                <li ng-class="{on:timeArray[0]}" ng-click="changeTime(0)">不限</li>
+                <li ng-class="{on:timeArray[1]}" ng-click="changeTime(1)">周一</li>
+                <li ng-class="{on:timeArray[2]}" ng-click="changeTime(2)">周二</li>
+                <li ng-class="{on:timeArray[3]}" ng-click="changeTime(3)">周三</li>
+                <li ng-class="{on:timeArray[4]}" ng-click="changeTime(4)">周四</li>
+                <li ng-class="{on:timeArray[5]}" ng-click="changeTime(5)">周五</li>
+                <li ng-class="{on:timeArray[6]}" ng-click="changeTime(6)">周六</li>
+                <li ng-class="{on:timeArray[7]}" ng-click="changeTime(7)">周日</li>
             </ul>
         </div>
     </div>
@@ -111,174 +106,193 @@
         </div>
         <div class="col-md-11">
             <ul>
-                <li class="on" low="0" high="max">不限</li>
-                <li low="0" high="500">500以下</li>
-                <li low="500" high="1000">500-1000</li>
-                <li low="1000" high="2000">1000-2000</li>
-                <li low="2000" high="3000">2000-3000</li>
-                <li low="3000" high="4000">3000-4000</li>
-                <li low="4000" high="max">4000以上</li>
+                <li ng-class="{on:params.low==0 && params.high=='max'}" ng-click="changeSalary(0,'max')">不限</li>
+                <li ng-class="{on:params.low==0 && params.high==500}" ng-click="changeSalary(0,500)">500以下</li>
+                <li ng-class="{on:params.low==500 && params.high==1000}" ng-click="changeSalary(500,1000)">500-1000</li>
+                <li ng-class="{on:params.low==1000 && params.high==2000}" ng-click="changeSalary(1000,2000)">1000-2000
+                </li>
+                <li ng-class="{on:params.low==2000 && params.high==3000}" ng-click="changeSalary(2000,3000)">2000-3000
+                </li>
+                <li ng-class="{on:params.low==3000 && params.high==4000}" ng-click="changeSalary(3000,4000)">3000-4000
+                </li>
+                <li ng-class="{on:params.low==4000 && params.high=='max'}" ng-click="changeSalary(4000,'max')">4000以上
+                </li>
             </ul>
         </div>
     </div>
 </div>
 
 <div id="middle">
-    <c:forEach var="item" items="${requestScope.jobs}">
-        <div class="job_item">
-            <table>
-                <tr>
-                    <td width="300"><a href="#" class="link">${item.name}</a></td>
-                    <td width="200" class="font3">
-                        <fmt:formatDate value="${item.post_time}" pattern="yyyy-MM-dd"></fmt:formatDate>
-                    </td>
-                    <td width="300" class="font5">${item.post_company.company_name}</td>
-                </tr>
-                <tr>
-                    <td class="font5">应届生</td>
-                    <td class="font4">${item.low_salary}-${item.high_salary}</td>
-                    <td class="font3">民营/私企 | 101－300人</td>
-                </tr>
-            </table>
-        </div>
-    </c:forEach>
+    <div class="job_item" style="display: block" ng-repeat="item in jobs">
+        <table>
+            <tr>
+                <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
+                <td width="30%" class="font3">{{item.post_time.time | date:'yyyy-MM-dd hh:mm'}}</td>
+                <td width="30%" class="font5">{{item.post_company.company_name}}</td>
+            </tr>
+            <tr>
+                <td class="font5">{{item.type.name}}</td>
+                <td class="font4">{{item.low_salary}}-{{item.high_salary}}</td>
+                <td class="font3">{{item.post_company.scope}}</td>
+            </tr>
+        </table>
+    </div>
 </div>
-<c:choose>
-    <c:when test="${count == 0}">
-        暂无记录！
-    </c:when>
-    <c:otherwise>
-        <nav>
-            <ul class="pagination pagination-lg">
-                <li id="pre"><a href="#" aria-label="Previous">«</a></li>
-                <li id="next"><a href="#" aria-label="Next">»</a></li>
-            </ul>
-        </nav>
-    </c:otherwise>
-</c:choose>
 
-<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
+<div ng-if="jobs.length <= 0" id="emptyDiv">
+    对不起，暂无记录！
+</div>
+
+<nav style="margin: 0 auto;text-align: center" ng-if="jobs.length > 0">
+    <ul class="pagination pagination-lg">
+        <li>
+            <a href="javascript:void(0)" aria-label="Previous" ng-click="load(-1)">&laquo;</a>
+        </li>
+        <li ng-repeat="p in pageArray" ng-class="{active:isCurrentPage(p)}">
+            <a href="javascript:void(0)" ng-click="changePage(p)">{{p}}</a>
+        </li>
+        <li>
+            <a href="javascript:void(0)" aria-label="Next" ng-click="load(1)">&raquo;</a>
+        </li>
+    </ul>
+</nav>
+
+<%--<jsp:include page="/WEB-INF/jsp/footer.jsp"/>--%>
 
 <script type="application/javascript">
-    //页码
-    var currentPage = ${page};
-    //条数
-    var count = ${count};
-    //页数
-    var totalPage = ${count}/10;
-    totalPage = Math.floor(totalPage) + 1;
-    //时间
-    var time = parseInt(${time}).toString(2);
-    var timeLength = time.length;
-    if(time.length<7) {
-        for(var i=0;i<7-timeLength;i++) {
-            time = "0" + time;
-        }
-    } else {
-        time = time.substr(time.length-7);
-    }
+    var app = angular.module("searchJobResult", []);
+    app.host = "${root}";
 
-    $(function () {
-        //初始化工资选中状态
-        $("#salaryDiv li").removeClass("on");
-        for (var i = 0; i < $("#salaryDiv li").length; i++) {
-            if ($("#salaryDiv li").eq(i).attr("low") == "${low}"
-                    && $("#salaryDiv li").eq(i).attr("high") == "${high}") {
-                $("#salaryDiv li").eq(i).addClass("on");
-            }
-        }
+    app.controller("JobListController", function ($scope, $http) {
+        $scope.currentPage = 1;
+        $scope.minPage = 1;
+        $scope.maxPage = 1;
+        $scope.timeArray = [true, false, false, false, false, false, false, false];
 
-        //初始化时间选中状态
-        $("#timeDiv li").removeClass("on");
-        if (time == '1111111') {
-            $("#first").addClass("on");
-        } else {
-            for (var i = 0; i < time.length; i++) {
-                if (time.charAt(i) == '1') {
-                    $("#timeDiv li").eq(i + 1).addClass("on");
-                }
-            }
-        }
+        $scope.params = {
+            keyword:"${keyword}",
+            c_id: 0,
+            page: 1,
+            time: 127,
+            low: 0,
+            high: "max"
+        };
 
-        if (currentPage >= 3 && totalPage >= 5) {
-                for(var i = currentPage+3;i>currentPage-3;i--) {
-                    if(i == currentPage) {
-                        $("#pre").after("<li class='active'><a href='#'>" + i + "</a></li>");
+        $scope.isCurrentPage = function (p) {
+            return p == $scope.currentPage;
+        };
+
+        $scope.loadData = function () {
+            $http.get(app.host + '/job/vagueSearchJobs.do', {
+                params: $scope.params
+            }).success(function (data) {
+                $scope.jobs = data.rows;
+                $scope.pageArray = [];
+
+                $scope.maxPage = Math.ceil(data.total / 11);
+
+                if ($scope.maxPage <= 11) {
+                    for (var i = 0; i < $scope.maxPage; i++) {
+                        $scope.pageArray.push(i + 1);
+                    }
+                } else {
+                    if ($scope.currentPage > 6) {
+                        var end = $scope.maxPage > $scope.currentPage + 5 ? $scope.currentPage + 5 : $scope.maxPage;
+                        for (var i = $scope.currentPage - 5; i <= end; i++) {
+                            $scope.pageArray.push(i);
+                        }
                     } else {
-                        $("#pre").after("<li><a href='#'>" + i + "</a></li>");
+                        for (var i = 0; i < 11; i++) {
+                            $scope.pageArray.push(i + 1);
+                        }
                     }
                 }
-        } else {
-            for(var i = totalPage;i>0;i--) {
-                if(i == currentPage) {
-                    $("#pre").after("<li class='active'><a href='#'>" + i + "</a></li>");
-                } else {
-                    $("#pre").after("<li><a href='#'>" + i + "</a></li>");
-                }
-            }
-        }
-    });
 
-    $("#timeDiv li").click(function (e) {
-        if ($(e.target)[0].id == "first") {
-            $("#timeDiv li").removeClass("on");
-            $(this).addClass("on");
-        } else {
-            if ($("#first").hasClass("on")) {
-                $("#first").removeClass("on");
-            }
-            if ($(this).attr("flag") == undefined) {
-                $(this).attr("flag", false);
-            }
-            if ($(this).attr("flag") == "false") {
-                $(this).addClass("on");
-                $(this).attr("flag", true);
+                $scope.currentPage = $scope.params.page;
+            });
+        };
+
+        //加载类型信息
+        $scope.loadClassifies = function () {
+            $http.get(app.host + '/job/classifyList.do', {
+                params: $scope.params
+            }).success(function (data) {
+                $scope.classifies = data;
+            });
+        };
+
+        //改变参数中的p_id
+        $scope.changeCid = function (c_id) {
+            $scope.params.c_id = c_id;
+            $scope.loadData();
+        };
+
+        //改变参数中的salary
+        $scope.changeSalary = function (low, high) {
+            $scope.params.low = low;
+            $scope.params.high = high;
+            $scope.loadData();
+        };
+
+        //改变参数中的page
+        $scope.changePage = function (page) {
+            $scope.params.page = page;
+            $scope.loadData();
+        };
+
+        //改变参数中的时间
+        $scope.changeTime = function (p) {
+            if (p == 0) {
+                $scope.resetTime();
             } else {
-                $(this).removeClass("on");
-                $(this).attr("flag", false);
-            }
-        }
-        loadData();
-    });
-    $("#salaryDiv li").click(function () {
-        $("#salaryDiv li").removeClass("on");
-        $(this).addClass("on");
-        loadData();
-    });
-
-    $("#positionDiv li").click(function () {
-        $("#positionDiv li").removeClass("on");
-        $(this).addClass("on");
-        loadData();
-    });
-
-    //加载数据，刷新页面
-    function loadData() {
-        var url = "${root}/job/vague_search_job.do?keyword=${keyword}";
-        var c_id = $("#positionDiv .on").eq(0).attr("id");
-
-        var low = $("#salaryDiv .on").attr("low");
-        var high = $("#salaryDiv .on").attr("high");
-
-        url += "&c_id=" + c_id + "&time=" + getWorkTime() + "&low=" + low + "&high=" + high;
-        window.location = url;
-    }
-
-    //获取工作时间
-    function getWorkTime() {
-        var temp = 0;
-        if ($("#first").hasClass("on")) {
-            temp = 127;
-        } else {
-            for (var i = 1; i < $("#timeDiv li").length; i++) {
-                if ($("#timeDiv li").eq(i).hasClass("on")) {
-                    temp += Math.pow(2,7-i);
+                $scope.timeArray[0] = false;
+                $scope.timeArray[p] = !$scope.timeArray[p];
+                var flag = true;
+                for (var i = 1; i < $scope.timeArray.length; i++) {
+                    if (!$scope.timeArray[i]) {
+                        flag = false;
+                    }
+                }
+                if (flag) {
+                    $scope.resetTime();
                 }
             }
-        }
-        return temp;
-    }
+
+            var num = 0;
+            if ($scope.timeArray[0]) {
+                num = 127;
+            } else {
+                for (var i = 1; i < $scope.timeArray.length; i++) {
+                    if ($scope.timeArray[i]) {
+                        num += Math.pow(2, 7 - i);
+                    }
+                }
+            }
+            $scope.params.time = num;
+            $scope.loadData();
+        };
+
+        $scope.resetTime = function () {
+            for (var i = 0; i < $scope.timeArray.length; i++) {
+                $scope.timeArray[i] = false;
+            }
+            $scope.timeArray[0] = true;
+        };
+
+        $scope.load = function (temp) {
+            if ((temp < 0 && $scope.currentPage <= $scope.minPage) ||
+                    ($scope.currentPage >= $scope.maxPage && temp > 0)) {
+            } else {
+                $scope.changePage($scope.params.page + temp);
+            }
+        };
+
+        //初始化加载类型信息
+        $scope.loadClassifies();
+
+        //初始加载职位列表
+        $scope.loadData();
+    });
 </script>
 </body>
 </html>
-

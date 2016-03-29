@@ -24,10 +24,11 @@
             <li>
                 <a href="javascript:void(0)">${item.name}</a>
                 <span></span>
+
                 <div class='hideDiv'>
                     <p class='alink'>
                         <c:forEach items="${item.positions}" var="position">
-                            <a href='${root}/job/job_list.do?c_id=${item.id}&p_id=${position.id}&page=1&time=127&low=0&high=max'>${position.name}</a>
+                            <a href='javascript:void(0)' onclick="toJobList(${item.id},${position.id},1,127,0,'max')">${position.name}</a>
                         </c:forEach>
                     </p>
                 </div>
@@ -120,7 +121,7 @@
         moment.locale("zh_cn");
 
         var dates = $(".date");
-        for(var i=0;i<dates.length;i++) {
+        for (var i = 0; i < dates.length; i++) {
             var dText = dates.eq(i).text();
             dates.eq(i).text(moment(dText, "YYYY-MM-DD hh:mm").fromNow());
         }
@@ -160,6 +161,36 @@
         $.post("${root}/user/quit.do", function (data) {
             window.location = "${root}";
         });
+    }
+
+    //post方法
+    function post(URL, PARAMS) {
+        var temp = document.createElement("form");
+        temp.action = URL;
+        temp.method = "post";
+        temp.style.display = "none";
+        for (var x in PARAMS) {
+            var opt = document.createElement("textarea");
+            opt.name = x;
+            opt.value = PARAMS[x];
+            temp.appendChild(opt);
+        }
+        document.body.appendChild(temp);
+        temp.submit();
+        return temp;
+    }
+
+    //转到职位列表页面
+    function toJobList(c_id, p_id, page, time, low, high) {
+        var param = {
+            c_id: c_id,
+            p_id: p_id,
+            page: page,
+            time: time,
+            low: low,
+            high: high
+        };
+        post("${root}/job/job_list.do", param);
     }
 
     $(".job_item").click(function () {

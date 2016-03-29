@@ -47,7 +47,7 @@ public class JobController {
 		List<Position> positions = jobService.searchPositions(0);
 
 		List<Job> jobs = jobService.getRecentJobs(5);
-		model.addAttribute("recentJobs",jobs);
+		model.addAttribute("recentJobs", jobs);
 
 		for (Classify classify : classifies) {
 			object = JSONObject.fromObject(classify);
@@ -98,7 +98,7 @@ public class JobController {
 			return "redirect:/user/toCompanyLogin.do";
 		}
 
-		List<Job> jobs = jobService.getCompanyJobs(company.getId(),0);
+		List<Job> jobs = jobService.getCompanyJobs(company.getId(), 0);
 		model.addAttribute("jobs", jobs);
 
 		return "company/job_manage";
@@ -184,102 +184,116 @@ public class JobController {
 	 *
 	 * @param c_id
 	 * @param p_id
-	 * @param time
-	 * @param low
-	 * @param high
-	 * @param page
 	 * @param model
 	 * @return
 	 */
 	@RequestMapping("/job_list.do")
-	public String jobList(int c_id, int p_id, Integer time, String low, String high,
-	                      Integer page, Model model) {
-		if (page == null) {
-			page = 1;
-		}
-		if (time > 127) {
-			time = 127;
-		} else if (time < 0) {
-			time = 0;
-		}
-		int l = getSalaryNumber(low);
-		int h = getSalaryNumber(high);
-		if (l <= 0) {
-			low = "0";
-		}
-		if (h == -1) {
-			high = "max";
-		}
-		List<Position> positions = jobService.searchPositions(c_id);
-		model.addAttribute("positions", positions);
+	public String jobList(int c_id, int p_id, Model model) {
 		model.addAttribute("p_id", p_id);
 		model.addAttribute("c_id", c_id);
-		model.addAttribute("time", time);
-		model.addAttribute("low", low);
-		model.addAttribute("high", high);
-		model.addAttribute("page", page);
-
-		int[] p_ids = null;
-		if (p_id != 0) {
-			p_ids = new int[]{p_id};
-		}
-
-		List<Job> jobs = jobService.searchJobs(p_ids, time, l, h, page);
-		model.addAttribute("jobs", jobs);
-
-		int count = jobService.getJobCount(p_ids, time, l, h);
-		model.addAttribute("count", count);
 
 		return "job_list";
 	}
 
 	/**
-	 * 模糊搜索职位
+	 * 返回一个大类下的所有小类
 	 *
+	 * @param c_id
+	 * @return
+	 */
+	@RequestMapping("/positions.do")
+	@ResponseBody
+	public JSONArray getPositions(int c_id) {
+		List<Position> positions = jobService.searchPositions(c_id);
+		JSONArray array = JSONArray.fromObject(positions);
+		return array;
+	}
+
+	@RequestMapping("/searchJobs.do")
+	@ResponseBody
+	public JSONObject searchJobs(int p_id, Integer time, String low, String high, Integer page) {
+		JSONObject object = new JSONObject();
+
+		int l = getSalaryNumber(low);
+		int h = getSalaryNumber(high);
+
+		if (time == null || time <= 0 || time >= 127) {
+			time = 127;
+		}
+
+		int[] p_ids = null;
+		if (p_id != 0) {
+			p_ids = new int[]{p_id};
+		}
+		List<Job> jobs = jobService.searchJobs(p_ids, time, l, h, page);
+		int count = jobService.getJobCount(p_ids, time, l, h);
+
+		object.put("rows", jobs);
+		object.put("total", count);
+
+		return object;
+	}
+
+	/**
+	 * 返回所有大类
+	 * @return
+	 */
+	@RequestMapping("/classifyList.do")
+	@ResponseBody
+	public JSONArray getClassifyList() {
+		List<Classify> classifies = jobService.getAllClassifies();
+		JSONArray array = JSONArray.fromObject(classifies);
+		return array;
+	}
+
+	/**
+	 * 模糊搜索工作
 	 * @param keyword
 	 * @param page
 	 * @param c_id
 	 * @param time
 	 * @param low
 	 * @param high
+	 * @return
+	 */
+	@RequestMapping("/vagueSearchJobs.do")
+	@ResponseBody
+	public JSONObject searchJobs(String keyword, Integer page, Integer c_id, Integer time, String low, String high) {
+		JSONObject object = new JSONObject();
+		if (page == null || page <= 0) {
+			page = 1;
+		}
+
+		int l = getSalaryNumber(low);
+		int h = getSalaryNumber(high);
+
+		if (c_id == null || c_id <= 0) {
+			c_id = 0;
+		}
+
+		if (time == null || time <= 0 || time >= 127) {
+			time = 127;
+		}
+
+		List<Job> jobs = jobService.searchJobs(keyword, page, l, h, time, c_id);
+		int count = jobService.getJobCount(keyword, l, h, time, c_id);
+
+		object.put("rows", jobs);
+		object.put("total", count);
+
+		return object;
+	}
+
+	/**
+	 * 模糊搜索职位
+	 *
+	 * @param keyword
 	 * @param model
 	 * @return
 	 */
 	@RequestMapping("/vague_search_job.do")
-	public String searchJobs(String keyword, Integer page, Integer c_id, Integer time, String low, String high, Model model) {
-		if (page == null || page <= 0) {
-			page = 1;
-		}
-		if (c_id == null || c_id <= 0) {
-			c_id = 0;
-		}
-		if (time == null || time <= 0 || time >= 127) {
-			time = 127;
-		}
-		int l = getSalaryNumber(low);
-		int h = getSalaryNumber(high);
-		if (l <= 0) {
-			low = "0";
-		}
-		if (h == -1) {
-			high = "max";
-		}
-
-		model.addAttribute("time", time);
-		model.addAttribute("c_id", c_id);
-		model.addAttribute("page", page);
+	public String searchJobs(String keyword, Model model) {
 		model.addAttribute("keyword", keyword);
-		model.addAttribute("low", low);
-		model.addAttribute("high", high);
-
-		List<Classify> classifies = jobService.getAllClassifies();
-		model.addAttribute("classifies", classifies);
-
-		List<Job> jobs = jobService.searchJobs(keyword, page, l, h, time, c_id);
-		model.addAttribute("jobs", jobs);
-
-		int count = jobService.getJobCount(keyword, l, h, time, c_id);
-		model.addAttribute("count", count);
 
 		return "vague_search_job";
 	}
@@ -436,8 +450,8 @@ public class JobController {
 			array.add(object);
 		}
 
-		jsonObject.put("rows",array);
-		jsonObject.put("total",count);
+		jsonObject.put("rows", array);
+		jsonObject.put("total", count);
 		return jsonObject;
 	}
 
@@ -449,13 +463,13 @@ public class JobController {
 			page = 1;
 		}
 
-		List<Job> jobs = jobService.getCompanyJobs(id,page);
+		List<Job> jobs = jobService.getCompanyJobs(id, page);
 		JSONArray array = JSONArray.fromObject(jobs);
 
 		int count = jobService.getCompanyJobCount(id);
 
-		jsonObject.put("rows",array);
-		jsonObject.put("total",count);
+		jsonObject.put("rows", array);
+		jsonObject.put("total", count);
 		return jsonObject;
 	}
 
@@ -712,7 +726,7 @@ public class JobController {
 		Resume resume = jobService.getResumeById(id);
 		List<Position> positions = new ArrayList<Position>();
 		String[] types = null;
-		if(types != null) {
+		if (types != null) {
 			types = resume.getJob_type().split("#");
 			for (String type : types) {
 				if (StringUtil.isNumber(type)) {
@@ -759,6 +773,7 @@ public class JobController {
 
 	/**
 	 * 新建简历
+	 *
 	 * @param major_id
 	 * @param birth
 	 * @param resume

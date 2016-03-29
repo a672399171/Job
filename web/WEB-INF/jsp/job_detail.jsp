@@ -22,7 +22,13 @@
     <script src="${root}/js/dateformat.js"></script>
     <script src="${root}/js/moment-with-locales.js"></script>
     <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
-    <%--<script src="${root}/js/controllers/jobDetail.js"></script>--%>
+    <script type="application/javascript">
+        var app = angular.module("jobDetail", []);
+        app.host = "${root}";
+        app.job_id = ${requestScope.job.id};
+        app.company_id = ${requestScope.job.post_company.id};
+    </script>
+    <script src="${root}/js/controllers/jobDetail.js"></script>
 </head>
 <body>
 <jsp:include page="header.jsp"></jsp:include>
@@ -117,7 +123,8 @@
     <div class="allJobs" ng-controller="CompanyJobController">
         <h4>该公司所有职位</h4>
 
-        <div class="job_item" style="display: block" ng-repeat="item in jobs">
+        <div class="job_item" style="display: block" ng-repeat="item in jobs"
+             ng-click="toUrl(item.id)">
             <table>
                 <tr>
                     <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
@@ -275,127 +282,6 @@
                 }
             }, "JSON");
         }
-    });
-
-    /////////////////////////////////////////// angularjs //////////////////////////////////////////////////
-
-    var app = angular.module("jobDetail", []);
-
-    app.controller("CommentController", function ($scope, $http) {
-        $scope.currentPage = 1;
-        $scope.minPage = 1;
-        $scope.maxPage = 1;
-
-        $scope.params = {
-            page: 1,
-            id:${requestScope.job.id}
-        };
-
-        $scope.isCurrentPage = function (p) {
-            return p == $scope.currentPage;
-        };
-
-        $scope.loadData = function (page) {
-            $scope.params.page = page;
-
-            $http.get('${root}/job/getComments.do', {
-                params: $scope.params
-            }).success(function (data) {
-                $scope.comments = data.rows;
-                $scope.pageArray = [];
-
-                $scope.maxPage = Math.ceil(data.total / 5);
-
-                if ($scope.maxPage <= 5) {
-                    for (var i = 0; i < $scope.maxPage; i++) {
-                        $scope.pageArray.push(i + 1);
-                    }
-                } else {
-                    if ($scope.currentPage > 3) {
-                        var end = $scope.maxPage > $scope.currentPage + 2 ? $scope.currentPage + 2 : $scope.maxPage;
-                        for (var i = $scope.currentPage - 2; i <= end; i++) {
-                            $scope.pageArray.push(i);
-                        }
-                    } else {
-                        for (var i = 0; i < 5; i++) {
-                            $scope.pageArray.push(i + 1);
-                        }
-                    }
-                }
-
-                $scope.currentPage = page;
-            });
-        };
-
-        $scope.load = function (temp) {
-            if ((temp < 0 && $scope.currentPage <= $scope.minPage) ||
-                    ($scope.currentPage >= $scope.maxPage && temp > 0)) {
-                return;
-            } else {
-                $scope.loadData($scope.currentPage + temp);
-            }
-        };
-
-        //初始化加载第一页评论
-        $scope.loadData(1);
-    });
-
-    app.controller("CompanyJobController", function ($scope, $http) {
-        $scope.currentPage = 1;
-        $scope.minPage = 1;
-        $scope.maxPage = 1;
-
-        $scope.params = {
-            page: 1,
-            id:${requestScope.job.post_company.id}
-        };
-
-        $scope.isCurrentPage = function (p) {
-            return p == $scope.currentPage;
-        };
-
-        $scope.loadData = function (page) {
-            $scope.params.page = page;
-
-            $http.get('${root}/job/getJobsByCompany.do', {
-                params: $scope.params
-            }).success(function (data) {
-                $scope.jobs = data.rows;
-                $scope.pageArray = [];
-
-                $scope.maxPage = Math.ceil(data.total / 5);
-
-                if ($scope.maxPage <= 5) {
-                    for (var i = 0; i < $scope.maxPage; i++) {
-                        $scope.pageArray.push(i + 1);
-                    }
-                } else {
-                    if ($scope.currentPage > 3) {
-                        var end = $scope.maxPage > $scope.currentPage + 2 ? $scope.currentPage + 2 : $scope.maxPage;
-                        for (var i = $scope.currentPage - 2; i <= end; i++) {
-                            $scope.pageArray.push(i);
-                        }
-                    } else {
-                        for (var i = 0; i < 5; i++) {
-                            $scope.pageArray.push(i + 1);
-                        }
-                    }
-                }
-
-                $scope.currentPage = page;
-            });
-        };
-
-        $scope.load = function (temp) {
-            if ((temp < 0 && $scope.currentPage <= $scope.minPage) ||
-                    ($scope.currentPage >= $scope.maxPage && temp > 0)) {
-                return;
-            } else {
-                $scope.loadData($scope.currentPage + temp);
-            }
-        };
-
-        $scope.loadData(1);
     });
 </script>
 </body>
