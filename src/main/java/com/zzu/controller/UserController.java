@@ -349,7 +349,7 @@ public class UserController {
 	 */
 	@RequestMapping("/saveOrUpdateResume.do")
 	public String saveOrUpdateResume(@Valid @ModelAttribute("resume") Resume resume, BindingResult result,
-	                                 String birthday,int major_id, HttpSession session) {
+	                                 String birthday, int major_id, HttpSession session) {
 		User user = (User) session.getAttribute(Common.USER);
 		if (user == null) {
 			return "login";
@@ -442,20 +442,21 @@ public class UserController {
 	 * @return
 	 */
 	@RequestMapping("/collection.do")
-	public String collection(HttpSession session,Model model) {
+	public String collection(HttpSession session, Model model) {
 		User user = (User) session.getAttribute(Common.USER);
 		if (user == null) {
 			return "login";
 		}
 
-		List<Collection> collections = userService.searchCollections(user.getId(),1);
-		model.addAttribute("collections",collections);
+		List<Collection> collections = userService.searchCollections(user.getId(), 1);
+		model.addAttribute("collections", collections);
 
 		return "collection";
 	}
 
 	/**
 	 * 取消收藏
+	 *
 	 * @param session
 	 * @param u_id
 	 * @param j_id
@@ -463,14 +464,14 @@ public class UserController {
 	 */
 	@RequestMapping("/cancelCollection.do")
 	@ResponseBody
-	public JSONObject cancelCollection(HttpSession session,int u_id,int j_id) {
+	public JSONObject cancelCollection(HttpSession session, int u_id, int j_id) {
 		JSONObject object = new JSONObject();
-		object.put("success",true);
+		object.put("success", true);
 		User user = (User) session.getAttribute(Common.USER);
 		if (user == null) {
-			object.put("success",false);
+			object.put("success", false);
 		} else {
-			userService.deleteCollection(u_id,j_id);
+			userService.deleteCollection(u_id, j_id);
 		}
 
 		return object;
@@ -600,22 +601,46 @@ public class UserController {
 		return "redirect:poor.do";
 	}
 
+	/**
+	 * 管理员登录
+	 * @param username
+	 * @param password
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/admin/login.do")
-	public String adminLogin(String username, String password, HttpSession session) {
+	@ResponseBody
+	public JSONObject adminLogin(String username, String password, HttpSession session) {
+		JSONObject object = new JSONObject();
 		if (session.getAttribute(Common.ADMIN) != null) {
-			return "admin/index";
-		}
-
-		password = StringUtil.toMd5(password);
-		Admin admin = userService.adminLogin(username, password);
-		if (admin != null) {
-			session.removeAttribute(Common.ERROR);
-			session.setAttribute(Common.ADMIN, admin);
-			return "admin/index";
+			object.put("success", true);
+		} else if (StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
+			object.put(Common.ERROR, "用户名或密码错误!");
 		} else {
-			session.setAttribute(Common.ERROR, "用户名或密码错误!");
-			return "redirect:/admin/login.jsp";
+			password = StringUtil.toMd5(password);
+			Admin admin = userService.adminLogin(username, password);
+
+			if (admin != null) {
+				session.setAttribute(Common.ADMIN, admin);
+				object.put("success", true);
+			} else {
+				object.put(Common.ERROR, "用户名或密码错误!");
+			}
 		}
+		return object;
+	}
+
+	/**
+	 * 管理员退出
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/admin/logout.do")
+	@ResponseBody
+	public JSONObject adminLogout(HttpSession session) {
+		JSONObject object = new JSONObject();
+		session.removeAttribute(Common.ADMIN);
+		return object;
 	}
 
 	@RequestMapping("modifyCompanyPassword")
@@ -781,12 +806,12 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/admin/companies/list/{page}", method = RequestMethod.GET)
 	@ResponseBody
-	public JSONObject searchCompanies(@PathVariable("page") Integer page,Boolean audit) {
+	public JSONObject searchCompanies(@PathVariable("page") Integer page, Boolean audit) {
 		JSONObject object = new JSONObject();
-		if(audit == null) {
+		if (audit == null) {
 			audit = false;
 		}
-		List<Company> companies = userService.searchCompanies(page,audit);
+		List<Company> companies = userService.searchCompanies(page, audit);
 		object.put("total", companies.size());
 		object.put("rows", companies);
 		return object;
@@ -810,6 +835,7 @@ public class UserController {
 
 	/**
 	 * 更新公司信息
+	 *
 	 * @param id
 	 * @param company
 	 * @param result
@@ -835,6 +861,7 @@ public class UserController {
 
 	/**
 	 * 创建公司
+	 *
 	 * @param company
 	 * @param result
 	 * @return
@@ -860,6 +887,7 @@ public class UserController {
 
 	/**
 	 * 删除公司
+	 *
 	 * @param ids
 	 * @return
 	 */
@@ -879,6 +907,7 @@ public class UserController {
 
 	/**
 	 * 查询所有贫困信息
+	 *
 	 * @param page
 	 * @return
 	 */
@@ -894,6 +923,7 @@ public class UserController {
 
 	/**
 	 * 根据id返回贫困生信息
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -909,36 +939,39 @@ public class UserController {
 
 	/**
 	 * 认证贫困生
+	 *
 	 * @param u_id
 	 * @param status
 	 * @return
 	 */
 	@RequestMapping(value = "/admin/auth.do", method = RequestMethod.POST)
 	@ResponseBody
-	public JSONObject authPoor(int u_id,int status) {
+	public JSONObject authPoor(int u_id, int status) {
 		JSONObject object = new JSONObject();
-		userService.authPoor(u_id,status);
+		userService.authPoor(u_id, status);
 
 		return object;
 	}
 
 	/**
 	 * 审核公司信息
+	 *
 	 * @param id
 	 * @param audit
 	 * @return
 	 */
 	@RequestMapping(value = "/admin/audit.do", method = RequestMethod.POST)
 	@ResponseBody
-	public JSONObject auditCompany(int id,int audit) {
+	public JSONObject auditCompany(int id, int audit) {
 		JSONObject object = new JSONObject();
-		userService.auditCompany(id,audit);
+		userService.auditCompany(id, audit);
 
 		return object;
 	}
 
 	/**
 	 * 修改或增加贫困生信息
+	 *
 	 * @param major_id
 	 * @param poor
 	 * @param result

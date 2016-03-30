@@ -65,7 +65,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <a href="#" onclick="openDlg()">修改密码</a>
+            <button class="btn btn-danger" onclick="openDlg()" style="margin: 10px;margin-left: 30px">修改密码</button>
         </div>
     </div>
     <div class="row">

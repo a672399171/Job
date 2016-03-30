@@ -692,7 +692,9 @@ public class JobController {
 		JSONObject object = new JSONObject();
 		List<Job> jobs = jobService.searchJobs(null, 127, 0, -1, page);
 
-		object.put("total", jobs.size());
+		int count = jobService.getJobCount(null,127,0,-1);
+
+		object.put("total", count);
 		object.put("rows", jobs);
 		return object;
 	}

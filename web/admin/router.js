@@ -4,7 +4,8 @@
 'use strict';
 
 app.run(
-    function ($rootScope, $state, $stateParams) {
+    function ($rootScope, $state, $stateParams, $localStorage, $http) {
+        $http.defaults.headers.common['Authorization'] = 'Basic ' + $localStorage.auth;
         $rootScope.$state = $state;
         $rootScope.$stateParams = $stateParams;
     }
@@ -63,8 +64,27 @@ app.run(
         }];
 
         $urlRouterProvider
-            .otherwise('/app/dashboard');
+            .otherwise('/auth/loading');
         $stateProvider
+            .state('auth', {
+                abstract: true,
+                url: '/auth',
+                template: '<div ui-view class="fade-in"></div>',
+                resolve: {
+                    deps: ['$ocLazyLoad',
+                        function ($ocLazyLoad) {
+                            return $ocLazyLoad.load('auth/ctrl.js');
+                        }]
+                }
+            })
+            .state('auth.loading', {
+                url: '/loading',
+                templateUrl: 'auth/loading.html'
+            })
+            .state('auth.login', {
+                url: '/login',
+                templateUrl: 'auth/login.html'
+            })
             .state('app', {
                 abstract: true,
                 url: '/app',

@@ -13,17 +13,32 @@ app.controller('JobListController', function ($scope, $resource, $stateParams, $
         } else {
             page = parseInt(page);
         }
-        $com.get({page: page}, function (data) {
+        $com.get({page: page,filter:filter}, function (data) {
             //扩展分页数据，显示页签，最终效果为  < 1 2 3 4 5 >
-            data.page_index = page;
-            data.pages = [];    //页签表
+            $scope.page_index = page;
+            $scope.pages = [];    //页签表
             var N = 5;          //每次显示5个页签
-            var s = Math.floor(page / N) * N;
-            if (s == page)s -= N;
-            s += 1;
-            var e = Math.min(data.page_count, s + N - 1)
-            for (var i = s; i <= e; i++)
-                data.pages.push(i)
+
+            $scope.pages = [];
+            $scope.maxPage = Math.ceil(data.total / 10);
+
+            if ($scope.maxPage <= N) {
+                for (var i = 0; i < $scope.maxPage; i++) {
+                    $scope.pages.push(i + 1);
+                }
+            } else {
+                if ($scope.page_index > Math.ceil(N / 2)) {
+                    var end = $scope.maxPage > $scope.page_index + Math.floor(N / 2) ? $scope.page_index + Math.floor(N / 2) : $scope.maxPage;
+                    for (var i = $scope.page_index - Math.floor(N / 2); i <= end; i++) {
+                        $scope.pages.push(i);
+                    }
+                } else {
+                    for (var i = 0; i < N; i++) {
+                        $scope.pages.push(i + 1);
+                    }
+                }
+            }
+
             $scope.data = data;
             $scope.search_context = filter;
         });
@@ -237,7 +252,7 @@ app.controller('JobDetailController', function ($rootScope, $scope, $resource, $
         });
     };
     //显示公司div
-    $scope.showCompanyDiv = function() {
+    $scope.showCompanyDiv = function () {
         $("#companyDiv").show();
         $(".mask").show();
 

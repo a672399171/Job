@@ -4,11 +4,19 @@
 
 angular.module('app')
     .controller('AppCtrl', ['$scope', '$translate', '$localStorage', '$window',
-        function ($scope, $translate, $localStorage, $window) {
+        function ($scope, $translate, $localStorage, $window,$http) {
             // add 'ie' classes to html
             var isIE = !!navigator.userAgent.match(/MSIE/i);
             isIE && angular.element($window.document.body).addClass('ie');
             isSmartDevice($window) && angular.element($window.document.body).addClass('smart');
+
+            //退出
+            $scope.logout = function() {
+                $http.post($scope.app.host + "/user/admin/logout.do")
+                    .then(function (response) {
+                        $state.go('auth.login');
+                    });
+            };
 
             // config
             $scope.app = {
@@ -37,7 +45,7 @@ angular.module('app')
                     asideDock: false,
                     container: false
                 }
-            }
+            };
 
             // save settings to local storage
             if (angular.isDefined($localStorage.settings)) {
