@@ -227,7 +227,9 @@
 <script type="application/javascript">
     //页面加载完后获取当前位置
     $(function () {
-        //getLocation();
+        $("#hrefUl li a").removeClass("activeTitle");
+        $("#account_setting a").addClass("activeTitle");
+
         var x = ${company.x};
         var y = ${company.y};
         if(x != 0 && y != 0) {

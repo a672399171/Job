@@ -110,8 +110,84 @@ public class JobController {
 	 * @return
 	 */
 	@RequestMapping("/resume_manage.do")
-	public String resumeManage() {
+	public String resumeManage(HttpSession session, Model model) {
+		Company company = (Company) session.getAttribute(Common.COMPANY);
+		if (company == null) {
+			return "redirect:/user/toCompanyLogin.do";
+		}
+
 		return "company/resume_manage";
+	}
+
+	/**
+	 * 获取投递该公司的简历
+	 *
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/resumeOfCompany.do")
+	@ResponseBody
+	public JSONObject resumeOfCompany(HttpSession session) {
+		JSONObject object = new JSONObject();
+		Company company = (Company) session.getAttribute(Common.COMPANY);
+		if (company == null) {
+			object.put("error", "未登录");
+			return object;
+		}
+
+		List<Apply> applies = jobService.getAppliesByCompany(company.getId(), 1);
+		int count = jobService.getCompanyApplyCount(company.getId());
+
+		JSONArray array = new JSONArray();
+		for (Apply apply : applies) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("state", apply.getState());
+
+			JSONObject resume = new JSONObject();
+			resume.put("id", apply.getResume().getId());
+			resume.put("grade", apply.getResume().getGrade());
+			resume.put("name", apply.getResume().getName());
+
+			JSONObject job = new JSONObject();
+			job.put("id", apply.getJob().getId());
+			job.put("name", apply.getJob().getName());
+
+			jsonObject.put("resume", resume);
+			jsonObject.put("job", job);
+
+			array.add(jsonObject);
+		}
+		object.put("rows", array);
+		object.put("total", count);
+
+		return object;
+	}
+
+	/**
+	 * 更新简历投递状态
+	 *
+	 * @param j_id
+	 * @param r_id
+	 * @param state
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/updateApply.do")
+	@ResponseBody
+	public JSONObject updateApply(int j_id, int r_id, int state, HttpSession session) {
+		JSONObject object = new JSONObject();
+		Company company = (Company) session.getAttribute(Common.COMPANY);
+		if (company == null) {
+			object.put("error", "未登录");
+		} else {
+			if (state != Common.APPLYING && state != Common.APPLYFILED &&
+					state != Common.APPLYSUCCESS) {
+				object.put("error", "未登录");
+			} else {
+				jobService.updateApply(j_id, r_id, state);
+			}
+		}
+		return object;
 	}
 
 	/**
@@ -122,8 +198,7 @@ public class JobController {
 	 */
 	@RequestMapping("/search_resume.do")
 	public String toSearchResume(Model model) {
-		List<School> schools = jobService.getSchools();
-		model.addAttribute("schools", schools);
+
 		return "company/search_resume";
 	}
 
@@ -236,6 +311,7 @@ public class JobController {
 
 	/**
 	 * 返回所有大类
+	 *
 	 * @return
 	 */
 	@RequestMapping("/classifyList.do")
@@ -248,6 +324,7 @@ public class JobController {
 
 	/**
 	 * 模糊搜索工作
+	 *
 	 * @param keyword
 	 * @param page
 	 * @param c_id
@@ -325,20 +402,24 @@ public class JobController {
 	 * 查找简历
 	 *
 	 * @param grade
-	 * @param spare_time
+	 * @param time
 	 * @param salary
 	 * @param school
 	 * @return
 	 */
 	@RequestMapping("/searchResume.do")
 	@ResponseBody
-	public JSONObject searchResume(int grade, Integer spare_time, String salary, int school) {
-		if (spare_time > 127 || spare_time <= 0) {
-			spare_time = 127;
+	public JSONObject searchResume(int grade, Integer time, String salary, int school,int page) {
+		if (time > 127 || time <= 0) {
+			time = 127;
 		}
+
 		JSONObject object = new JSONObject();
-		List<Resume> resumes = jobService.searchResume(grade, spare_time, salary, school, 0);
-		object.put("resumes", resumes);
+		List<Resume> resumes = jobService.searchResume(grade, time, salary, school, page);
+		int count = jobService.getResumeCount(grade, time, salary, school);
+
+		object.put("rows", resumes);
+		object.put("total",count);
 
 		return object;
 	}
@@ -372,6 +453,16 @@ public class JobController {
 		}
 
 		//jobService.addMajors(list);
+		return object;
+	}
+
+	@RequestMapping("/changeJobStatus.do")
+	@ResponseBody
+	public JSONObject changeJobStatus(int j_id, int status) {
+		JSONObject object = new JSONObject();
+
+		jobService.changeJobStatus(j_id, status);
+
 		return object;
 	}
 
@@ -500,10 +591,12 @@ public class JobController {
 			return map;
 		}
 
+		Resume resume = jobService.getResumeById(user.getId());
+
 		Job job = new Job();
 		job.setId(j_id);
 		Apply apply = new Apply();
-		apply.setUser(user);
+		apply.setResume(resume);
 		apply.setJob(job);
 		apply.setState(Common.APPLYING);
 

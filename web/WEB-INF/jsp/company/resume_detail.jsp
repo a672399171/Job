@@ -91,12 +91,11 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">工作时间</label>
+                    <label class="col-sm-2 control-label">空余时间</label>
 
                     <div class="col-sm-10">
                         <table id="table">
                             <tr>
-                                <td></td>
                                 <td>星期一</td>
                                 <td>星期二</td>
                                 <td>星期三</td>
@@ -105,18 +104,7 @@
                                 <td>星期六</td>
                                 <td>星期日</td>
                             </tr>
-                            <tr id="am">
-                                <td>上午</td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                            </tr>
-                            <tr id="pm">
-                                <td>下午</td>
+                            <tr id="week">
                                 <td><input type="checkbox"/></td>
                                 <td><input type="checkbox"/></td>
                                 <td><input type="checkbox"/></td>
@@ -137,15 +125,12 @@
     $(function() {
         var spareStr = "${requestScope.resume.spare_time}";
 
-        var am = $("#am td :checkbox");
-        var pm = $("#pm td :checkbox");
+        var week = $("#week td :checkbox");
 
         for (var i = 0; i < spareStr.length; i++) {
             var c = spareStr.charAt(i);
             if (i < 7) {
-                am.eq(i).attr("checked", c == '1');
-            } else {
-                pm.eq(i - 7).attr("checked", c == '1');
+                week.eq(i).attr("checked", c == '1');
             }
         }
         $(":checkbox").attr("disabled","disabled");

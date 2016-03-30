@@ -5,6 +5,7 @@
     #hrefUl {
         list-style-type: none;
     }
+
     #hrefUl li {
         float: left;
         font-size: 20px;
@@ -19,10 +20,10 @@
         </div>
         <div class="col-md-6">
             <ul id="hrefUl">
-                <li><a href="${root}/job/job_manage.do">职位管理</a></li>
-                <li><a href="${root}/job/resume_manage.do">简历管理</a></li>
-                <li><a href="${root}/job/search_resume.do">搜索简历</a></li>
-                <li><a href="${root}/job/account_setting.do">账号设置</a></li>
+                <li id="job_manage"><a href="${root}/job/job_manage.do">职位管理</a></li>
+                <li id="resume_manage"><a href="${root}/job/resume_manage.do">简历管理</a></li>
+                <li id="resume_search"><a href="${root}/job/search_resume.do">搜索简历</a></li>
+                <li id="account_setting"><a href="${root}/job/account_setting.do">账号设置</a></li>
             </ul>
         </div>
         <div class="col-md-3" id="login">

@@ -88,18 +88,8 @@
                                 <td>星期六</td>
                                 <td>星期日</td>
                             </tr>
-                            <tr id="am">
+                            <tr id="week">
                                 <td>上午</td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                            </tr>
-                            <tr id="pm">
-                                <td>下午</td>
                                 <td><input type="checkbox"/></td>
                                 <td><input type="checkbox"/></td>
                                 <td><input type="checkbox"/></td>
@@ -118,20 +108,26 @@
 
 <script type="application/javascript">
     $(function() {
-        var spareStr = "${requestScope.job.work_time}";
+        $("#hrefUl li a").removeClass("activeTitle");
+        $("#job_manage a").addClass("activeTitle");
 
-        var am = $("#am td :checkbox");
-        var pm = $("#pm td :checkbox");
+        var spareStr = parseInt(${requestScope.job.work_time}).toString(2);
+        var timeLength = spareStr.length;
+        if (spareStr.length < 7) {
+            for (var i = 0; i < 7 - timeLength; i++) {
+                spareStr = "0" + spareStr;
+            }
+        } else {
+            spareStr = spareStr.substr(spareStr.length - 7);
+        }
+
+        var week = $("#week td :checkbox");
 
         for (var i = 0; i < spareStr.length; i++) {
             var c = spareStr.charAt(i);
-            if (i < 7) {
-                am.eq(i).attr("checked", c == '1');
-            } else {
-                pm.eq(i - 7).attr("checked", c == '1');
-            }
+            week.eq(i).attr("checked", c == '1');
         }
-        $(":checkbox").attr("disabled","disabled");
+        $(":checkbox").attr("disabled", "disabled");
     });
 </script>
 </body>

@@ -325,7 +325,7 @@ public class JobDao {
 	 * @param company_id
 	 * @return
 	 */
-	public List<Job> getJobsByCompany(int company_id,int page) {
+	public List<Job> getJobsByCompany(int company_id, int page) {
 		List<Job> jobs = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("id", company_id);
@@ -338,16 +338,18 @@ public class JobDao {
 
 	/**
 	 * 根据id返回小类
+	 *
 	 * @param id
 	 * @return
 	 */
 	public Position getPositionById(int id) {
-		Position position = session.selectOne("mapping.JobMapper.getPositionById",id);
+		Position position = session.selectOne("mapping.JobMapper.getPositionById", id);
 		return position;
 	}
 
 	/**
 	 * 获取所有的院系信息
+	 *
 	 * @return
 	 */
 	public List<Major> getSchoolsAndMajors() {
@@ -358,11 +360,98 @@ public class JobDao {
 
 	/**
 	 * 获取一个公司的职位数量
+	 *
 	 * @param id
 	 * @return
 	 */
 	public int getCompanyJobCount(int id) {
 		int count = session.selectOne("mapping.JobMapper.getCompanyJobCount", id);
+		return count;
+	}
+
+	/**
+	 * 改变职位的运行状态
+	 *
+	 * @param j_id
+	 * @param status
+	 */
+	public void changeJobStatus(int j_id, int status) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("j_id", j_id);
+		map.put("status", status);
+
+		session.update("mapping.JobMapper.changeJobStatus", map);
+	}
+
+	/**
+	 * 获取去投递该职位的简历
+	 *
+	 * @param id
+	 * @param page
+	 * @return
+	 */
+	public List<Apply> getAppliesByCompany(int id, int page) {
+		List<Apply> applies = null;
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("id", id);
+		map.put("page", page);
+		map.put("start", (page - 1) * Common.COUNT);
+		map.put("count", Common.COUNT);
+
+		applies = session.selectList("mapping.JobMapper.getAppliesByCompany", map);
+
+		return applies;
+	}
+
+	/**
+	 * 获取投递该公司简历的个数
+	 *
+	 * @param id
+	 * @return
+	 */
+	public int getCompanyApplyCount(int id) {
+		int count = 0;
+		count = session.selectOne("mapping.JobMapper.getCompanyApplyCount", id);
+
+		return count;
+	}
+
+	/**
+	 * 更新简历的投递状态
+	 *
+	 * @param j_id
+	 * @param r_id
+	 * @param state
+	 */
+	public void updateApply(int j_id, int r_id, int state) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("j_id", j_id);
+		map.put("r_id", r_id);
+		map.put("state", state);
+
+		session.update("mapping.JobMapper.updateApply", map);
+	}
+
+	/**
+	 * 获取搜索到的简历数量
+	 * @param grade
+	 * @param time
+	 * @param salary
+	 * @param school
+	 * @return
+	 */
+	public int getResumeCount(int grade, int time, String salary, int school) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("grade", grade);
+		map.put("time", time);
+		map.put("salary", salary);
+		map.put("grade", grade);
+		map.put("school", school);
+
+		int count = 0;
+		count = session.selectOne("mapping.ResumeMapper.getResumeCount",map);
+
 		return count;
 	}
 }

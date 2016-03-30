@@ -26,8 +26,8 @@ public class JobService {
 		return jobDao.searchPositions(c_id);
 	}
 
-	public List<Job> getCompanyJobs(int post_company,int page) {
-		return jobDao.getJobsByCompany(post_company,page);
+	public List<Job> getCompanyJobs(int post_company, int page) {
+		return jobDao.getJobsByCompany(post_company, page);
 	}
 
 	public int getCompanyJobCount(int id) {
@@ -38,8 +38,8 @@ public class JobService {
 		return jobDao.getJobById(id);
 	}
 
-	public List<Resume> searchResume(int grade, int spare_time, String salary, int school,int page) {
-		List<Resume> resumes = jobDao.searchResume(grade, spare_time, salary, school,page);
+	public List<Resume> searchResume(int grade, int spare_time, String salary, int school, int page) {
+		List<Resume> resumes = jobDao.searchResume(grade, spare_time, salary, school, page);
 
 		return resumes;
 	}
@@ -226,6 +226,7 @@ public class JobService {
 
 	/**
 	 * 根据id返回小类
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -256,9 +257,64 @@ public class JobService {
 
 	/**
 	 * 获取所有的学院和专业信息
+	 *
 	 * @return
 	 */
 	public List<Major> getSchoolsAndMajors() {
 		return jobDao.getSchoolsAndMajors();
+	}
+
+	/**
+	 * 改变职位的运行状态
+	 *
+	 * @param j_id
+	 * @param status
+	 */
+	public void changeJobStatus(int j_id, int status) {
+		jobDao.changeJobStatus(j_id, status);
+	}
+
+	/**
+	 * 获取投递该公司的简历
+	 *
+	 * @param id
+	 * @param page
+	 * @return
+	 */
+	public List<Apply> getAppliesByCompany(int id, int page) {
+		return jobDao.getAppliesByCompany(id, page);
+	}
+
+	/**
+	 * 获取投递该公司简历的个数
+	 *
+	 * @param id
+	 * @return
+	 */
+	public int getCompanyApplyCount(int id) {
+		return jobDao.getCompanyApplyCount(id);
+	}
+
+	/**
+	 * 更新简历的投递状态
+	 *
+	 * @param j_id
+	 * @param r_id
+	 * @param state
+	 */
+	public void updateApply(int j_id, int r_id, int state) {
+		jobDao.updateApply(j_id, r_id, state);
+	}
+
+	/**
+	 * 获取搜索到的简历的数量
+	 * @param grade
+	 * @param time
+	 * @param salary
+	 * @param school
+	 * @return
+	 */
+	public int getResumeCount(int grade, int time, String salary, int school) {
+		return jobDao.getResumeCount(grade,time,salary,school);
 	}
 }

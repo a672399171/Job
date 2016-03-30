@@ -17,6 +17,18 @@
         </association>
     </resultMap>
 
+    <resultMap type="com.zzu.model.Resume" id="applyResumeResultMap" autoMapping="true">
+        <id property="id" column="id"></id>
+        <association property="major" javaType="com.zzu.model.Major">
+            <id property="id" column="major"/>
+            <result property="major" column="m_major"/>
+            <association property="school" javaType="com.zzu.model.School">
+                <id property="id" column="s_id"/>
+                <result property="school" column="s_school"/>
+            </association>
+        </association>
+    </resultMap>
+
     <select id="getResumeByUid" resultMap="resumeResultMap" parameterType="int">
         SELECT r.*,s.id as s_id,s.school as s_school,m.id as major,m.major as m_major,m.s_id as s_id FROM tb_resume
         r,tb_school s,tb_major m where r.major=m.id and m.s_id=s.id and u_id=#{u_id}
@@ -53,4 +65,18 @@
         SELECT r.*,s.id as s_id,s.school as s_school,m.id as m_id,m.major as m_major,m.s_id as s_id FROM tb_resume
         r,tb_school s,tb_major m where r.major=m.id and m.s_id=s.id and r.id=#{id}
     </select>
+
+    <select id="getResumeCount" parameterType="hashmap" resultType="int">
+        select count(*) FROM tb_resume r,tb_school s,tb_major m where r.major=m.id and m.s_id=s.id
+        <if test="grade != 0">
+            and r.grade=#{grade}
+        </if>
+        <if test="salary != null and salary != ''">
+            and r.salary=#{salary}
+        </if>
+        <if test="school != 0">
+            and s_id=#{school}
+        </if>
+    </select>
+
 </mapper>

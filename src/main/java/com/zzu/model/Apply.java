@@ -4,16 +4,16 @@ package com.zzu.model;
  * Created by Administrator on 2016/3/15.
  */
 public class Apply {
-	private User user;
+	private Resume resume;
 	private Job job;
 	private int state;
 
-	public User getUser() {
-		return user;
+	public Resume getResume() {
+		return resume;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setResume(Resume resume) {
+		this.resume = resume;
 	}
 
 	public Job getJob() {

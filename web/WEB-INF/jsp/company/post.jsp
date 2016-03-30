@@ -13,9 +13,11 @@
     <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
     <link rel="stylesheet" type="text/css" href="${root}/css/post.css"/>
+    <link href="${root}/js/summernote/summernote.css" rel="stylesheet">
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
-    <script src="${root}/js/ajaxfileupload.js"></script>
+    <script src="${root}/js/summernote/summernote.js"></script>
+    <script src="${root}/js/summernote/lang/summernote-zh-CN.js"></script>
 </head>
 <body>
 <jsp:include page="header.jsp"></jsp:include>
@@ -61,7 +63,7 @@
                     <label for="type" class="col-sm-2 control-label">职位描述</label>
 
                     <div class="col-sm-10">
-                        <textarea class="form-control" rows="3" name="description"></textarea>
+                        <div id="description"></div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -75,24 +77,23 @@
                     <label class="col-sm-2 control-label">技能要求</label>
 
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="skill" placeholder="技能要求">
+                        <div id="skill"></div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">职位标签</label>
 
                     <div class="col-sm-10">
-                        <a href="javascript:void(0)" class="tag" id="t1">工资日结</a>
-                        <a href="javascript:void(0)" class="tag" id="t2">长期兼职</a>
+                        <div class="tag" id="t1">工资日结</div>
+                        <div class="tag" id="t2">长期兼职</div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">工作时间</label>
 
                     <div class="col-sm-10">
-                        <table id="table">
+                        <table id="table" class="weekTable">
                             <tr>
-                                <td></td>
                                 <td>星期一</td>
                                 <td>星期二</td>
                                 <td>星期三</td>
@@ -101,18 +102,7 @@
                                 <td>星期六</td>
                                 <td>星期日</td>
                             </tr>
-                            <tr id="am">
-                                <td>上午</td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                            </tr>
-                            <tr id="pm">
-                                <td>下午</td>
+                            <tr id="week">
                                 <td><input type="checkbox"/></td>
                                 <td><input type="checkbox"/></td>
                                 <td><input type="checkbox"/></td>
@@ -127,6 +117,8 @@
                 <input type="hidden" name="work_time" id="work_time"/>
                 <input type="hidden" name="tag" id="tag"/>
                 <input type="hidden" name="type" id="typeHidden"/>
+                <input type="hidden" name="description" id="des"/>
+                <input type="hidden" name="skill" id="sk"/>
 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
@@ -145,7 +137,36 @@
         $("#hideJobDiv").show();
         $("#bigDiv").show();
     });
+
+    //初始化编辑器
+    function initEditer() {
+        var config = {
+            height: 100,
+            minHeight: null,
+            maxHeight: null,
+            focus: true,
+            lang: 'zh-CN',
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['fontname']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height', 'link']]
+            ]
+        };
+
+        $('#description').summernote(config);
+        $('#skill').summernote(config);
+    }
+
     $(function () {
+        $("#hrefUl li a").removeClass("activeTitle");
+        $("#job_manage a").addClass("activeTitle");
+
+        //初始化编辑器
+        initEditer();
+
         $("#bigDiv").width(window.screen.availWidth - 40);
         $("#bigDiv").height(window.screen.availHeight - 40);
         initData();
@@ -262,6 +283,9 @@
             str += $("#t2").text();
         }
         $("#tag").val(str);
+        $("#des").val($('#description').summernote('code'));
+        $("#sk").val($('#skill').summernote('code'));
+
         return true;
     }
 </script>

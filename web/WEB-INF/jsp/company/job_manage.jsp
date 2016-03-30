@@ -17,9 +17,16 @@
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <script src="${root}/js/ajaxfileupload.js"></script>
+    <script src="${root}/js/moment-with-locales.js"></script>
     <style type="text/css">
         #container {
             background: white;
+        }
+
+        #postBtn {
+            float: right;
+            margin: 10px;
+            margin-right: 50px;
         }
     </style>
 </head>
@@ -27,8 +34,8 @@
 <jsp:include page="header.jsp"></jsp:include>
 <div class="container" id="container">
     <div class="row">
-        <div class="col-md-8">
-            <a href="${root}/job/toPost.do">发布新职位</a>
+        <div class="col-md-12">
+            <a class="btn btn-success" href="${root}/job/toPost.do" id="postBtn">发布新职位</a>
         </div>
     </div>
     <div class="row">
@@ -40,7 +47,7 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <td>名称</td>
+                        <td>标题</td>
                         <td>类型</td>
                         <td>发布时间</td>
                         <td>状态</td>
@@ -51,19 +58,35 @@
                     <c:forEach var="job" items="${requestScope.jobs}">
                         <tr>
                             <td><a href="${root}/job/job_detail.do?id=${job.id}">${job.name}</a></td>
-                            <td>${job.type.name}</td>
-                            <td><fmt:formatDate value="${job.post_time}" pattern="yyyy-MM-dd HH:mm:ss"></fmt:formatDate></td>
+                            <td><span class="font3">${job.type.name}</span></td>
+                            <td>
+                                <span class="date">
+                                    <fmt:formatDate value="${job.post_time}"
+                                                    pattern="yyyy-MM-dd HH:mm"></fmt:formatDate>
+                                </span>
+                            </td>
                             <td>
                                 <c:choose>
                                     <c:when test="${job.status == 0}">
-                                        停止中
+                                        <span class="label label-default">Stoped</span>
                                     </c:when>
                                     <c:otherwise>
-                                        运行中
+                                        <span class="label label-success">Running</span>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
-                            <td><a href="#">运行</a></td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${job.status == 0}">
+                                        <a href="javascript:void(0)" style="color: green"
+                                           onclick="changeStatus(${job.id},1)">运行</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="javascript:void(0)" style="color: red"
+                                           onclick="changeStatus(${job.id},0)">停止</a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -74,7 +97,33 @@
 </div>
 
 <script type="application/javascript">
+    //格式化时间
+    function formatDate() {
+        moment.locale("zh_cn");
 
+        var dates = $(".date");
+        for (var i = 0; i < dates.length; i++) {
+            var dText = dates.eq(i).text();
+            dates.eq(i).text(moment(dText, "YYYY-MM-DD hh:mm").fromNow());
+        }
+    }
+
+    //改变职位运行状态
+    function changeStatus(j_id, status) {
+        $.post("${root}/job/changeJobStatus.do", {
+            j_id: j_id,
+            status: status
+        }, function (data) {
+            window.location.reload();
+        }, "JSON");
+    }
+
+    $(function () {
+        formatDate();
+
+        $("#hrefUl li a").removeClass("activeTitle");
+        $("#job_manage a").addClass("activeTitle");
+    });
 </script>
 </body>
 </html>

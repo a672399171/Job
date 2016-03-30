@@ -157,7 +157,7 @@
     </ul>
 </nav>
 
-<%--<jsp:include page="/WEB-INF/jsp/footer.jsp"/>--%>
+<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 
 <script type="application/javascript">
     var app = angular.module("jobList", []);
