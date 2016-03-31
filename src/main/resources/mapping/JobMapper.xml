@@ -24,6 +24,7 @@
         <association property="user" javaType="com.zzu.model.User">
             <id property="id" column="u_id"/>
             <result property="photo_src" column="photo_src"></result>
+            <result property="nickname" column="nickname"></result>
         </association>
     </resultMap>
 
@@ -36,14 +37,16 @@
         </association>
     </resultMap>
 
-    <resultMap id="applyResultMap" type="com.zzu.model.Apply">
-        <result property="state" column="state"></result>
+    <resultMap id="applyResultMap" type="com.zzu.model.Apply" autoMapping="true">
         <association property="resume" javaType="com.zzu.model.Resume" autoMapping="true">
             <id property="id" column="r_id"></id>
         </association>
-        <association property="job" javaType="com.zzu.model.Job">
+        <association property="job" javaType="com.zzu.model.Job" autoMapping="true">
             <id property="id" column="j_id"></id>
             <result property="name" column="j_name"></result>
+            <association property="post_company" javaType="com.zzu.model.Company">
+                <result property="company_name" column="company_name"></result>
+            </association>
         </association>
     </resultMap>
 
@@ -111,7 +114,7 @@
     </select>
 
     <select id="getCommentsPage" resultMap="commentResultMap" parameterType="hashmap">
-        SELECT j.id as j_id,m.*,u.id as u_id,u.photo_src
+        SELECT j.id as j_id,m.*,u.id as u_id,u.photo_src,u.nickname
         FROM tb_job j,tb_user u,tb_comment m
         where m.u_id=u.id and m.j_id=j.id and m.j_id=#{id} ORDER BY m.c_time desc
         <if test="page != 0">
@@ -134,7 +137,14 @@
     </select>
 
     <select id="getApplies" resultMap="applyResultMap" parameterType="hashmap">
-        select * from tb_apply a,tb_user u,tb_job j where a.u_id=u.id and a.j_id=j.id and a.u_id=#{u_id}
+        select r.*,a.*,j.name as j_name,c.company_name from tb_resume r,tb_apply a,tb_job j,tb_company c WHERE a.r_id=r.id and a.j_id=j.id and j.post_company=c.id
+        <if test="u_id != 0">
+            and r.u_id=#{u_id}
+        </if>
+        <if test="j_id != 0">
+            and a.j_id=#{j_id}
+        </if>
+        order by a.apply_date desc
     </select>
 
     <select id="getAppliesByCompany" parameterType="hashmap" resultMap="applyResultMap">
@@ -154,7 +164,7 @@
     </select>
 
     <insert id="addApply" parameterType="com.zzu.model.Apply">
-        insert into tb_apply(u_id,j_id,state) values(#{user.id},#{job.id},#{state})
+        insert into tb_apply(u_id,j_id,state,apply_date) values(#{user.id},#{job.id},#{state},now())
     </insert>
 
     <delete id="deleteCollection" parameterType="hashmap">

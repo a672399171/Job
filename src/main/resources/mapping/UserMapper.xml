@@ -178,6 +178,14 @@
         </if>
     </select>
 
+    <select id="getNewPoorCount" resultType="int">
+        select count(*) from tb_poor where status=1 and isNew=1
+    </select>
+
+    <select id="getNewCompanyCount" resultType="int">
+        select count(*) from tb_company where auth in (0,1)
+    </select>
+
     <update id="changePassword" parameterType="com.zzu.model.User">
         update tb_user set password=#{password} where id=#{id}
     </update>
@@ -206,4 +214,8 @@
     <update id="auditCompany" parameterType="hashmap">
         update tb_company set auth=#{audit} where id=#{id}
     </update>
+
+    <insert id="addComment" parameterType="com.zzu.model.Comment">
+        insert into tb_comment(u_id,j_id,content,c_time) values(#{user.id,jdbcType=NUMERIC},#{job.id,jdbcType=NUMERIC},#{content},#{c_time})
+    </insert>
 </mapper>

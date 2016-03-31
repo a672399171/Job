@@ -17,110 +17,115 @@
     <script src="${root}/js/ajaxfileupload.js"></script>
 </head>
 <body>
-<jsp:include page="header.jsp"></jsp:include>
-<div class="container">
-    <div class="row">
-        <div class="col-md-3 col-md-offset-1">
-            <div class="list-group">
-                <a class="list-group-item active" href="${root}/user/info.do">
-                    <i class="fa fa-user fa-fw"></i>&nbsp; 我的资料
-                </a>
-                <a class="list-group-item" href="${root}/user/resume.do">
-                    <i class="fa fa-files-o fa-fw"></i>&nbsp; 我的简历
-                </a>
-                <a class="list-group-item" href="#">
-                    <i class="fa fa-comments fa-fw"></i>&nbsp; 求职进展
-                </a>
-                <a class="list-group-item" href="${root}/user/poor.do">
-                    <i class="fa fa-user-secret fa-fw"></i>&nbsp; 贫困生认证
-                </a>
-                <a class="list-group-item" href="${root}/user/collection.do">
-                    <i class="fa fa-star fa-fw"></i>&nbsp; 我的收藏
-                </a>
-                <a class="list-group-item" href="${root}/user/secret.do">
-                    <i class="fa fa-lock fa-fw"></i>&nbsp; 隐私设置
-                </a>
-                <a class="list-group-item" href="${root}/user/setting.do">
-                    <i class="fa fa-cog fa-fw"></i>&nbsp; 账号设置
-                </a>
+<div class="big">
+    <jsp:include page="header.jsp"></jsp:include>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-md-offset-1">
+                <div class="list-group">
+                    <a class="list-group-item active" href="${root}/user/info.do">
+                        <i class="fa fa-user fa-fw"></i>&nbsp; 我的资料
+                    </a>
+                    <a class="list-group-item" href="${root}/user/resume.do">
+                        <i class="fa fa-files-o fa-fw"></i>&nbsp; 我的简历
+                    </a>
+                    <a class="list-group-item" href="${root}/user/apply.do">
+                        <i class="fa fa-comments fa-fw"></i>&nbsp; 求职进展
+                    </a>
+                    <a class="list-group-item" href="${root}/user/poor.do">
+                        <i class="fa fa-user-secret fa-fw"></i>&nbsp; 贫困生认证
+                    </a>
+                    <a class="list-group-item" href="${root}/user/collection.do">
+                        <i class="fa fa-star fa-fw"></i>&nbsp; 我的收藏
+                    </a>
+                    <a class="list-group-item" href="${root}/user/secret.do">
+                        <i class="fa fa-lock fa-fw"></i>&nbsp; 隐私设置
+                    </a>
+                    <a class="list-group-item" href="${root}/user/setting.do">
+                        <i class="fa fa-cog fa-fw"></i>&nbsp; 账号设置
+                    </a>
+                </div>
             </div>
-        </div>
-        <div class="col-lg-1">
-            <img src="${root}/images/${sessionScope.user.photo_src}" width="100" height="100"
-                 style="margin-top: 20px;border: 1px solid black" id="head_photo"/>
-        </div>
-        <div class="col-lg-5">
-            <form class="form-horizontal" action="${root}/user/modify_info.do" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">用户名:</label>
+            <div class="col-lg-1">
+                <img src="${root}/images/${sessionScope.user.photo_src}" width="100" height="100"
+                     style="margin-top: 20px;border: 1px solid black" id="head_photo"/>
+            </div>
+            <div class="col-lg-5">
+                <form class="form-horizontal" action="${root}/user/modify_info.do" method="post"
+                      enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">用户名:</label>
 
-                    <div class="col-sm-8">
-                        <p class="form-control-static">${sessionScope.user.username}</p>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">${sessionScope.user.username}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="nickname" class="col-sm-3 control-label">昵称:</label>
+                    <div class="form-group">
+                        <label for="nickname" class="col-sm-3 control-label">昵称:</label>
 
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="nickname" name="nickname"
-                               placeholder="昵称" value="${sessionScope.user.nickname}">
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="nickname" name="nickname"
+                                   placeholder="昵称" value="${sessionScope.user.nickname}">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">性别:</label>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">性别:</label>
 
-                    <div class="col-sm-8">
-                        <c:choose>
-                            <c:when test="${sessionScope.user.sex == '男'}">
-                                <label class="radio-inline">
-                                    <input type="radio" name="sex" value="男" checked> 男
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="sex" value="女"> 女
-                                </label>
-                            </c:when>
-                            <c:otherwise>
-                                <label class="radio-inline">
-                                    <input type="radio" name="sex" value="男"> 男
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="sex" value="女" checked> 女
-                                </label>
-                            </c:otherwise>
-                        </c:choose>
+                        <div class="col-sm-8">
+                            <c:choose>
+                                <c:when test="${sessionScope.user.sex == '男'}">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="sex" value="男" checked> 男
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="sex" value="女"> 女
+                                    </label>
+                                </c:when>
+                                <c:otherwise>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="sex" value="男"> 男
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="sex" value="女" checked> 女
+                                    </label>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
                     </div>
-                </div>
-                <%--<div class="form-group">
-                    <label for="phone" class="col-sm-3 control-label">手机号码:</label>
-                    <div class="col-sm-8">
-                        <input type="tel" class="form-control" id="phone" placeholder="手机号码">
+                    <%--<div class="form-group">
+                        <label for="phone" class="col-sm-3 control-label">手机号码:</label>
+                        <div class="col-sm-8">
+                            <input type="tel" class="form-control" id="phone" placeholder="手机号码">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="varify" class="col-sm-3 control-label">验证码:</label>
-                    <div class="col-sm-5">
-                        <input type="tel" class="form-control" id="varify" placeholder="验证码">
-                    </div>
-                    <div class="col-sm-3">
-                        <button type="button" class="btn btn-default">获取验证码</button>
-                    </div>
-                </div>--%>
-                <div class="form-group">
-                    <label for="file" class="col-sm-3 control-label">更换头像</label>
+                    <div class="form-group">
+                        <label for="varify" class="col-sm-3 control-label">验证码:</label>
+                        <div class="col-sm-5">
+                            <input type="tel" class="form-control" id="varify" placeholder="验证码">
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-default">获取验证码</button>
+                        </div>
+                    </div>--%>
+                    <div class="form-group">
+                        <label for="file" class="col-sm-3 control-label">更换头像</label>
 
-                    <div class="col-sm-8">
-                        <input type="file" id="file" name="file">
+                        <div class="col-sm-8">
+                            <input type="file" id="file" name="file">
+                        </div>
                     </div>
-                </div>
-                <input type="hidden" value="${sessionScope.user.photo_src}" name="photo_src" id="photo_src"/>
-                <p class="help-block">格式仅支持.jpg,.png,.gif,大小不超过300KB</p>
-                <button type="submit" class="btn btn-primary" style="width: 150px">
-                    <i class="fa fa-floppy-o"></i> 完成修改
-                </button>
-            </form>
+                    <input type="hidden" value="${sessionScope.user.photo_src}" name="photo_src" id="photo_src"/>
+
+                    <p class="help-block">格式仅支持.jpg,.png,.gif,大小不超过300KB</p>
+                    <button type="submit" class="btn btn-primary" style="width: 150px">
+                        <i class="fa fa-floppy-o"></i> 完成修改
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+<jsp:include page="footer.jsp"></jsp:include>
 
 <script type="application/javascript">
     $("#file").change(function () {
@@ -139,7 +144,7 @@
                     fileElementId: "file",
                     dataType: 'json',
                     success: function (data) {
-                        $("#head_photo").attr("src","${root}/images/" + data.src);
+                        $("#head_photo").attr("src", "${root}/images/" + data.src);
                         $("#photo_src").val(data.src);
                     },
                     error: function (data, status, e) {

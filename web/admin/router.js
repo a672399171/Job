@@ -92,7 +92,13 @@ app.run(
             })
             .state('app.dashboard', {
                 url: '/dashboard',
-                templateUrl: 'tpl/blocks/dashboard.html'
+                templateUrl: 'tpl/blocks/dashboard.html',
+                resolve: {
+                    deps: ['$ocLazyLoad',
+                        function ($ocLazyLoad) {
+                            return $ocLazyLoad.load('dashboard/ctrl.js');
+                        }]
+                }
             })//用户管理
             .state('app.users', {
                 abstract: true,

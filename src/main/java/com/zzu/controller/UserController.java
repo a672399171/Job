@@ -554,6 +554,19 @@ public class UserController {
 		return "varify_result";
 	}
 
+	@RequestMapping("/apply.do")
+	public String apply(HttpSession session, Model model) {
+		User user = (User) session.getAttribute(Common.USER);
+		if (user == null) {
+			return "login";
+		}
+
+		List<Apply> applies = jobService.getApplies(user.getId(), 0);
+		model.addAttribute("applies", applies);
+
+		return "apply";
+	}
+
 	@RequestMapping("/poor.do")
 	public String poor(HttpSession session, Model model) {
 		User user = (User) session.getAttribute(Common.USER);
@@ -575,7 +588,12 @@ public class UserController {
 			return "login";
 		}
 
-		String realPath = session.getServletContext().getRealPath("/upload");
+		String realPath = session.getServletContext().getRealPath("/images");
+		File file = new File(realPath);
+		if(file.isDirectory() && !file.exists()) {
+			file.mkdirs();
+		}
+
 		String originalFilename = myfile.getOriginalFilename();
 		//如果只是上传一个文件,则只需要MultipartFile类型接收文件即可,而且无需显式指定@RequestParam注解
 		String newFile = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
@@ -646,6 +664,35 @@ public class UserController {
 		return object;
 	}
 
+	@RequestMapping("/postComment.do")
+	@ResponseBody
+	public JSONObject postComment(int j_id, String content, HttpSession session) {
+		JSONObject object = new JSONObject();
+		User user = (User) session.getAttribute(Common.USER);
+		if (user != null) {
+			Comment comment = new Comment();
+			comment.setUser(user);
+			comment.setContent(content);
+
+			Job job = new Job();
+			job.setId(j_id);
+
+			comment.setJob(job);
+			comment.setC_time(new Date());
+
+			userService.addComment(comment);
+		}
+		return object;
+	}
+
+	/**
+	 * 公司修改密码
+	 *
+	 * @param session
+	 * @param password
+	 * @param newPassword
+	 * @return
+	 */
 	@RequestMapping("modifyCompanyPassword")
 	@ResponseBody
 	public Map<String, Object> modifyCompanyPassword(HttpSession session, String password, String newPassword) {
@@ -924,6 +971,25 @@ public class UserController {
 		} else {
 			object.put("msg", "未完全删除");
 		}
+		return object;
+	}
+
+	/**
+	 * 返回后台主页所需数据（未处理贫困生数量及未审核公司）
+	 *
+	 * @return
+	 */
+	@RequestMapping("/admin/dashboard.do")
+	@ResponseBody
+	public JSONObject getDashboardData() {
+		JSONObject object = new JSONObject();
+
+		int poorCount = userService.getNewPoorCount();
+		int companyCount = userService.getNewCompanyCount();
+
+		object.put("poorCount", poorCount);
+		object.put("companyCount", companyCount);
+
 		return object;
 	}
 

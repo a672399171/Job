@@ -4,9 +4,11 @@ app.controller('PictureController', ['$scope', '$http', 'Upload', function ($sco
             $scope.array = response.data;
             for (var i = 0; i < $scope.array.length; i++) {
                 $scope.array[i].local = "";
+                $scope.array[i].id = i;
             }
         });
 
+    //上传
     $scope.upload = function (file, item) {
         Upload.upload({
             url: $scope.app.host + '/user/uploadPicture.do',
@@ -22,6 +24,18 @@ app.controller('PictureController', ['$scope', '$http', 'Upload', function ($sco
         });
     };
 
+    //删除
+    $scope.delete = function(item) {
+        for(var i=0;i<$scope.array.length;i++) {
+            console.log($scope.array[i].id + "  " + item.id);
+            if($scope.array[i].id == item.id) {
+                $scope.array.splice(i,1);
+                break;
+            }
+        }
+    };
+
+    //保存
     $scope.save = function () {
         $http.post($scope.app.host + "/user/updatePictureJson.do", {
             data:JSON.stringify($scope.array)

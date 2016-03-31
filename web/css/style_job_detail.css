@@ -57,17 +57,6 @@ h2, h4 {
     height: 300px;
 }
 
-.tag {
-    display: inline-block;
-    height: 30px;
-    line-height: 30px;
-    background: #73bed2;
-    color: #F8F8F8;
-    border-radius: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
 .headPhoto {
     width: 30px;
     height: 30px;

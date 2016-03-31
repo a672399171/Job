@@ -232,7 +232,7 @@
 
         var x = ${company.x};
         var y = ${company.y};
-        if(x != 0 && y != 0) {
+        if (x != 0 && y != 0) {
             $("#lng").val(x);
             $("#lat").val(y);
         }

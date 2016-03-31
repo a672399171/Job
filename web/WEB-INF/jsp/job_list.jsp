@@ -66,98 +66,106 @@
     </style>
 </head>
 <body ng-controller="JobListController">
-<jsp:include page="/WEB-INF/jsp/header.jsp"/>
+<div class="big">
+    <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 
-<div class="container">
-    <div class="row selectType" id="positionDiv">
-        <div class="col-md-1">
-            类别:
+    <div class="container">
+        <div class="row selectType" id="positionDiv">
+            <div class="col-md-1">
+                类别:
+            </div>
+            <div class="col-md-11">
+                <ul>
+                    <li ng-class="{on:params.p_id==0}" ng-click="changePid(0)">不限</li>
+                    <li ng-class="{on:item.id == params.p_id}" ng-repeat="item in positions"
+                        ng-click="changePid(item.id)">
+                        {{item.name}}
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div class="col-md-11">
-            <ul>
-                <li ng-class="{on:params.p_id==0}" ng-click="changePid(0)">不限</li>
-                <li ng-class="{on:item.id == params.p_id}" ng-repeat="item in positions"
-                    ng-click="changePid(item.id)">
-                    {{item.name}}
-                </li>
-            </ul>
+        <div class="row selectType" id="timeDiv">
+            <div class="col-md-1">
+                工作时间:
+            </div>
+            <div class="col-md-11">
+                <ul>
+                    <li ng-class="{on:timeArray[0]}" ng-click="changeTime(0)">不限</li>
+                    <li ng-class="{on:timeArray[1]}" ng-click="changeTime(1)">周一</li>
+                    <li ng-class="{on:timeArray[2]}" ng-click="changeTime(2)">周二</li>
+                    <li ng-class="{on:timeArray[3]}" ng-click="changeTime(3)">周三</li>
+                    <li ng-class="{on:timeArray[4]}" ng-click="changeTime(4)">周四</li>
+                    <li ng-class="{on:timeArray[5]}" ng-click="changeTime(5)">周五</li>
+                    <li ng-class="{on:timeArray[6]}" ng-click="changeTime(6)">周六</li>
+                    <li ng-class="{on:timeArray[7]}" ng-click="changeTime(7)">周日</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row selectType" id="salaryDiv">
+            <div class="col-md-1">
+                月薪:
+            </div>
+            <div class="col-md-11">
+                <ul>
+                    <li ng-class="{on:params.low==0 && params.high=='max'}" ng-click="changeSalary(0,'max')">不限</li>
+                    <li ng-class="{on:params.low==0 && params.high==500}" ng-click="changeSalary(0,500)">500以下</li>
+                    <li ng-class="{on:params.low==500 && params.high==1000}" ng-click="changeSalary(500,1000)">
+                        500-1000
+                    </li>
+                    <li ng-class="{on:params.low==1000 && params.high==2000}" ng-click="changeSalary(1000,2000)">
+                        1000-2000
+                    </li>
+                    <li ng-class="{on:params.low==2000 && params.high==3000}" ng-click="changeSalary(2000,3000)">
+                        2000-3000
+                    </li>
+                    <li ng-class="{on:params.low==3000 && params.high==4000}" ng-click="changeSalary(3000,4000)">
+                        3000-4000
+                    </li>
+                    <li ng-class="{on:params.low==4000 && params.high=='max'}" ng-click="changeSalary(4000,'max')">
+                        4000以上
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-    <div class="row selectType" id="timeDiv">
-        <div class="col-md-1">
-            工作时间:
-        </div>
-        <div class="col-md-11">
-            <ul>
-                <li ng-class="{on:timeArray[0]}" ng-click="changeTime(0)">不限</li>
-                <li ng-class="{on:timeArray[1]}" ng-click="changeTime(1)">周一</li>
-                <li ng-class="{on:timeArray[2]}" ng-click="changeTime(2)">周二</li>
-                <li ng-class="{on:timeArray[3]}" ng-click="changeTime(3)">周三</li>
-                <li ng-class="{on:timeArray[4]}" ng-click="changeTime(4)">周四</li>
-                <li ng-class="{on:timeArray[5]}" ng-click="changeTime(5)">周五</li>
-                <li ng-class="{on:timeArray[6]}" ng-click="changeTime(6)">周六</li>
-                <li ng-class="{on:timeArray[7]}" ng-click="changeTime(7)">周日</li>
-            </ul>
-        </div>
-    </div>
-    <div class="row selectType" id="salaryDiv">
-        <div class="col-md-1">
-            月薪:
-        </div>
-        <div class="col-md-11">
-            <ul>
-                <li ng-class="{on:params.low==0 && params.high=='max'}" ng-click="changeSalary(0,'max')">不限</li>
-                <li ng-class="{on:params.low==0 && params.high==500}" ng-click="changeSalary(0,500)">500以下</li>
-                <li ng-class="{on:params.low==500 && params.high==1000}" ng-click="changeSalary(500,1000)">500-1000</li>
-                <li ng-class="{on:params.low==1000 && params.high==2000}" ng-click="changeSalary(1000,2000)">1000-2000
-                </li>
-                <li ng-class="{on:params.low==2000 && params.high==3000}" ng-click="changeSalary(2000,3000)">2000-3000
-                </li>
-                <li ng-class="{on:params.low==3000 && params.high==4000}" ng-click="changeSalary(3000,4000)">3000-4000
-                </li>
-                <li ng-class="{on:params.low==4000 && params.high=='max'}" ng-click="changeSalary(4000,'max')">4000以上
-                </li>
-            </ul>
+
+    <div id="middle">
+        <div class="job_item" style="display: block" ng-repeat="item in jobs" ng-click="toUrl(item)">
+            <table>
+                <tr>
+                    <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
+                    <td width="30%" class="font3">{{item.post_time.time | date:'yyyy-MM-dd hh:mm'}}</td>
+                    <td width="30%" class="font5">{{item.post_company.company_name}}</td>
+                </tr>
+                <tr>
+                    <td class="font5">{{item.type.name}}</td>
+                    <td class="font4">{{item.low_salary}}-{{item.high_salary}}</td>
+                    <td class="font3">{{item.post_company.scope}}</td>
+                </tr>
+            </table>
         </div>
     </div>
+
+    <div ng-if="jobs.length <= 0" id="emptyDiv">
+        对不起，暂无记录！
+    </div>
+
+    <nav style="margin: 0 auto;text-align: center" ng-if="jobs.length > 0">
+        <ul class="pagination pagination-lg">
+            <li>
+                <a href="javascript:void(0)" aria-label="Previous" ng-click="load(-1)">&laquo;</a>
+            </li>
+            <li ng-repeat="p in pageArray" ng-class="{active:isCurrentPage(p)}">
+                <a href="javascript:void(0)" ng-click="changePage(p)">{{p}}</a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" aria-label="Next" ng-click="load(1)">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
 </div>
-
-<div id="middle">
-    <div class="job_item" style="display: block" ng-repeat="item in jobs">
-        <table>
-            <tr>
-                <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
-                <td width="30%" class="font3">{{item.post_time.time | date:'yyyy-MM-dd hh:mm'}}</td>
-                <td width="30%" class="font5">{{item.post_company.company_name}}</td>
-            </tr>
-            <tr>
-                <td class="font5">{{item.type.name}}</td>
-                <td class="font4">{{item.low_salary}}-{{item.high_salary}}</td>
-                <td class="font3">{{item.post_company.scope}}</td>
-            </tr>
-        </table>
-    </div>
-</div>
-
-<div ng-if="jobs.length <= 0" id="emptyDiv">
-    对不起，暂无记录！
-</div>
-
-<nav style="margin: 0 auto;text-align: center" ng-if="jobs.length > 0">
-    <ul class="pagination pagination-lg">
-        <li>
-            <a href="javascript:void(0)" aria-label="Previous" ng-click="load(-1)">&laquo;</a>
-        </li>
-        <li ng-repeat="p in pageArray" ng-class="{active:isCurrentPage(p)}">
-            <a href="javascript:void(0)" ng-click="changePage(p)">{{p}}</a>
-        </li>
-        <li>
-            <a href="javascript:void(0)" aria-label="Next" ng-click="load(1)">&raquo;</a>
-        </li>
-    </ul>
-</nav>
-
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
+
 
 <script type="application/javascript">
     var app = angular.module("jobList", []);
@@ -210,6 +218,11 @@
 
                 $scope.currentPage = $scope.params.page;
             });
+        };
+
+        //转到url
+        $scope.toUrl = function (item) {
+            window.location = "${root}/job/detail.do?id=" + item.id;
         };
 
         //加载类型信息

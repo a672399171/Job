@@ -171,4 +171,20 @@ public class UserService {
 	public int getCompaniesCount(int[] audit, String filter) {
 		return userDao.getCompaniesCount(audit,filter);
 	}
+
+	//获取未处理的贫困生认定的数量
+	public int getNewPoorCount() {
+		return userDao.getNewPoorCount();
+	}
+
+	//获取未审核的公司数量
+	public int getNewCompanyCount() {
+		return userDao.getNewCompanyCount();
+	}
+
+	//添加评论
+	public void addComment(Comment comment) {
+		userDao.addComment(comment);
+	}
+
 }

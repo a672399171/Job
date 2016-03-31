@@ -33,38 +33,41 @@
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
 </head>
 <body>
-<div class="panel panel-default" id="login_panel">
-    <div class="panel-body">
-        <form id="loginForm">
-            <div class="form-group">
-                <input type="text" class="form-control" name="username" id="username" placeholder="用户名"
-                       value="${username}">
-            </div>
-            <div class="form-group">
-                <input type="password" class="form-control" name="password" id="password" placeholder="密码"
-                       value="${password}">
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" id="on"
-                        <%
+<div class="big">
+    <div class="panel panel-default" id="login_panel">
+        <div class="panel-body">
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="username" id="username" placeholder="用户名"
+                           value="${username}">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="密码"
+                           value="${password}">
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="on"
+                            <%
                             if(flag) {
                                 %>
-                           checked
-                        <%
+                               checked
+                            <%
                             }
                         %>
-                    >记住我
-                </label>
-                <a href="#" id="wangji">忘记密码</a>
-            </div>
+                        >记住我
+                    </label>
+                    <a href="#" id="wangji">忘记密码</a>
+                </div>
 
-            <button type="submit" class="btn btn-default">登&nbsp;录</button>
-            <div id="msg"></div>
-            <a href="${root}/user/toReg.do" id="zhuce">没有账号？立即注册</a>
-        </form>
+                <button type="submit" class="btn btn-default">登&nbsp;录</button>
+                <div id="msg"></div>
+                <a href="${root}/user/toReg.do" id="zhuce">没有账号？立即注册</a>
+            </form>
+        </div>
     </div>
 </div>
+<jsp:include page="footer.jsp"></jsp:include>
 
 <script type="application/javascript">
     $(function () {

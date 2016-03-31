@@ -62,28 +62,31 @@
     </style>
 </head>
 <body>
-<jsp:include page="header.jsp"></jsp:include>
-<div id="body">
-    <div class="well">
-        <div id="top1">
-            <img src="${root}/images/icon-succeed.png">
+<div class="big">
+    <jsp:include page="header.jsp"></jsp:include>
+    <div id="body">
+        <div class="well">
+            <div id="top1">
+                <img src="${root}/images/icon-succeed.png">
 
-            <div>
-                <span class="usernameStyle">672399171${sessionScope.user.username}</span>
-                <span class="successStyle">恭喜你注册成功！</span>
+                <div>
+                    <span class="usernameStyle">672399171${sessionScope.user.username}</span>
+                    <span class="successStyle">恭喜你注册成功！</span>
+                </div>
             </div>
-        </div>
-        <hr>
-        <div id="top2">
-            <a type="button" class="btn btn-primary" href="${root}/user/info.do">
-                <i class="fa fa-pencil-square-o"></i>&nbsp;完善个人资料
-            </a>
-            <a type="button" class="btn btn-info" href="${root}/">
-                <i class="fa fa-home"></i>&nbsp;返回主页查看
-            </a>
+            <hr>
+            <div id="top2">
+                <a type="button" class="btn btn-primary" href="${root}/user/info.do">
+                    <i class="fa fa-pencil-square-o"></i>&nbsp;完善个人资料
+                </a>
+                <a type="button" class="btn btn-info" href="${root}/">
+                    <i class="fa fa-home"></i>&nbsp;返回主页查看
+                </a>
+            </div>
         </div>
     </div>
 </div>
+<jsp:include page="footer.jsp"></jsp:include>
 </body>
 </html>
 

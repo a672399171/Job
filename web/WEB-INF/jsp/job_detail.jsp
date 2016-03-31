@@ -1,16 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html ng-app="jobDetail">
 <head>
     <title>${job.name}</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
-    <script type="text/javascript"
-            src="${root}/js/jquery.fullPage.min.js"></script>
+    <script type="text/javascript" src="${root}/js/jquery-1.11.2.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
     <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
@@ -31,164 +29,206 @@
     <script src="${root}/js/controllers/jobDetail.js"></script>
 </head>
 <body>
-<jsp:include page="header.jsp"></jsp:include>
-<div id="leftDiv">
-    <div class="baseInfo">
-        <h2>${job.name}
-            <c:choose>
-                <c:when test="${requestScope.collection == null}">
-                    <i class="fa fa-star" id="collect"></i>
-                </c:when>
-                <c:otherwise>
-                    <i class="fa fa-star" id="collect" style="color: red"></i>
-                </c:otherwise>
-            </c:choose>
-        </h2>
+<div class="big">
+    <jsp:include page="header.jsp"></jsp:include>
 
-        <div class="require">
-            <span class="font4" style="margin-right: 30px">${job.low_salary}-${job.high_salary}</span>
+    <div id="leftDiv">
+        <div class="baseInfo">
+            <h2>${job.name}
+                <c:choose>
+                    <c:when test="${requestScope.collection == null}">
+                        <i class="fa fa-star" id="collect"></i>
+                    </c:when>
+                    <c:otherwise>
+                        <i class="fa fa-star" id="collect" style="color: red"></i>
+                    </c:otherwise>
+                </c:choose>
+            </h2>
+
+            <div class="require">
+                <span class="font4" style="margin-right: 30px">${job.low_salary}-${job.high_salary}</span>
             <span class="date" style="margin-right: 30px">
                 <fmt:formatDate pattern="yyyy-MM-dd hh:MM" value="${requestScope.job.post_time}"></fmt:formatDate>
             </span>
-            <span class="font5">${job.type.name}</span>
-            <c:choose>
-                <c:when test="${requestScope.apply == null}">
-                    <button class="btn btn-danger" id="apply">申请职位</button>
-                </c:when>
-                <c:otherwise>
-                    <button class="btn btn-danger" id="apply" disabled>申请中</button>
-                </c:otherwise>
-            </c:choose>
+                <span class="font5">${job.type.name}</span>
+                <c:choose>
+                    <c:when test="${requestScope.apply == null}">
+                        <button class="btn btn-danger" id="apply">申请职位</button>
+                    </c:when>
+                    <c:otherwise>
+                        <button class="btn btn-danger" id="apply" disabled>申请中</button>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+            <div>
+                <c:forEach var="item" items="${fn:split(job.tag,'#')}">
+                    <span class="label label-info">${item}</span>
+                </c:forEach>
+            </div>
         </div>
-        <div class="tag">${job.tag}</div>
-    </div>
-    <div class="jobIntroduce">
-        <h4>职位介绍</h4>
+        <div class="jobIntroduce">
+            <h4>职位介绍</h4>
 
-        <p>
-            技能要求：${job.skill}
-        </p>
+            <p>
+                技能要求：${job.skill}
+            </p>
 
-        <p>
-            招聘人数：${job.person_count}
-        </p>
+            <p>
+                招聘人数：${job.person_count}
+            </p>
 
-        <p>
-            职位描述：${job.description}
-        </p>
+            <p>
+                职位描述：${job.description}
+            </p>
 
-        <p>
-            工作时间：
-        <table id="table" class="weekTable">
-            <tr>
-                <td>星期一</td>
-                <td>星期二</td>
-                <td>星期三</td>
-                <td>星期四</td>
-                <td>星期五</td>
-                <td>星期六</td>
-                <td>星期日</td>
-            </tr>
-            <tr id="week">
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-            </tr>
-        </table>
-        </p>
-    </div>
-    <div class="companyIntroduce">
-        <h4>公司介绍</h4>
-
-        <p>${job.post_company.company_name}</p>
-
-        <p>公司地址：${job.post_company.address}</p>
-
-        <p>公司简介：${job.post_company.introduce}</p>
-
-        <p>公司规模：${job.post_company.scope}</p>
-
-        <p>联系人：${job.post_company.name}</p>
-
-        <p>手机号：${job.post_company.phone}</p>
-
-        <p>邮箱：${job.post_company.email}</p>
-
-        <div id="container"></div>
-    </div>
-    <div class="allJobs" ng-controller="CompanyJobController">
-        <h4>该公司所有职位</h4>
-
-        <div class="job_item" style="display: block" ng-repeat="item in jobs"
-             ng-click="toUrl(item.id)">
-            <table>
+            <p>
+                工作时间：
+            <table id="table" class="weekTable">
                 <tr>
-                    <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
-                    <td width="30%" class="font3">{{item.post_time.time | date:'yyyy-MM-dd hh:mm'}}</td>
-                    <td width="30%" class="font5">{{item.post_company.company_name}}</td>
+                    <td>星期一</td>
+                    <td>星期二</td>
+                    <td>星期三</td>
+                    <td>星期四</td>
+                    <td>星期五</td>
+                    <td>星期六</td>
+                    <td>星期日</td>
+                </tr>
+                <tr id="week">
+                    <td><input type="checkbox"/></td>
+                    <td><input type="checkbox"/></td>
+                    <td><input type="checkbox"/></td>
+                    <td><input type="checkbox"/></td>
+                    <td><input type="checkbox"/></td>
+                    <td><input type="checkbox"/></td>
+                    <td><input type="checkbox"/></td>
+                </tr>
+            </table>
+            </p>
+        </div>
+        <div class="companyIntroduce">
+            <h4>公司介绍</h4>
+
+            <p>公司全名：${job.post_company.company_name}</p>
+
+            <p>公司地址：${job.post_company.address}</p>
+
+            <p>公司简介：${job.post_company.introduce}</p>
+
+            <p>公司规模：${job.post_company.scope}</p>
+
+            <p>联系人：${job.post_company.name}</p>
+
+            <p>手机号：${job.post_company.phone}</p>
+
+            <p>邮箱：${job.post_company.email}</p>
+
+            <div id="container"></div>
+        </div>
+        <div class="allJobs" ng-controller="CompanyJobController">
+            <h4>该公司所有职位</h4>
+
+            <div class="job_item" style="display: block" ng-repeat="item in jobs"
+                 ng-click="toUrl(item.id)">
+                <table>
+                    <tr>
+                        <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
+                        <td width="30%" class="font3">{{item.post_time.time | date:'yyyy-MM-dd hh:mm'}}</td>
+                        <td width="30%" class="font5">{{item.post_company.company_name}}</td>
+                    </tr>
+                    <tr>
+                        <td class="font5">{{item.type.name}}</td>
+                        <td class="font4">{{item.low_salary}}-{{item.high_salary}}</td>
+                        <td class="font3">{{item.post_company.scope}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <nav style="margin: 0 auto;text-align: center" ng-if="jobs.length > 0">
+                <ul class="pagination">
+                    <li>
+                        <a href="javascript:void(0)" aria-label="Previous" ng-click="load(-1)">&laquo;</a>
+                    </li>
+                    <li ng-repeat="p in pageArray" ng-class="{active:isCurrentPage(p)}">
+                        <a href="javascript:void(0)" ng-click="loadData(p)">{{p}}</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" aria-label="Next" ng-click="load(1)">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="otherJobs">
+            <h4>职位推荐</h4>
+        </div>
+    </div>
+    <div id="rightDiv">
+        <div class="companyLogo">
+            <img src="${root}/images/${job.post_company.logo}">
+            <table style="margin-top: 10px">
+                <tr>
+                    <td>公司全名：</td>
+                    <td>${job.post_company.company_name}</td>
                 </tr>
                 <tr>
-                    <td class="font5">{{item.type.name}}</td>
-                    <td class="font4">{{item.low_salary}}-{{item.high_salary}}</td>
-                    <td class="font3">{{item.post_company.scope}}</td>
+                    <td>公司规模：</td>
+                    <td>${job.post_company.scope}</td>
+                </tr>
+                <tr>
+                    <td>联系人：</td>
+                    <td>${job.post_company.name}</td>
+                </tr>
+                <tr>
+                    <td>手机号：</td>
+                    <td>${job.post_company.phone}</td>
+                </tr>
+                <tr>
+                    <td>邮箱：</td>
+                    <td>${job.post_company.email}</td>
                 </tr>
             </table>
         </div>
+        <div class="comment" ng-controller="CommentController">
+            <h4>评论列表</h4>
 
-        <nav style="margin: 0 auto;text-align: center" ng-if="jobs.length > 0">
-            <ul class="pagination">
-                <li>
-                    <a href="javascript:void(0)" aria-label="Previous" ng-click="load(-1)">&laquo;</a>
-                </li>
-                <li ng-repeat="p in pageArray" ng-class="{active:isCurrentPage(p)}">
-                    <a href="javascript:void(0)" ng-click="loadData(p)">{{p}}</a>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" aria-label="Next" ng-click="load(1)">&raquo;</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-    <div class="otherJobs">
-        <h4>职位推荐</h4>
-    </div>
-</div>
-<div id="rightDiv">
-    <div class="companyLogo">
-        <img src="${root}/images/${job.post_company.logo}">
-    </div>
-    <div class="comment" ng-controller="CommentController">
-        <h4>评论列表</h4>
-
-        <div id="content">
-            <div ng-repeat="item in comments">
-                <div>
-                    <img ng-src="${root}/images/{{item.user.photo_src}}" class='headPhoto'>
-                    <span>{{item.c_time.time | date:'yyyy-MM-dd hh:mm:ss'}}</span>
-                </div>
-                <div class='contentDiv'>
-                    <p>{{item.content}}</p>
+            <div id="content">
+                <div ng-repeat="item in comments">
+                    <div>
+                        <img ng-src="${root}/images/{{item.user.photo_src}}" class='headPhoto'>
+                        <span style="color: #2b542c">{{item.user.nickname}}</span>
+                        <span>{{item.c_time.time | date:'yyyy-MM-dd hh:mm:ss'}}</span>
+                    </div>
+                    <div class='contentDiv'>
+                        <p>{{item.content}}</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <nav style="margin: 0 auto;text-align: center" id="page" ng-if="comments.length > 0">
-            <ul class="pagination pagination-sm">
-                <li>
-                    <a href="javascript:void(0)" aria-label="Previous" ng-click="load(-1)">&laquo;</a>
-                </li>
-                <li ng-repeat="p in pageArray" ng-class="{active:isCurrentPage(p)}">
-                    <a href="javascript:void(0)" ng-click="loadData(p)">{{p}}</a>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" aria-label="Next" ng-click="load(1)">&raquo;</a>
-                </li>
-            </ul>
-        </nav>
+            <nav style="margin: 0 auto;text-align: center" id="page" ng-if="comments.length > 0">
+                <ul class="pagination pagination-sm">
+                    <li>
+                        <a href="javascript:void(0)" aria-label="Previous" ng-click="load(-1)">&laquo;</a>
+                    </li>
+                    <li ng-repeat="p in pageArray" ng-class="{active:isCurrentPage(p)}">
+                        <a href="javascript:void(0)" ng-click="loadData(p)">{{p}}</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" aria-label="Next" ng-click="load(1)">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <c:choose>
+                <c:when test="${sessionScope.user != null}">
+                    <div style="width: 100%">
+                        <textarea rows="3" style="width: 100%" id="comment"></textarea>
+                        <button class="btn btn-danger" onclick="postComment()">发表评论</button>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <span class="font3"><a href="#" style="color: red" id="loginHref">登录</a>后才能评论哦~</span>
+                </c:otherwise>
+            </c:choose>
+        </div>
     </div>
 </div>
 <jsp:include page="footer.jsp"></jsp:include>
@@ -212,6 +252,16 @@
         map.addOverlay(marker);                     // 将标注添加到地图中
     }
 
+    //发表评论
+    function postComment() {
+        $.post("${root}/user/postComment.do", {
+            j_id:${requestScope.job.id},
+            content: $("#comment").val()
+        }, function (data) {
+            window.location.reload();
+        }, "JSON");
+    }
+
     //格式化时间
     function formatDate() {
         moment.locale("zh_cn");
@@ -225,6 +275,9 @@
 
     $(function () {
         formatDate();
+
+        //设置登录按钮的href
+        $("#loginHref").attr("href", "${root}/user/toLogin.do?from=" + window.location.href);
 
         flag = ${requestScope.collection != null};
         initMap();

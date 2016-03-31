@@ -275,4 +275,24 @@ public class UserDao {
 		count = session.selectOne("mapping.UserMapper.getCompaniesCount", map);
 		return count;
 	}
+
+	//获取未处理的贫困生认定的数量
+	public int getNewPoorCount() {
+		int count = 0;
+		count = session.selectOne("mapping.UserMapper.getNewPoorCount");
+		return count;
+	}
+
+	//获取未审核的公司数量
+	public int getNewCompanyCount() {
+		int count = 0;
+		count = session.selectOne("mapping.UserMapper.getNewCompanyCount");
+		return count;
+	}
+
+	//添加评论
+	public void addComment(Comment comment) {
+		session.insert("mapping.UserMapper.addComment",comment);
+	}
+
 }

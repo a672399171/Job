@@ -21,16 +21,17 @@
     <script src="${root}/js/ajaxfileupload.js"></script>
 </head>
 <body>
-<jsp:include page="header.jsp"></jsp:include>
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <img src="${root}/images/icon-succeed.png">
-            <span class="font6">简历投递成功！</span>
+<div class="big">
+    <jsp:include page="header.jsp"></jsp:include>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <img src="${root}/images/icon-succeed.png">
+                <span class="font6">简历投递成功！</span>
+            </div>
         </div>
     </div>
 </div>
-
 <jsp:include page="footer.jsp"></jsp:include>
 
 <script type="application/javascript">

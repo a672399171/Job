@@ -2,6 +2,19 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <div id="header" class="container">
+    <div class="row" style="background: grey">
+        <%--<!-- JiaThis Button BEGIN -->
+        <div class="jiathis_style">
+            <a class="jiathis_button_qzone"></a>
+            <a class="jiathis_button_tsina"></a>
+            <a class="jiathis_button_tqq"></a>
+            <a class="jiathis_button_weixin"></a>
+            <a class="jiathis_button_renren"></a>
+            <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        </div>
+        <script type="text/javascript" src="http://v3.jiathis.com/code_mini/jia.js" charset="utf-8"></script>
+        <!-- JiaThis Button END -->--%>
+    </div>
     <div class="row">
         <div class="col-md-2 col-md-offset-1">
             <a href="${root}/">
@@ -34,7 +47,7 @@
                             <a class="list-group-item" href="${root}/user/resume.do">
                                 <i class="fa fa-files-o fa-fw"></i>&nbsp; 我的简历
                             </a>
-                            <a class="list-group-item" href="#">
+                            <a class="list-group-item" href="${root}/user/apply.do">
                                 <i class="fa fa-comments fa-fw"></i>&nbsp; 求职进展
                             </a>
                             <a class="list-group-item" href="${root}/user/poor.do">
