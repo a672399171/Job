@@ -84,12 +84,13 @@ public class UserDao {
 		return admin;
 	}
 
-	public List<User> searchUsers(int page) {
+	public List<User> searchUsers(int page, String filter) {
 		List<User> users = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("page", page);
 		map.put("start", (page - 1) * Common.COUNT);
 		map.put("count", Common.COUNT);
+		map.put("filter", filter);
 
 		users = session.selectList("mapping.UserMapper.searchUsers", map);
 
@@ -161,13 +162,14 @@ public class UserDao {
 		return count;
 	}
 
-	public List<Company> searchCompanies(int page, boolean audit) {
+	public List<Company> searchCompanies(int page, int[] audit,String filter) {
 		List<Company> companies = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("page", page);
 		map.put("start", (page - 1) * Common.COUNT);
 		map.put("count", Common.COUNT);
 		map.put("audit", audit);
+		map.put("filter",filter);
 
 		companies = session.selectList("mapping.UserMapper.searchCompanies", map);
 		return companies;
@@ -243,7 +245,7 @@ public class UserDao {
 		map.put("count", Common.COUNT);
 
 		List<Collection> collections = null;
-		collections = session.selectList("mapping.JobMapper.searchCollections",map);
+		collections = session.selectList("mapping.JobMapper.searchCollections", map);
 		return collections;
 	}
 
@@ -253,6 +255,24 @@ public class UserDao {
 		map.put("u_id", u_id);
 		map.put("j_id", j_id);
 
-		session.delete("mapping.JobMapper.deleteCollection",map);
+		session.delete("mapping.JobMapper.deleteCollection", map);
+	}
+
+	//搜索到的用户总数
+	public int getUsersCount(String filter) {
+		int count = 0;
+		count = session.selectOne("mapping.UserMapper.getUsersCount", filter);
+		return count;
+	}
+
+	//搜索到的公司数
+	public int getCompaniesCount(int[] audit, String filter) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("audit", audit);
+		map.put("filter", filter);
+
+		int count = 0;
+		count = session.selectOne("mapping.UserMapper.getCompaniesCount", map);
+		return count;
 	}
 }

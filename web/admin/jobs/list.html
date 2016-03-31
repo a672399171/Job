@@ -19,10 +19,16 @@
                 <button class="btn btn-sm btn-default" ng-click="exec()">执行</button>
             </div>
             <div class="col-sm-4">
+                运行状态:
+                <select class="input-sm form-control w-sm inline v-middle" ng-model="state" ng-init="state=0" ng-change="change()">
+                    <option value="0">全部</option>
+                    <option value="1">未运行</option>
+                    <option value="2">运行中</option>
+                </select>
             </div>
             <div class="col-sm-3">
                 <div class="input-group">
-                    <input type="text" class="input-sm form-control" placeholder="Search" ng-model="search_context">
+                    <input type="text" class="input-sm form-control" placeholder="输入公司名、职位名" ng-model="search_context">
           <span class="input-group-btn">
             <button class="btn btn-sm btn-default" ng-click="search()" type="button">Go!</button>
           </span>
@@ -77,15 +83,15 @@
                 <div ng-if="maxPage >= 1" class="col-sm-4 text-right text-center-xs">
                     <ul class="pagination pagination-sm m-t-none m-b-none">
                         <li ng-class="{disabled:page_index <= 1}">
-                            <a ui-sref="app.jobs.list({page:page_index-1,search:search_context})">
+                            <a ui-sref="app.jobs.list({page:page_index-1,search:search_context,state:state})">
                                 <i class="fa fa-chevron-left"></i>
                             </a>
                         </li>
                         <li ng-repeat="page in pages" ng-class="{active:page==page_index}">
-                            <a ui-sref="app.jobs.list({page:page,search:search_context})">{{page}}</a>
+                            <a ui-sref="app.jobs.list({page:page,search:search_context,state:state})">{{page}}</a>
                         </li>
                         <li ng-class="{disabled:page_index >= maxPage}">
-                            <a ui-sref="app.jobs.list({page:page_index+1,search:search_context})">
+                            <a ui-sref="app.jobs.list({page:page_index+1,search:search_context,state:state})">
                                 <i class="fa fa-chevron-right"></i>
                             </a>
                         </li>

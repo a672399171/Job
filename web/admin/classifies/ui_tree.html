@@ -1,3 +1,13 @@
+<style type="text/css">
+    #right input {
+        margin: 10px;
+    }
+    #right button {
+        margin: 0 auto;
+        margin-left: 30px;
+    }
+</style>
+
 <div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="AbnTestController">
     <div class="col w-lg bg-light b-r bg-auto">
         <div class="wrapper-md">
@@ -27,9 +37,9 @@
     </div>
     <div class="col">
         <div class="wrapper-md">
-            <div class="alert alert-info">
-                <input type="text" class="form-control" ng-model="currentNode.id" value="">
-                <input type="text" class="form-control" ng-model="currentNode.label">
+            <div class="alert alert-info" id="right">
+                <input type="text" class="form-control" ng-model="currentNode.id" placeholder="此处显示节点id">
+                <input type="text" class="form-control" ng-model="currentNode.label" placeholder="此处显示节点名">
                 <button class="btn m-b-xs btn-sm btn-info btn-addon" ng-click="delete_node()"><i class="fa fa-trash-o"></i>删除</button>
                 <button class="btn m-b-xs btn-sm btn-default btn-addon" ng-click="save_modify()"><i class="fa fa-plus"></i>保存修改</button>
             </div>

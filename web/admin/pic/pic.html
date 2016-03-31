@@ -1,0 +1,33 @@
+<style type="text/css">
+    #panel {
+        width: 100%;
+        margin: 0 auto;
+        margin-top: 30px;
+    }
+    #panel table {
+        width: 100%;
+    }
+
+    #panel table td {
+        padding: 5px;
+    }
+</style>
+
+<div class="panel panel-default" id="panel" ng-controller="PictureController">
+    <div class="panel-body">
+        <table>
+            <tr ng-repeat="item in array">
+                <td><input type="text" class="form-control" ng-model="item.src"/></td>
+                <td><input type="text" class="form-control" ng-model="item.href"/></td>
+                <td>
+                    <div class="button" ngf-select="upload($file,item)">选择文件</div>
+                </td>
+                <td width="20%">
+                    <span>{{item.local}}</span>
+                </td>
+                <td><a href="#">删除</a></td>
+            </tr>
+        </table>
+        <button class="btn btn-default" ng-click="save()">保存</button>
+    </div>
+</div>

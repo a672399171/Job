@@ -222,6 +222,19 @@
         <if test="h != -1">
             and j.high_salary &lt;=#{h}
         </if>
+        <if test="filter != null">
+            and (j.name like '%${filter}%' or c.company_name like '%${filter}%' or p.name like '%${filter}%')
+        </if>
+        <if test="state != 0">
+            <choose>
+                <when test="state == 1">
+                    and j.status=0
+                </when>
+                <when test="state == 2">
+                    and j.status=1
+                </when>
+            </choose>
+        </if>
         ORDER BY j.post_time desc
         <if test="page != 0">
             limit ${start},${count}
@@ -243,6 +256,19 @@
         </if>
         <if test="h != -1">
             and j.high_salary &lt;=#{h}
+        </if>
+        <if test="filter != null">
+            and (j.name like '%${filter}%' or c.company_name like '%${filter}%' or p.name like '%${filter}%')
+        </if>
+        <if test="state != 0">
+            <choose>
+                <when test="state == 1">
+                    and j.status=0
+                </when>
+                <when test="state == 2">
+                    and j.status=1
+                </when>
+            </choose>
         </if>
         ORDER BY j.post_time desc
     </select>

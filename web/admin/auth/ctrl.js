@@ -20,9 +20,7 @@ app.controller('LoginController', function ($scope, $state, $http) {
                 password: $scope.user.password
             })
             .then(function (response) {
-                console.log(response.data);
                 if (response.data.success) {
-                    console.log("success");
                     $state.go('app.dashboard');
                 } else {
                     $scope.authError = response.data.error;

@@ -1,0 +1,8 @@
+tomacat对GET和POST请求处理方式是不同的，要处理针对GET请求的编码问题，则需要改tomcat的server.xml配置文件，如下：
+
+<Connector connectionTimeout="20000" port="8080" protocol="HTTP/1.1" redirectPort="8443"/>
+改为：
+
+<Connector connectionTimeout="20000" port="8080" protocol="HTTP/1.1" redirectPort="8443" useBodyEncodingForURI="true"/>
+
+配置useBodyEncodingForURI="true"后，可以解决普通get请求的中文乱码问题，但是对于通过ajax发起的get请求中文依然会乱码，请把useBodyEncodingForURI="true"改为URIEncoding="UTF-8"即可。

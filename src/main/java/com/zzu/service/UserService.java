@@ -6,6 +6,7 @@ import com.zzu.model.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -53,8 +54,9 @@ public class UserService {
 		return userDao.adminLogin(username,password);
 	}
 
-	public List<User> searchUsers(int page) {
-		return userDao.searchUsers(page);
+	//搜索用户
+	public List<User> searchUsers(int page,String filter) {
+		return userDao.searchUsers(page,filter);
 	}
 
 	public Poor searchPoor(int u_id) {
@@ -106,8 +108,8 @@ public class UserService {
 	}
 
 	//查询公司
-	public List<Company> searchCompanies(int page, boolean audit) {
-		return userDao.searchCompanies(page,audit);
+	public List<Company> searchCompanies(int page, int[] audit,String filter) {
+		return userDao.searchCompanies(page,audit,filter);
 	}
 
 	//修改密码
@@ -158,5 +160,15 @@ public class UserService {
 	//取消收藏
 	public void deleteCollection(int u_id, int j_id) {
 		userDao.deleteCollection(u_id,j_id);
+	}
+
+	//搜索到的用户总数
+	public int getUsersCount(String filter) {
+		return userDao.getUsersCount(filter);
+	}
+
+	//搜索到的公司数
+	public int getCompaniesCount(int[] audit, String filter) {
+		return userDao.getCompaniesCount(audit,filter);
 	}
 }

@@ -7,30 +7,45 @@
 app.controller('UserListController', function ($scope, $resource, $stateParams, $modal, $state) {
     //查询
     $scope.query = function (page, filter) {
-        var $com = $resource($scope.app.host + "/user/admin/users/list/:page", {page: '@page'});
+        var $com = $resource($scope.app.host + "/user/admin/users/list/:page?filter=:filter", {page: '@page'});
         if (!page) {
             page = 1;
         } else {
             page = parseInt(page);
         }
-        $com.get({page: page}, function (data) {
+        $com.get({page: page,filter:filter}, function (data) {
             //扩展分页数据，显示页签，最终效果为  < 1 2 3 4 5 >
-            data.page_index = page;
-            data.pages = [];    //页签表
+            $scope.page_index = page;
+            $scope.pages = [];    //页签表
             var N = 5;          //每次显示5个页签
-            var s = Math.floor(page / N) * N;
-            if (s == page)s -= N;
-            s += 1;
-            var e = Math.min(data.page_count, s + N - 1)
-            for (var i = s; i <= e; i++)
-                data.pages.push(i)
+
+            $scope.pages = [];
+            $scope.maxPage = Math.ceil(data.total / 10);
+
+            if ($scope.maxPage <= N) {
+                for (var i = 0; i < $scope.maxPage; i++) {
+                    $scope.pages.push(i + 1);
+                }
+            } else {
+                if ($scope.page_index > Math.ceil(N / 2)) {
+                    var end = $scope.maxPage > $scope.page_index + Math.floor(N / 2) ? $scope.page_index + Math.floor(N / 2) : $scope.maxPage;
+                    for (var i = $scope.page_index - Math.floor(N / 2); i <= end; i++) {
+                        $scope.pages.push(i);
+                    }
+                } else {
+                    for (var i = 0; i < N; i++) {
+                        $scope.pages.push(i + 1);
+                    }
+                }
+            }
+
             $scope.data = data;
             $scope.search_context = filter;
         });
     };
     //搜索跳转
     $scope.search = function () {
-        $state.go('app.users.list', {search: $scope.search_context});
+        $scope.query(1,$scope.search_context);
     };
     //全选
     var selected = false;

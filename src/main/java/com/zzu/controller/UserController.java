@@ -23,8 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -275,6 +274,8 @@ public class UserController {
 	@ResponseBody
 	public Map<String, Object> quit(HttpSession session) {
 		session.removeAttribute(Common.USER);
+		session.removeAttribute(Common.COMPANY);
+
 		Map map = new HashMap<String, Object>();
 		map.put("msg", true);
 		return map;
@@ -603,6 +604,7 @@ public class UserController {
 
 	/**
 	 * 管理员登录
+	 *
 	 * @param username
 	 * @param password
 	 * @param session
@@ -632,6 +634,7 @@ public class UserController {
 
 	/**
 	 * 管理员退出
+	 *
 	 * @param session
 	 * @return
 	 */
@@ -703,10 +706,17 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/admin/users/list/{page}", method = RequestMethod.GET)
 	@ResponseBody
-	public JSONObject searchUsers(@PathVariable("page") Integer page) {
+	public JSONObject searchUsers(@PathVariable("page") Integer page, String filter) {
 		JSONObject object = new JSONObject();
-		List<User> users = userService.searchUsers(page);
-		object.put("total", users.size());
+
+		if (StringUtil.isEmpty(filter)) {
+			filter = null;
+		}
+
+		List<User> users = userService.searchUsers(page, filter);
+		int count = userService.getUsersCount(filter);
+
+		object.put("total", count);
 		object.put("rows", users);
 
 		return object;
@@ -806,13 +816,25 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/admin/companies/list/{page}", method = RequestMethod.GET)
 	@ResponseBody
-	public JSONObject searchCompanies(@PathVariable("page") Integer page, Boolean audit) {
+	public JSONObject searchCompanies(@PathVariable("page") Integer page, Boolean audit, String filter) {
 		JSONObject object = new JSONObject();
+		int[] array = null;
 		if (audit == null) {
-			audit = false;
+			array = new int[]{Common.UNAUTH, Common.AUTHING, Common.AUTHED};
+		} else if (audit) {
+			array = new int[]{Common.AUTHED};
+		} else {
+			array = new int[]{Common.UNAUTH, Common.AUTHING};
 		}
-		List<Company> companies = userService.searchCompanies(page, audit);
-		object.put("total", companies.size());
+
+		if (StringUtil.isEmpty(filter)) {
+			filter = null;
+		}
+
+		List<Company> companies = userService.searchCompanies(page, array, filter);
+		int count = userService.getCompaniesCount(array, filter);
+
+		object.put("total", count);
 		object.put("rows", companies);
 		return object;
 	}
@@ -1020,5 +1042,57 @@ public class UserController {
 		PictureUtil.cutPicture(newPath);
 		map.put("src", newFile);
 		return map;
+	}
+
+	@RequestMapping("uploadPicture.do")
+	@ResponseBody
+	public JSONObject uploadPicture(@RequestParam("file") MultipartFile myfile, HttpServletRequest request) {
+		JSONObject object = new JSONObject();
+		String realPath = request.getSession().getServletContext().getRealPath("/images/index");
+		String originalFilename = myfile.getOriginalFilename();
+
+		String newFile = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
+		String newPath = realPath + "/" + newFile;
+		System.out.println("新文件路径:" + newPath);
+
+		try {
+			myfile.transferTo(new File(newPath));
+		} catch (IOException e) {
+			System.out.println("文件[" + originalFilename + "]上传失败,堆栈轨迹如下");
+			e.printStackTrace();
+		}
+
+		object.put("src", newFile);
+		return object;
+	}
+
+	/**
+	 * 修改主页图片轮播
+	 *
+	 * @param data
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/updatePictureJson.do")
+	@ResponseBody
+	public JSONObject updatePictureJson(String data, HttpSession session) {
+		JSONObject object = new JSONObject();
+		JSONArray array = JSONArray.fromObject(data);
+
+		String realPath = session.getServletContext().getRealPath("/json") + "/pic.json";
+		//System.out.println(realPath);
+
+		try {
+			FileWriter fw = new FileWriter(realPath);
+			fw.write(array.toString());
+			fw.flush();
+			fw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return object;
 	}
 }

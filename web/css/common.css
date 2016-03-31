@@ -300,3 +300,8 @@ a:hover {
     padding: 10px;
     display: none;
 }
+
+.pic {
+    width: 700px;
+    height: 330px;
+}

@@ -28,7 +28,8 @@
                 <div class='hideDiv'>
                     <p class='alink'>
                         <c:forEach items="${item.positions}" var="position">
-                            <a href='javascript:void(0)' onclick="toJobList(${item.id},${position.id},1,127,0,'max')">${position.name}</a>
+                            <a href='javascript:void(0)'
+                               onclick="toJobList(${item.id},${position.id},1,127,0,'max')">${position.name}</a>
                         </c:forEach>
                     </p>
                 </div>
@@ -39,29 +40,10 @@
 
 <div id="carousel" class="carousel slide" data-ride="carousel">
     <!-- Indicators -->
-    <ol class="carousel-indicators">
-        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-    </ol>
+    <ol class="carousel-indicators"></ol>
 
     <!-- Wrapper for slides -->
-    <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="${root}/images/1.jpg" alt="">
-
-            <div class="carousel-caption">
-
-            </div>
-        </div>
-        <div class="item">
-            <img src="${root}/images/1.jpg" alt="">
-
-            <div class="carousel-caption">
-
-            </div>
-        </div>
-    </div>
+    <div class="carousel-inner" role="listbox"></div>
 
     <!-- Controls -->
     <a class="left carousel-control" href="#carousel" role="button" data-slide="prev">
@@ -73,6 +55,29 @@
         <span class="sr-only">Next</span>
     </a>
 </div>
+
+<script type="application/javascript">
+    //加载图片轮播配置
+    $.getJSON("${root}/json/pic.json", function (data) {
+        for (var i = 0; i < data.length; i++) {
+            var li = $("<li data-target='#carousel' data-slide-to='" + i + "'></li>");
+            if(i == 0) {
+                li.addClass("active");
+            }
+            $("#carousel .carousel-indicators").append(li);
+
+            var div = $("<div class='item'></div>");
+            div.append("<a href='" + data[i].href + "' target='_blank'><img src='" + data[i].src + "' alt='图片不存在' width='700' height='330' class='pic'></a>");
+
+            if(i == 0) {
+                div.addClass("active");
+            }
+
+            $("#carousel .carousel-inner").append(div);
+        }
+        $('#carousel').carousel()
+    });
+</script>
 
 <div id="middle">
     <h2>最新招聘</h2>

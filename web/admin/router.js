@@ -246,6 +246,21 @@ app.run(
             .state('app.audits.detail', {
                 url: '/detail/{id}',
                 templateUrl: 'audits/detail.html'
+            })//图片轮播管理
+            .state('app.picture', {
+                abstract: true,
+                url: '/picture',
+                template: '<div ui-view class="fade-in"></div>',
+                resolve: {
+                    deps: ['$ocLazyLoad',
+                        function ($ocLazyLoad) {
+                            return $ocLazyLoad.load('pic/ctrl.js');
+                        }]
+                }
+            })
+            .state('app.picture.manage', {
+                url: '/manage',
+                templateUrl: 'pic/pic.html'
             })
     }
 );

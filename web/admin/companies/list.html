@@ -20,12 +20,12 @@
             </div>
             <div class="col-sm-4">
                 <label class="i-checks m-b-none">
-                    <input type="checkbox"><i></i>隐藏未认证公司
+                    <input type="checkbox" ng-model="audit" ng-change="change()" ng-init="audit=null"><i></i>隐藏未认证公司
                 </label>
             </div>
             <div class="col-sm-3">
                 <div class="input-group">
-                    <input type="text" class="input-sm form-control" placeholder="Search" ng-model="search_context">
+                    <input type="text" class="input-sm form-control" placeholder="输入公司名、联系人" ng-model="search_context">
           <span class="input-group-btn">
             <button class="btn btn-sm btn-default" ng-click="search()" type="button">Go!</button>
           </span>
@@ -82,16 +82,21 @@
                 <div class="col-sm-8 text-left">
                     <small class="text-muted inline m-t-sm m-b-sm">{{data.total}}条记录</small>
                 </div>
-                <div ng-if="data.page>1" class="col-sm-4 text-right text-center-xs">
+                <div ng-if="maxPage >= 1" class="col-sm-4 text-right text-center-xs">
                     <ul class="pagination pagination-sm m-t-none m-b-none">
-                        <li ng-class="{disabled:!data.previous}"><a
-                                ui-sref="app.users.list({page:data.page_index-1,search:search_context})"><i
-                                class="fa fa-chevron-left"></i></a></li>
-                        <li ng-repeat="page in data.pages" ng-class="{active:page==data.page_index}"><a
-                                ui-sref="app.users.list({page:page,search:search_context})">{{page}}</a></li>
-                        <li ng-class="{disabled:!data.next}"><a
-                                ui-sref="app.users.list({page:data.page_index+1,search:search_context})"><i
-                                class="fa fa-chevron-right"></i></a></li>
+                        <li ng-class="{disabled:page_index <= 1}">
+                            <a ui-sref="app.companies.list({page:page_index-1,filter:search_context,audit:audit})">
+                                <i class="fa fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li ng-repeat="page in pages" ng-class="{active:page==page_index}">
+                            <a ui-sref="app.companies.list({page:page,filter:search_context,audit:audit})">{{page}}</a>
+                        </li>
+                        <li ng-class="{disabled:page_index >= maxPage}">
+                            <a ui-sref="app.companies.list({page:page_index+1,filter:search_context,audit:audit})">
+                                <i class="fa fa-chevron-right"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

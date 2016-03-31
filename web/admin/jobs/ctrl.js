@@ -6,14 +6,14 @@
 
 app.controller('JobListController', function ($scope, $resource, $stateParams, $modal, $state) {
     //查询
-    $scope.query = function (page, filter) {
-        var $com = $resource($scope.app.host + "/job/admin/jobs/list/:page", {page: '@page'});
+    $scope.query = function (page, filter, state) {
+        var $com = $resource($scope.app.host + "/job/admin/jobs/list/:page?filter=:filter&state=:state", {page: '@page'});
         if (!page) {
             page = 1;
         } else {
             page = parseInt(page);
         }
-        $com.get({page: page,filter:filter}, function (data) {
+        $com.get({page: page, filter: filter, state: state}, function (data) {
             //扩展分页数据，显示页签，最终效果为  < 1 2 3 4 5 >
             $scope.page_index = page;
             $scope.pages = [];    //页签表
@@ -41,11 +41,17 @@ app.controller('JobListController', function ($scope, $resource, $stateParams, $
 
             $scope.data = data;
             $scope.search_context = filter;
+            $scope.state = state;
         });
     };
     //搜索跳转
     $scope.search = function () {
-        $state.go('app.jobs.list', {search: $scope.search_context});
+        $scope.query(1, $scope.search_context, $scope.state);
+    };
+
+    //change
+    $scope.change = function () {
+        $scope.query(1, $scope.search_context, $scope.state);
     };
     //全选
     var selected = false;

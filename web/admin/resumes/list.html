@@ -11,18 +11,42 @@
             简历列表
         </div>
         <div class="row wrapper">
-            <div class="col-sm-5 m-b-xs">
+            <div class="col-sm-3 m-b-xs">
                 <select class="input-sm form-control w-sm inline v-middle" ng-model="operate" ng-init="operate=0">
                     <option value="0">---</option>
-                    <option value="1">删除所选记录</option>
+                    <option value="1">删除</option>
                 </select>
                 <button class="btn btn-sm btn-default" ng-click="exec()">执行</button>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-6">
+                <select class="input-sm form-control w-sm inline v-middle" ng-model="grade" ng-init="grade=0" ng-change="change()">
+                    <option value="0">不限</option>
+                    <option value="2010">2010</option>
+                    <option value="2011">2011</option>
+                    <option value="2012">2012</option>
+                    <option value="2013">2013</option>
+                    <option value="2014">2014</option>
+                    <option value="2015">2015</option>
+                </select>
+                <select class="input-sm form-control w-sm inline v-middle" ng-model="salary" ng-init="salary=''" ng-change="change()">
+                    <option value="">不限</option>
+                    <option value="500元以下">500元以下</option>
+                    <option value="500-1000">500-1000</option>
+                    <option value="1000-2000">1000-2000</option>
+                    <option value="2000-3000">2000-3000</option>
+                    <option value="3000-4000">3000-4000</option>
+                    <option value="4000以上">4000以上</option>
+                </select>
+                <select class="input-sm form-control w-sm inline v-middle" ng-model="school" ng-init="school=0" ng-change="change()">
+                    <option value="0">不限</option>
+                    <option value="{{item.id}}" ng-repeat="item in schools">
+                        {{item.school}}
+                    </option>
+                </select>
             </div>
             <div class="col-sm-3">
                 <div class="input-group">
-                    <input type="text" class="input-sm form-control" placeholder="Search" ng-model="search_context">
+                    <input type="text" class="input-sm form-control" placeholder="输入姓名" ng-model="search_context">
           <span class="input-group-btn">
             <button class="btn btn-sm btn-default" ng-click="search()" type="button">Go!</button>
           </span>
@@ -69,16 +93,21 @@
                 <div class="col-sm-8 text-left">
                     <small class="text-muted inline m-t-sm m-b-sm">{{data.total}}条记录</small>
                 </div>
-                <div ng-if="data.page>1" class="col-sm-4 text-right text-center-xs">
+                <div ng-if="maxPage >= 1" class="col-sm-4 text-right text-center-xs">
                     <ul class="pagination pagination-sm m-t-none m-b-none">
-                        <li ng-class="{disabled:!data.previous}"><a
-                                ui-sref="app.users.list({page:data.page_index-1,search:search_context})"><i
-                                class="fa fa-chevron-left"></i></a></li>
-                        <li ng-repeat="page in data.pages" ng-class="{active:page==data.page_index}"><a
-                                ui-sref="app.users.list({page:page,search:search_context})">{{page}}</a></li>
-                        <li ng-class="{disabled:!data.next}"><a
-                                ui-sref="app.users.list({page:data.page_index+1,search:search_context})"><i
-                                class="fa fa-chevron-right"></i></a></li>
+                        <li ng-class="{disabled:page_index <= 1}">
+                            <a ui-sref="app.resumes.list({page:page_index-1,filter:search_context,grade:grade,salary:salary,school:school})">
+                                <i class="fa fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li ng-repeat="page in pages" ng-class="{active:page==page_index}">
+                            <a ui-sref="app.resumes.list({page:page,filter:search_context,grade:grade,salary:salary,school:school})">{{page}}</a>
+                        </li>
+                        <li ng-class="{disabled:page_index >= maxPage}">
+                            <a ui-sref="app.resumes.list({page:page_index+1,filter:search_context,grade:grade,salary:salary,school:school})">
+                                <i class="fa fa-chevron-right"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

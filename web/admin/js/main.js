@@ -3,15 +3,15 @@
 /* Controllers */
 
 angular.module('app')
-    .controller('AppCtrl', ['$scope', '$translate', '$localStorage', '$window',
-        function ($scope, $translate, $localStorage, $window,$http) {
+    .controller('AppCtrl', ['$scope', '$translate', '$localStorage', '$window', '$http', '$state',
+        function ($scope, $translate, $localStorage, $window, $http, $state) {
             // add 'ie' classes to html
             var isIE = !!navigator.userAgent.match(/MSIE/i);
             isIE && angular.element($window.document.body).addClass('ie');
             isSmartDevice($window) && angular.element($window.document.body).addClass('smart');
 
             //退出
-            $scope.logout = function() {
+            $scope.logout = function () {
                 $http.post($scope.app.host + "/user/admin/logout.do")
                     .then(function (response) {
                         $state.go('auth.login');

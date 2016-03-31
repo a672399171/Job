@@ -35,7 +35,7 @@ public class JobDao {
 		return job;
 	}
 
-	public List<Resume> searchResume(int grade, int spare_time, String salary, int school, int page) {
+	public List<Resume> searchResume(int grade, int spare_time, String salary, int school, int page,String filter) {
 		List<Resume> resumes = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("grade", grade);
@@ -45,6 +45,8 @@ public class JobDao {
 		map.put("page", page);
 		map.put("start", (page - 1) * Common.COUNT);
 		map.put("count", Common.COUNT);
+		map.put("filter",filter);
+
 		resumes = session.selectList("mapping.ResumeMapper.searchResume", map);
 
 		return resumes;
@@ -173,7 +175,7 @@ public class JobDao {
 	 *
 	 * @return
 	 */
-	public List<Job> searchJobs(int[] p_ids, int time, int l, int h, int page) {
+	public List<Job> searchJobs(int[] p_ids, int time, int l, int h, int page,String filter,int state) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("p_ids", p_ids);
 		map.put("l", l);
@@ -182,6 +184,8 @@ public class JobDao {
 		map.put("start", (page - 1) * Common.COUNT);
 		map.put("count", Common.COUNT);
 		map.put("time", time);
+		map.put("filter",filter);
+		map.put("state",state);
 
 		List<Job> jobs = session.selectList("mapping.JobMapper.searchJobs", map);
 		return jobs;
@@ -224,12 +228,14 @@ public class JobDao {
 	 * @param h
 	 * @return
 	 */
-	public int getJobCount(int[] p_ids, int time, int l, int h) {
+	public int getJobCount(int[] p_ids, int time, int l, int h,String filter,int state) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("p_ids", p_ids);
 		map.put("l", l);
 		map.put("h", h);
 		map.put("time", time);
+		map.put("filter",filter);
+		map.put("state",state);
 
 		int count = session.selectOne("mapping.JobMapper.getJobCount", map);
 		return count;
@@ -441,13 +447,14 @@ public class JobDao {
 	 * @param school
 	 * @return
 	 */
-	public int getResumeCount(int grade, int time, String salary, int school) {
+	public int getResumeCount(int grade, int time, String salary, int school,String filter) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("grade", grade);
 		map.put("time", time);
 		map.put("salary", salary);
 		map.put("grade", grade);
 		map.put("school", school);
+		map.put("filter",filter);
 
 		int count = 0;
 		count = session.selectOne("mapping.ResumeMapper.getResumeCount",map);

@@ -7,7 +7,7 @@
 app.controller('AuditListController', function ($scope, $resource, $stateParams, $modal, $state) {
     //查询
     $scope.query = function (page, filter) {
-        var $com = $resource($scope.app.host + "/user/admin/companies/list/:page", {page: '@page', audit: true});
+        var $com = $resource($scope.app.host + "/user/admin/companies/list/:page", {page: '@page', audit: false});
         if (!page) {
             page = 1;
         } else {

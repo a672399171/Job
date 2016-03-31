@@ -18,6 +18,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Filter;
 
 /**
  * Created by Administrator on 2016/3/8.
@@ -300,8 +302,8 @@ public class JobController {
 		if (p_id != 0) {
 			p_ids = new int[]{p_id};
 		}
-		List<Job> jobs = jobService.searchJobs(p_ids, time, l, h, page);
-		int count = jobService.getJobCount(p_ids, time, l, h);
+		List<Job> jobs = jobService.searchJobs(p_ids, time, l, h, page, null, 0);
+		int count = jobService.getJobCount(p_ids, time, l, h, null, 0);
 
 		object.put("rows", jobs);
 		object.put("total", count);
@@ -409,17 +411,17 @@ public class JobController {
 	 */
 	@RequestMapping("/searchResume.do")
 	@ResponseBody
-	public JSONObject searchResume(int grade, Integer time, String salary, int school,int page) {
+	public JSONObject searchResume(int grade, Integer time, String salary, int school, int page) {
 		if (time > 127 || time <= 0) {
 			time = 127;
 		}
 
 		JSONObject object = new JSONObject();
-		List<Resume> resumes = jobService.searchResume(grade, time, salary, school, page);
-		int count = jobService.getResumeCount(grade, time, salary, school);
+		List<Resume> resumes = jobService.searchResume(grade, time, salary, school, page, null);
+		int count = jobService.getResumeCount(grade, time, salary, school, null);
 
 		object.put("rows", resumes);
-		object.put("total",count);
+		object.put("total", count);
 
 		return object;
 	}
@@ -688,11 +690,15 @@ public class JobController {
 	 */
 	@RequestMapping(value = "/admin/jobs/list/{page}", method = RequestMethod.GET)
 	@ResponseBody
-	public JSONObject searchJobs(@PathVariable("page") Integer page) {
+	public JSONObject searchJobs(@PathVariable("page") Integer page, String filter, Integer state) {
 		JSONObject object = new JSONObject();
-		List<Job> jobs = jobService.searchJobs(null, 127, 0, -1, page);
 
-		int count = jobService.getJobCount(null,127,0,-1);
+		if (state == null) {
+			state = 0;
+		}
+
+		List<Job> jobs = jobService.searchJobs(null, 127, 0, -1, page, filter, state);
+		int count = jobService.getJobCount(null, 127, 0, -1, filter, state);
 
 		object.put("total", count);
 		object.put("rows", jobs);
@@ -800,11 +806,29 @@ public class JobController {
 	 */
 	@RequestMapping(value = "/admin/resumes/list/{page}", method = RequestMethod.GET)
 	@ResponseBody
-	public JSONObject searchResumes(@PathVariable("page") Integer page) {
+	public JSONObject searchResumes(@PathVariable("page") Integer page, String filter, Integer grade, String salary, Integer school) {
 		JSONObject object = new JSONObject();
-		List<Resume> resumes = jobService.searchResume(0, 127, null, 0, page);
 
-		object.put("total", resumes.size());
+		if (StringUtil.isEmpty(filter)) {
+			filter = null;
+		}
+
+		if (grade == null || grade < 0) {
+			grade = 0;
+		}
+
+		if (StringUtil.isEmpty(salary)) {
+			salary = null;
+		}
+
+		if (school == null || school < 0) {
+			school = 0;
+		}
+
+		List<Resume> resumes = jobService.searchResume(grade, 127, salary, school, page, filter);
+		int count = jobService.getResumeCount(grade, 127, salary, school, filter);
+
+		object.put("total", count);
 		object.put("rows", resumes);
 		return object;
 	}

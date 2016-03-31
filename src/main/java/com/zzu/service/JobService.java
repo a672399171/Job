@@ -38,8 +38,8 @@ public class JobService {
 		return jobDao.getJobById(id);
 	}
 
-	public List<Resume> searchResume(int grade, int spare_time, String salary, int school, int page) {
-		List<Resume> resumes = jobDao.searchResume(grade, spare_time, salary, school, page);
+	public List<Resume> searchResume(int grade, int spare_time, String salary, int school, int page,String filter) {
+		List<Resume> resumes = jobDao.searchResume(grade, spare_time, salary, school, page,filter);
 
 		return resumes;
 	}
@@ -147,8 +147,8 @@ public class JobService {
 	 *
 	 * @return
 	 */
-	public List<Job> searchJobs(int[] p_ids, int time, int low, int high, int page) {
-		List<Job> jobs = jobDao.searchJobs(p_ids, time, low, high, page);
+	public List<Job> searchJobs(int[] p_ids, int time, int low, int high, int page,String filter,int state) {
+		List<Job> jobs = jobDao.searchJobs(p_ids, time, low, high, page,filter,state);
 
 		/*//使用增强的for循环会抛出java.util.ConcurrentModificationException,用iterator替代
 		Iterator<Job> iterator = jobs.iterator();
@@ -172,8 +172,8 @@ public class JobService {
 	 * @param high
 	 * @return
 	 */
-	public int getJobCount(int[] p_ids, int time, int low, int high) {
-		return jobDao.getJobCount(p_ids, time, low, high);
+	public int getJobCount(int[] p_ids, int time, int low, int high,String filter,int state) {
+		return jobDao.getJobCount(p_ids, time, low, high,filter,state);
 	}
 
 	/**
@@ -314,7 +314,7 @@ public class JobService {
 	 * @param school
 	 * @return
 	 */
-	public int getResumeCount(int grade, int time, String salary, int school) {
-		return jobDao.getResumeCount(grade,time,salary,school);
+	public int getResumeCount(int grade, int time, String salary, int school,String filter) {
+		return jobDao.getResumeCount(grade,time,salary,school,filter);
 	}
 }

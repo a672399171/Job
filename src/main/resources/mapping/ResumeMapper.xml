@@ -56,6 +56,9 @@
         <if test="school != 0">
             and s_id=#{school}
         </if>
+        <if test="filter != null">
+            and r.name like '%${filter}%'
+        </if>
         <if test="page > 0">
             limit ${start},${count}
         </if>
@@ -76,6 +79,9 @@
         </if>
         <if test="school != 0">
             and s_id=#{school}
+        </if>
+        <if test="filter != null">
+            and r.name like '%${filter}%'
         </if>
     </select>
 

@@ -27,11 +27,23 @@
             </ul>
         </div>
         <div class="col-md-3" id="login">
-
+            <c:choose>
+                <c:when test="${sessionScope.company != null}">
+                    欢迎你，
+                    <span style="color: #1a9c39">${sessionScope.company.username}</span>
+                    <a href="javascript:void(0)" onclick="quit()">退出</a>
+                </c:when>
+            </c:choose>
         </div>
     </div>
 </div>
 
 <script type="application/javascript">
 
+    //退出
+    function quit() {
+        $.post("${root}/user/quit.do", function (data) {
+            window.location = "${root}";
+        });
+    }
 </script>

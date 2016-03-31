@@ -11,7 +11,7 @@
         <association property="major" javaType="com.zzu.model.Major">
             <id property="id" column="major"/>
             <result property="major" column="m_major"></result>
-            <association property="school" javaType="com.zzu.model.School" >
+            <association property="school" javaType="com.zzu.model.School">
                 <id property="id" column="id"/>
                 <result property="school" column="school"></result>
             </association>
@@ -60,8 +60,20 @@
 
     <select id="searchUsers" resultType="com.zzu.model.User" parameterType="hashmap">
         SELECT * FROM tb_user
+        <if test="filter != null">
+            where username like '%${filter}%' or school_num like '%${filter}%' or nickname like '%${filter}%'
+        </if>
         <if test="page != 0">
             limit ${start},${count}
+        </if>
+    </select>
+
+    <select id="getUsersCount" parameterType="string" resultType="int">
+        SELECT count(*) FROM tb_user
+        /*传入string参数时，不管参数名是什么，都要用_parameter代替*/
+        <if test="_parameter != null">
+            where username like '%${_parameter}%' or school_num like '%${_parameter}%' or nickname like
+            '%${_parameter}%'
         </if>
     </select>
 
@@ -123,14 +135,47 @@
     </delete>
 
     <select id="searchCompanies" resultType="com.zzu.model.Company" parameterType="hashmap">
-        SELECT * FROM tb_company
-        <if test="audit">
-            where auth in (0,1)
+        SELECT * FROM tb_company where 1
+        <if test="audit != null">
+            and auth in
+            <foreach collection="audit" open="(" close=")" index="index" item="item">
+                <choose>
+                    <when test="index == 0">
+                        #{item}
+                    </when>
+                    <otherwise>
+                        ,#{item}
+                    </otherwise>
+                </choose>
+            </foreach>
+        </if>
+        <if test="filter != null">
+            and (company_name like '%${filter}%' or tb_company.name like '%${filter}%')
         </if>
         <if test="page != 0">
             limit ${start},${count}
         </if>
 
+    </select>
+
+    <select id="getCompaniesCount" resultType="int" parameterType="hashmap">
+        select count(*) from tb_company where 1
+        <if test="audit != null">
+            and auth in
+            <foreach collection="audit" open="(" close=")" index="index" item="item">
+                <choose>
+                    <when test="index == 0">
+                        #{item}
+                    </when>
+                    <otherwise>
+                        ,#{item}
+                    </otherwise>
+                </choose>
+            </foreach>
+        </if>
+        <if test="filter != null">
+            and (company_name like '%${filter}%' or tb_company.name like '%${filter}%')
+        </if>
     </select>
 
     <update id="changePassword" parameterType="com.zzu.model.User">
