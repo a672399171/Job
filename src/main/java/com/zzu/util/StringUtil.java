@@ -25,22 +25,26 @@ public class StringUtil {
 
 	//MD5加密
 	public static String toMd5(String str) {
-		//确定计算方法
-		MessageDigest md5 = null;
-		String newStr = null;
+		String result = "";
 		try {
-			md5 = MessageDigest.getInstance("MD5");
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(str.getBytes());
+			byte b[] = md.digest();
+			int i;
+			StringBuffer buf = new StringBuffer("");
+			for (int offset = 0; offset < b.length; offset++) {
+				i = b[offset];
+				if (i < 0)
+					i += 256;
+				if (i < 16)
+					buf.append("0");
+				buf.append(Integer.toHexString(i));
+			}
+			result = buf.toString();
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			System.out.println(e);
 		}
-		BASE64Encoder base64en = new BASE64Encoder();
-		//加密后的字符串
-		try {
-			newStr = base64en.encode(md5.digest(str.getBytes("utf-8")));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return newStr;
+		return result;
 	}
 
 	//产生指定长度的字符串
@@ -96,7 +100,7 @@ public class StringUtil {
 
 	public static void main(String[] args) {
 		//System.out.println(toMd5("admin"));
-		System.out.println(getNumberList("/Date(1458536322941)/"));
+		System.out.println(toMd5("a1703628649"));
 		//showAllCitys();
 		//sendMsg();
 	}

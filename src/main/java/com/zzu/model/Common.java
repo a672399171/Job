@@ -35,4 +35,7 @@ public class Common {
 	//treenode的类型
 	public static final String CLASSIFY = "classify";
 	public static final String POSITION = "position";
+	//邮件验证的类型
+	public static final int BINGEMAIL = 1;
+	public static final int FINDPWD = 2;
 }

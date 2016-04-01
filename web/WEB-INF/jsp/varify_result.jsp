@@ -19,11 +19,16 @@
 </head>
 <body>
 <jsp:include page="header.jsp"></jsp:include>
-<div class="container">
-    <div class="row">
-        ${result}
+<div class="big">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <span style="font-size: 30px;color: orangered;">${result}</span>
+            </div>
+        </div>
     </div>
 </div>
+<jsp:include page="footer.jsp"></jsp:include>
 </body>
 </html>
 

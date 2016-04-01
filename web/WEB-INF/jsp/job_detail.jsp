@@ -27,6 +27,7 @@
         app.company_id = ${requestScope.job.post_company.id};
     </script>
     <script src="${root}/js/controllers/jobDetail.js"></script>
+    <script src="${root}/js/page.js"></script>
 </head>
 <body>
 <div class="big">
@@ -127,8 +128,7 @@
         <div class="allJobs" ng-controller="CompanyJobController">
             <h4>该公司所有职位</h4>
 
-            <div class="job_item" style="display: block" ng-repeat="item in jobs"
-                 ng-click="toUrl(item.id)">
+            <div class="job_item" style="display: block" ng-repeat="item in data" ng-click="toUrl(item.id)">
                 <table>
                     <tr>
                         <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
@@ -143,19 +143,7 @@
                 </table>
             </div>
 
-            <nav style="margin: 0 auto;text-align: center" ng-if="jobs.length > 0">
-                <ul class="pagination">
-                    <li>
-                        <a href="javascript:void(0)" aria-label="Previous" ng-click="load(-1)">&laquo;</a>
-                    </li>
-                    <li ng-repeat="p in pageArray" ng-class="{active:isCurrentPage(p)}">
-                        <a href="javascript:void(0)" ng-click="loadData(p)">{{p}}</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)" aria-label="Next" ng-click="load(1)">&raquo;</a>
-                    </li>
-                </ul>
-            </nav>
+            <xl-page pageSize="5" n="5" method="load"></xl-page>
         </div>
         <div class="otherJobs">
             <h4>职位推荐</h4>
@@ -191,7 +179,7 @@
             <h4>评论列表</h4>
 
             <div id="content">
-                <div ng-repeat="item in comments">
+                <div ng-repeat="item in data">
                     <div>
                         <img ng-src="${root}/images/{{item.user.photo_src}}" class='headPhoto'>
                         <span style="color: #2b542c">{{item.user.nickname}}</span>
@@ -203,19 +191,7 @@
                 </div>
             </div>
 
-            <nav style="margin: 0 auto;text-align: center" id="page" ng-if="comments.length > 0">
-                <ul class="pagination pagination-sm">
-                    <li>
-                        <a href="javascript:void(0)" aria-label="Previous" ng-click="load(-1)">&laquo;</a>
-                    </li>
-                    <li ng-repeat="p in pageArray" ng-class="{active:isCurrentPage(p)}">
-                        <a href="javascript:void(0)" ng-click="loadData(p)">{{p}}</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)" aria-label="Next" ng-click="load(1)">&raquo;</a>
-                    </li>
-                </ul>
-            </nav>
+            <xl-page pageSize="5" n="5" method="load" cla="pagination-sm"></xl-page>
 
             <c:choose>
                 <c:when test="${sessionScope.user != null}">

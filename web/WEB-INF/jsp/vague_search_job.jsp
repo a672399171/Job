@@ -130,7 +130,7 @@
     </div>
 
     <div id="middle">
-        <div class="job_item" style="display: block" ng-repeat="item in jobs" ng-click="toUrl(item)">
+        <div class="job_item" style="display: block" ng-repeat="item in data" ng-click="toUrl(item)">
             <table>
                 <tr>
                     <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
@@ -146,23 +146,11 @@
         </div>
     </div>
 
-    <div ng-if="jobs.length <= 0" id="emptyDiv">
+    <div ng-if="data.length <= 0" id="emptyDiv">
         对不起，暂无记录！
     </div>
 
-    <nav style="margin: 0 auto;text-align: center" ng-if="jobs.length > 0">
-        <ul class="pagination pagination-lg">
-            <li>
-                <a href="javascript:void(0)" aria-label="Previous" ng-click="load(-1)">&laquo;</a>
-            </li>
-            <li ng-repeat="p in pageArray" ng-class="{active:isCurrentPage(p)}">
-                <a href="javascript:void(0)" ng-click="changePage(p)">{{p}}</a>
-            </li>
-            <li>
-                <a href="javascript:void(0)" aria-label="Next" ng-click="load(1)">&raquo;</a>
-            </li>
-        </ul>
-    </nav>
+    <xl-page pageSize="10" n="5" method="load" cla="pagination-lg"></xl-page>
 </div>
 
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
@@ -172,9 +160,6 @@
     app.host = "${root}";
 
     app.controller("JobListController", function ($scope, $http) {
-        $scope.currentPage = 1;
-        $scope.minPage = 1;
-        $scope.maxPage = 1;
         $scope.timeArray = [true, false, false, false, false, false, false, false];
 
         $scope.params = {
@@ -186,37 +171,15 @@
             high: "max"
         };
 
-        $scope.isCurrentPage = function (p) {
-            return p == $scope.currentPage;
-        };
+        $scope.load = function (page,callback) {
+            $scope.params.page = page;
 
-        $scope.loadData = function () {
             $http.get(app.host + '/job/vagueSearchJobs.do', {
                 params: $scope.params
             }).success(function (data) {
-                $scope.jobs = data.rows;
-                $scope.pageArray = [];
-
-                $scope.maxPage = Math.ceil(data.total / 11);
-
-                if ($scope.maxPage <= 11) {
-                    for (var i = 0; i < $scope.maxPage; i++) {
-                        $scope.pageArray.push(i + 1);
-                    }
-                } else {
-                    if ($scope.currentPage > 6) {
-                        var end = $scope.maxPage > $scope.currentPage + 5 ? $scope.currentPage + 5 : $scope.maxPage;
-                        for (var i = $scope.currentPage - 5; i <= end; i++) {
-                            $scope.pageArray.push(i);
-                        }
-                    } else {
-                        for (var i = 0; i < 11; i++) {
-                            $scope.pageArray.push(i + 1);
-                        }
-                    }
+                if(callback) {
+                    callback(data);
                 }
-
-                $scope.currentPage = $scope.params.page;
             });
         };
 
@@ -232,20 +195,20 @@
         //改变参数中的p_id
         $scope.changeCid = function (c_id) {
             $scope.params.c_id = c_id;
-            $scope.loadData();
+            $scope.load();
         };
 
         //改变参数中的salary
         $scope.changeSalary = function (low, high) {
             $scope.params.low = low;
             $scope.params.high = high;
-            $scope.loadData();
+            $scope.load();
         };
 
         //改变参数中的page
         $scope.changePage = function (page) {
             $scope.params.page = page;
-            $scope.loadData();
+            $scope.load();
         };
 
         //转到url
@@ -282,7 +245,7 @@
                 }
             }
             $scope.params.time = num;
-            $scope.loadData();
+            $scope.load();
         };
 
         $scope.resetTime = function () {
@@ -292,20 +255,13 @@
             $scope.timeArray[0] = true;
         };
 
-        $scope.load = function (temp) {
-            if ((temp < 0 && $scope.currentPage <= $scope.minPage) ||
-                    ($scope.currentPage >= $scope.maxPage && temp > 0)) {
-            } else {
-                $scope.changePage($scope.params.page + temp);
-            }
-        };
-
         //初始化加载类型信息
         $scope.loadClassifies();
 
         //初始加载职位列表
-        $scope.loadData();
+        $scope.load(1);
     });
 </script>
+<script src="${root}/js/page.js"></script>
 </body>
 </html>

@@ -63,17 +63,21 @@ public class UserDao {
 		session.update("mapping.UserMapper.updateSecret", map);
 	}
 
-	public Varify searchVarifyByUsername(String username) {
-		Varify varify = session.selectOne("mapping.UserMapper.searchVarifyByUsername", username);
+	public Varify searchVarify(String username, int type) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("username", username);
+		map.put("type", type);
+
+		Varify varify = session.selectOne("mapping.UserMapper.searchVarify", map);
 		return varify;
 	}
 
-	public void insertVarify(Varify varify) {
-		session.insert("mapping.UserMapper.insertVarify", varify);
+	public void insertOrUpdateVarify(Varify varify) {
+		session.insert("mapping.UserMapper.insertOrUpdateVarify", varify);
 	}
 
-	public void updateVarify(Varify varify) {
-		session.update("mapping.UserMapper.updateVarify", varify);
+	public void deleteVarify(Varify varify) {
+		session.delete("mapping.UserMapper.deleteVarify",varify);
 	}
 
 	public Admin adminLogin(String username, String password) {
@@ -99,8 +103,11 @@ public class UserDao {
 
 	//根据学号查找用户
 	public User searchUserBySchoolNum(String school_num) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("school_num", school_num);
+
 		User user = null;
-		user = session.selectOne("mapping.UserMapper.searchUserBySchoolNum");
+		user = session.selectOne("mapping.UserMapper.searchUserBySchoolNum", map);
 		return user;
 	}
 
@@ -162,14 +169,14 @@ public class UserDao {
 		return count;
 	}
 
-	public List<Company> searchCompanies(int page, int[] audit,String filter) {
+	public List<Company> searchCompanies(int page, int[] audit, String filter) {
 		List<Company> companies = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("page", page);
 		map.put("start", (page - 1) * Common.COUNT);
 		map.put("count", Common.COUNT);
 		map.put("audit", audit);
-		map.put("filter",filter);
+		map.put("filter", filter);
 
 		companies = session.selectList("mapping.UserMapper.searchCompanies", map);
 		return companies;
@@ -177,7 +184,7 @@ public class UserDao {
 
 	//修改密码
 	public void changeUserPassword(User user) {
-		session.update("mapping.UserMapper.changeUserPassword", user);
+		session.update("mapping.UserMapper.changePassword", user);
 	}
 
 	//绑定email
@@ -292,7 +299,7 @@ public class UserDao {
 
 	//添加评论
 	public void addComment(Comment comment) {
-		session.insert("mapping.UserMapper.addComment",comment);
+		session.insert("mapping.UserMapper.addComment", comment);
 	}
 
 }

@@ -56,12 +56,12 @@ public class VarifyUtil {
 		gd.setColor(Color.BLACK);
 		gd.drawRect(0, 0, width - 1, height - 1);
 
-		// 随机产生40条干扰线，使图象中的认证码不易被其它程序探测到。
+		// 随机产生10条干扰线，使图象中的认证码不易被其它程序探测到。
 		gd.setColor(Color.BLACK);
 
 		// 创建一个随机数生成器类
 		Random random = new Random();
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 10; i++) {
 			int x = random.nextInt(width);
 			int y = random.nextInt(height);
 			int xl = random.nextInt(12);

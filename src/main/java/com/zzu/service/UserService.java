@@ -38,16 +38,16 @@ public class UserService {
 		userDao.updateSecret(id,secret);
 	}
 
-	public Varify searchVarifyByUsername(String username) {
-		return userDao.searchVarifyByUsername(username);
+	public Varify searchVarify(String username,int type) {
+		return userDao.searchVarify(username,type);
 	}
 
-	public void insertVarify(Varify varify) {
-		userDao.insertVarify(varify);
+	public void insertOrUpdateVarify(Varify varify) {
+		userDao.insertOrUpdateVarify(varify);
 	}
 
-	public void updateVarify(Varify varify) {
-		userDao.updateVarify(varify);
+	public void deleteVarify(Varify varify) {
+		userDao.deleteVarify(varify);
 	}
 
 	public Admin adminLogin(String username, String password) {

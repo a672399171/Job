@@ -10,6 +10,24 @@ public class Varify {
 	private String varify;
 	private Date time;
 	private String email;
+	private int type;
+	private String u;
+
+	public String getU() {
+		return u;
+	}
+
+	public void setU(String u) {
+		this.u = u;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
 
 	public String getEmail() {
 		return email;

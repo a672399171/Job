@@ -29,8 +29,7 @@
     <!-- 完成请求和注解POJO的映射 -->
     <bean id="jsonConverter"
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"></bean>
-    <bean
-            class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">
             <list>
                 <ref bean="jsonConverter"/>
@@ -46,11 +45,10 @@
     <mvc:resources mapping="/css/**" location="/css/" cache-period="31536000"/>
     <mvc:resources mapping="/font-awesome-4.3.0/**" location="/font-awesome-4.3.0/" cache-period="31536000"/>
     <mvc:resources mapping="/images/**" location="/images/" cache-period="31536000"/>
-    <mvc:resources mapping="/jquery-easyui-1.4.4/**" location="/jquery-easyui-1.4.4/" cache-period="31536000"/>
     <mvc:resources mapping="/js/**" location="/js/" cache-period="31536000"/>
     <mvc:resources mapping="/json/**" location="/json/" cache-period="31536000"/>
     <mvc:resources mapping="/layer/**" location="/layer/" cache-period="31536000"/>
     <mvc:resources mapping="/test/**" location="/test/" cache-period="31536000"/>
     <mvc:resources mapping="/upload/**" location="/upload/" cache-period="31536000"/>
-    <mvc:resources mapping="/app/**" location="/app/" cache-period="31536000"/>
+    <mvc:resources mapping="/tpl/**" location="/tpl/" cache-period="31536000"/>
 </beans>

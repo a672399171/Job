@@ -78,4 +78,40 @@
     <bean id="session" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg index="0" ref="factory" />
     </bean>
+
+    <!-- 邮件发送方配置bean -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.163.com"/>
+        <!-- mail account -->
+        <property name="username" value="m15617536860@163.com"/>
+        <!--使用的是授权码登录-->
+        <property name="password" value="didiaozuoren31"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">true</prop>
+            </props>
+        </property>
+    </bean>
+    <!-- 邮件发送模板 -->
+    <bean id="mailMessage" class="org.springframework.mail.SimpleMailMessage">
+        <property name="from" value="m15617536860@163.com"/>
+    </bean>
+    <!-- 配置发送模板bean-->
+    <bean id="freeMarkerConfigurer"
+          class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <!-- 模板路径位置(多路径) -->
+        <property name="templateLoaderPaths">
+            <list>
+                <value>/WEB-INF/tpl/</value>
+            </list>
+        </property>
+        <property name="freemarkerSettings">
+            <props>
+                <!-- 模板更新延时 -->
+                <prop key="template_update_delay">1800</prop>
+                <prop key="default_encoding">UTF-8</prop>
+                <prop key="locale">zh_CN</prop>
+            </props>
+        </property>
+    </bean>
 </beans>

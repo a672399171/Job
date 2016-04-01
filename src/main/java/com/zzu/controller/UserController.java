@@ -3,6 +3,7 @@ package com.zzu.controller;
 import com.zzu.model.*;
 import com.zzu.model.Collection;
 import com.zzu.service.JobService;
+import com.zzu.service.MailService;
 import com.zzu.service.ResumeService;
 import com.zzu.service.UserService;
 import com.zzu.util.*;
@@ -38,6 +39,8 @@ public class UserController {
 	private ResumeService resumeService;
 	@Resource
 	private JobService jobService;
+	@Resource
+	private MailService mailService;
 
 	@RequestMapping("/toLogin.do")
 	public String toLogin(String from) {
@@ -499,24 +502,24 @@ public class UserController {
 		String randomString = StringUtil.randomString(10);
 		url += "?u=" + StringUtil.toMd5(user.getUsername()) + "&s=" + StringUtil.toMd5(randomString);
 
-		MailUtil.sendEmail(url, email, "验证邮箱");
+		Map<String, Object> valMap = new HashMap<String, Object>();
+		valMap.put("url", url);
 
-		Varify varify = userService.searchVarifyByUsername(StringUtil.toMd5(user.getUsername()));
+		mailService.sendEmail(email, "验证邮箱", "bindEmail.ftl", valMap);
+
+		Varify varify = userService.searchVarify(StringUtil.toMd5(user.getUsername()), Common.BINGEMAIL);
 
 		if (varify == null) {
 			varify = new Varify();
-			varify.setUsername(StringUtil.toMd5(user.getUsername()));
-			varify.setTime(new Date());
-			varify.setEmail(email);
-			varify.setVarify(StringUtil.toMd5(randomString));
-			userService.insertVarify(varify);
-		} else {
-			varify.setUsername(StringUtil.toMd5(user.getUsername()));
-			varify.setTime(new Date());
-			varify.setEmail(email);
-			varify.setVarify(StringUtil.toMd5(randomString));
-			userService.updateVarify(varify);
 		}
+
+		varify.setUsername(StringUtil.toMd5(user.getUsername()));
+		varify.setTime(new Date());
+		varify.setEmail(email);
+		varify.setVarify(StringUtil.toMd5(randomString));
+		varify.setType(Common.BINGEMAIL);
+
+		userService.insertOrUpdateVarify(varify);
 
 		return map;
 	}
@@ -536,20 +539,21 @@ public class UserController {
 		if (user == null) {
 			return "login";
 		}
-		Varify varify = userService.searchVarifyByUsername(u);
+		Varify varify = userService.searchVarify(u, Common.BINGEMAIL);
 
 		if (varify != null && varify.getVarify().equals(s)) {
 			int hourGap = (int) ((new Date().getTime() - varify.getTime().getTime()) / (1000 * 3600));
 			if (hourGap <= 48) {
 				user.setEmail(varify.getEmail());
 				userService.bindEmail(user);
-				model.addAttribute("result", "验证成功！");
+				model.addAttribute("result", "恭喜你，验证成功！");
 				session.setAttribute(Common.USER, user);
 			} else {
-				model.addAttribute("result", "验证失败！");
+				model.addAttribute("result", "很遗憾，验证失败！");
 			}
+			userService.deleteVarify(varify);
 		} else {
-			model.addAttribute("result", "验证失败！");
+			model.addAttribute("result", "很遗憾，验证失败！");
 		}
 		return "varify_result";
 	}
@@ -590,7 +594,7 @@ public class UserController {
 
 		String realPath = session.getServletContext().getRealPath("/images");
 		File file = new File(realPath);
-		if(file.isDirectory() && !file.exists()) {
+		if (file.isDirectory() && !file.exists()) {
 			file.mkdirs();
 		}
 
@@ -664,6 +668,14 @@ public class UserController {
 		return object;
 	}
 
+	/**
+	 * 发表评论
+	 *
+	 * @param j_id
+	 * @param content
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/postComment.do")
 	@ResponseBody
 	public JSONObject postComment(int j_id, String content, HttpSession session) {
@@ -683,6 +695,151 @@ public class UserController {
 			userService.addComment(comment);
 		}
 		return object;
+	}
+
+	/**
+	 * 找回密码
+	 *
+	 * @return
+	 */
+	@RequestMapping("/find_password.do")
+	public String toFindPassword() {
+		return "find_password";
+	}
+
+	/**
+	 * 验证学号教务密码
+	 *
+	 * @param username
+	 * @param school_num
+	 * @param jwpwd
+	 * @param code
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/varifySchoolNum.do")
+	@ResponseBody
+	public JSONObject varifySchoolNum(String username, String school_num, String jwpwd, String code, HttpSession session) {
+		String c = (String) session.getAttribute("code");
+
+		JSONObject object = new JSONObject();
+		User user = null;
+		if (StringUtil.isEmpty(username) || StringUtil.isEmpty(school_num)
+				|| StringUtil.isEmpty(jwpwd) || StringUtil.isEmpty(code)) {
+			object.put("msg", "字段不能为空");
+		} else if (!code.equalsIgnoreCase(c)) {
+			object.put("msg", "验证码错误");
+		} else {
+			user = userService.searchUserBySchoolNum(school_num);
+			if (user == null || !username.equals(user.getUsername())) {
+				object.put("msg", "用户名或学号错误");
+			} else if (!NetUtil.isZZUStudent(school_num, jwpwd)) {
+				object.put("msg", "教务密码与学号不匹配");
+			} else {
+				session.setAttribute("auth", username);
+			}
+		}
+
+		return object;
+	}
+
+	/**
+	 * 修改用户密码
+	 *
+	 * @param password
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/resetPassword.do")
+	@ResponseBody
+	public JSONObject resetPassword(String password, HttpSession session) {
+		JSONObject object = new JSONObject();
+		String username = (String) session.getAttribute("auth");
+		if (username == null) {
+			object.put("msg", "未验证");
+		} else {
+			User user = userService.exists(username);
+			if (user != null) {
+				user.setPassword(StringUtil.toMd5(password));
+				userService.changeUserPassword(user);
+			}
+		}
+		session.removeAttribute("auth");
+		return object;
+	}
+
+	/**
+	 * 验证邮箱发送邮件
+	 *
+	 * @param username
+	 * @param email
+	 * @return
+	 */
+	@RequestMapping("/varifyEmail.do")
+	@ResponseBody
+	public JSONObject varifyEmail(String username, String email, HttpServletRequest request) {
+		JSONObject object = new JSONObject();
+		User user = userService.exists(username);
+		if (user == null) {
+			object.put("msg", "用户不存在");
+		} else {
+			String _email = user.getEmail();
+			if (StringUtil.isEmpty(_email)) {
+				object.put("msg", "该用户邮箱未绑定");
+			} else if (!_email.equals(email)) {
+				object.put("msg", "邮箱不正确");
+			} else {
+				String url = request.getScheme() + "://" + request.getServerName() + ":" +
+						request.getServerPort() + request.getContextPath() + "/user/validate_find_password.do";
+				String randomString = StringUtil.randomString(10);
+				url += "?u=" + StringUtil.toMd5(user.getUsername()) + "&s=" + StringUtil.toMd5(randomString);
+
+				Map<String, Object> valMap = new HashMap<String, Object>();
+				valMap.put("url", url);
+
+				mailService.sendEmail(email, "验证邮箱", "findPwd.ftl", valMap);
+
+				Varify varify = userService.searchVarify(StringUtil.toMd5(user.getUsername()), Common.FINDPWD);
+
+				if (varify == null) {
+					varify = new Varify();
+				}
+
+				varify.setUsername(StringUtil.toMd5(user.getUsername()));
+				varify.setTime(new Date());
+				varify.setEmail(email);
+				varify.setVarify(StringUtil.toMd5(randomString));
+				varify.setType(Common.FINDPWD);
+				varify.setU(username);
+
+				userService.insertOrUpdateVarify(varify);
+			}
+		}
+		return object;
+	}
+
+	/**
+	 * 验证找回密码的邮件
+	 *
+	 * @param u
+	 * @param s
+	 * @param model
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/validate_find_password.do")
+	public String validateFindPassword(String u, String s, Model model, HttpSession session) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Varify varify = userService.searchVarify(u, Common.FINDPWD);
+
+		if (varify != null && varify.getVarify().equals(s)) {
+			int hourGap = (int) ((new Date().getTime() - varify.getTime().getTime()) / (1000 * 3600));
+			if (hourGap <= 48) {
+				session.setAttribute("auth", varify.getU());
+			}
+			userService.deleteVarify(varify);
+		}
+		return "find_password";
 	}
 
 	/**

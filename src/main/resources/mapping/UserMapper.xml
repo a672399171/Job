@@ -22,7 +22,7 @@
         SELECT * FROM tb_user WHERE username=#{username} AND password=#{password}
     </select>
 
-    <select id="searchUserBySchoolNum" resultType="com.zzu.model.User" parameterType="string">
+    <select id="searchUserBySchoolNum" resultType="com.zzu.model.User" parameterType="hashmap">
         SELECT * FROM tb_user WHERE school_num=#{school_num}
     </select>
 
@@ -42,17 +42,18 @@
         update tb_user set push=#{secret} where id=#{id}
     </update>
 
-    <select id="searchVarifyByUsername" resultType="com.zzu.model.Varify" parameterType="string">
-        SELECT * FROM tb_varify WHERE username=#{username}
+    <select id="searchVarify" resultType="com.zzu.model.Varify" parameterType="hashmap">
+        SELECT * FROM tb_varify WHERE username=#{username} and type=#{type}
     </select>
 
-    <update id="updateVarify" parameterType="com.zzu.model.Varify">
-        update tb_varify set varify=#{varify},time=#{time},email=#{email} where username=#{username}
-    </update>
-
-    <insert id="insertVarify" parameterType="com.zzu.model.Varify">
-        insert into tb_varify (username,varify,time,email) values(#{username},#{varify},#{time},#{email})
+    <insert id="insertOrUpdateVarify" parameterType="com.zzu.model.Varify">
+        insert into tb_varify (username,varify,time,email,type,u) values(#{username},#{varify},#{time},#{email},#{type},#{u})
+        ON duplicate key update varify=#{varify},time=#{time},email=#{email},u=#{u}
     </insert>
+
+    <delete id="deleteVarify" parameterType="com.zzu.model.Varify">
+        delete from tb_varify where username=#{username} and varify=#{varify}
+    </delete>
 
     <select id="adminLogin" resultType="com.zzu.model.Admin" parameterType="hashmap">
         SELECT * FROM tb_admin WHERE username=#{username} AND password=#{password}

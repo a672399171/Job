@@ -1,0 +1,20 @@
+<!--指令模板-->
+<nav style="margin: 0 auto;text-align: center" ng-show="total>0">
+    <ul class="pagination {{cla}}">
+        <li>
+            <a href="javascript:void(0)" ng-click="getData(1)">&laquo;&laquo;</a>
+        </li>
+        <li ng-class="{disabled:currentPage<=1}">
+            <a href="javascript:void(0)" aria-label="Previous" ng-click="getData(currentPage - 1)">&laquo;</a>
+        </li>
+        <li ng-repeat="page in pages" ng-class="{active:page==currentPage}">
+            <a href="javascript:void(0)" ng-click="getData(page)">{{page}}</a>
+        </li>
+        <li ng-class="{disabled:currentPage>=maxPage}">
+            <a href="javascript:void(0)" aria-label="Next" ng-click="getData(currentPage + 1)">&raquo;</a>
+        </li>
+        <li>
+            <a href="javascript:void(0)" ng-click="getData(maxPage)">&raquo;&raquo;</a>
+        </li>
+    </ul>
+</nav>

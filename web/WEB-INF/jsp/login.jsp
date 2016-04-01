@@ -57,7 +57,7 @@
                         %>
                         >记住我
                     </label>
-                    <a href="#" id="wangji">忘记密码</a>
+                    <a href="${root}/user/find_password.do" id="wangji">忘记密码</a>
                 </div>
 
                 <button type="submit" class="btn btn-default">登&nbsp;录</button>
@@ -67,7 +67,6 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
 
 <script type="application/javascript">
     $(function () {
