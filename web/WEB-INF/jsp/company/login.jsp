@@ -35,6 +35,7 @@
 <body>
 <div class="panel panel-default" id="login_panel">
     <div class="panel-body">
+        <h3 align="center">企业登录</h3>
         <form id="loginForm">
             <div class="form-group">
                 <input type="text" class="form-control" name="username" id="username" placeholder="用户名"

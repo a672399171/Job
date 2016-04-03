@@ -30,6 +30,14 @@
         SELECT * FROM tb_user WHERE username=#{username}
     </select>
 
+    <select id="existsCompany" resultType="com.zzu.model.Company" parameterType="string">
+        SELECT * FROM tb_company WHERE username=#{username}
+    </select>
+
+    <select id="searchCompanyByEmail" resultType="com.zzu.model.Company" parameterType="string">
+        SELECT * FROM tb_company WHERE email=#{email}
+    </select>
+
     <select id="getUserById" resultType="com.zzu.model.User" parameterType="int">
         SELECT * FROM tb_user WHERE id=#{id}
     </select>
@@ -57,6 +65,10 @@
 
     <select id="adminLogin" resultType="com.zzu.model.Admin" parameterType="hashmap">
         SELECT * FROM tb_admin WHERE username=#{username} AND password=#{password}
+    </select>
+
+    <select id="getAllAdmins" resultType="com.zzu.model.Admin">
+        SELECT * from tb_admin;
     </select>
 
     <select id="searchUsers" resultType="com.zzu.model.User" parameterType="hashmap">

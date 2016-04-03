@@ -80,13 +80,6 @@ public class StringUtil {
 		return matcher.find();
 	}
 
-	//判断是否是空余时间字符串
-	public static boolean isSpareTimeString(String s) {
-		Pattern pattern = Pattern.compile("[0,1]{7}");
-		Matcher matcher = pattern.matcher(s);
-		return matcher.find();
-	}
-
 	//提取字符串中的数字
 	public static List<String> getNumberList(String str) {
 		List<String> list = new ArrayList<String>();
@@ -99,9 +92,7 @@ public class StringUtil {
 	}
 
 	public static void main(String[] args) {
-		//System.out.println(toMd5("admin"));
-		System.out.println(toMd5("a1703628649"));
-		//showAllCitys();
+		System.out.println(toMd5("admin"));
 		//sendMsg();
 	}
 }

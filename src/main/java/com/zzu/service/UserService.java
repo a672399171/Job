@@ -92,6 +92,16 @@ public class UserService {
 		userDao.modifyCompanyPassword(id,s);
 	}
 
+	//判断该用户名的公司是否存在
+	public Company existsCompany(String username) {
+		return userDao.existsCompany(username);
+	}
+
+	//根据email查找公司
+	public Company searchCompanyByEmail(String email) {
+		return userDao.searchCompanyByEmail(email);
+	}
+
 	//添加用户
 	public void addUser(User user) {
 		userDao.addUser(user);
@@ -187,4 +197,8 @@ public class UserService {
 		userDao.addComment(comment);
 	}
 
+	//获取所有的管理员
+	public List<Admin> getAllAdmins() {
+		return userDao.getAllAdmins();
+	}
 }

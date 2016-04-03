@@ -172,7 +172,7 @@
     </delete>
 
     <delete id="addCollection" parameterType="hashmap">
-        insert into tb_collection values(#{u_id},#{j_id})
+        insert into tb_collection(u_id,j_id,collect_time) values(#{u_id},#{j_id},now())
     </delete>
 
     <update id="addMajors" parameterType="list">

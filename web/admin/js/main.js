@@ -21,7 +21,7 @@ angular.module('app')
             // config
             $scope.app = {
                 name: '后台管理',
-                host: "http://localhost:8888/Job",
+                host: host,
                 version: '1.3.3',
                 // for chart colors
                 color: {

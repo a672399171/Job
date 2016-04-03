@@ -44,29 +44,14 @@ public class JobService {
 		return resumes;
 	}
 
-	public List<School> getSchools() {
-		return jobDao.getSchools();
-	}
-
 	public Resume getResumeById(int id) {
 		return jobDao.getResumeById(id);
-	}
-
-	public void addSchool(String school) {
-		jobDao.addSchool(school);
-	}
-
-	public void addMajors(List<String> majors) {
-		jobDao.addMajors(majors);
 	}
 
 	public List<Job> getRecentJobs(int num) {
 		return jobDao.getRecentJobs(num);
 	}
 
-	public List<Comment> getComments(int id) {
-		return jobDao.getComments(id);
-	}
 
 	public Collection getCollection(int u_id, int j_id) {
 		return jobDao.getCollection(u_id, j_id);

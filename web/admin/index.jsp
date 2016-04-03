@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en" data-ng-app="app">
 <head>
@@ -18,6 +19,10 @@
 <div class="app" id="app"
      ng-class="{'app-header-fixed':app.settings.headerFixed, 'app-aside-fixed':app.settings.asideFixed, 'app-aside-folded':app.settings.asideFolded, 'app-aside-dock':app.settings.asideDock, 'container':app.settings.container}"
      ui-view></div>
+
+<script type="application/javascript">
+    var host = "${pageContext.request.contextPath}";
+</script>
 
 <!-- jQuery -->
 <script src="vendor/jquery/jquery.min.js"></script>

@@ -18,8 +18,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.*;
-import java.util.logging.FileHandler;
-import java.util.logging.Filter;
 
 /**
  * Created by Administrator on 2016/3/8.
@@ -231,7 +229,15 @@ public class JobController {
 	 * @return
 	 */
 	@RequestMapping("/toPost.do")
-	public String toPost() {
+	public String toPost(HttpSession session,Model model) {
+		Company company = (Company) session.getAttribute(Common.COMPANY);
+		company = userService.getCompanyById(company.getId());
+
+		if(company.getAuth() != Common.AUTHED) {
+			model.addAttribute("msg","公司暂未认证或认证未通过，不能发布职位，请完善公司信息后发布职位");
+			return "company/account_setting";
+		}
+
 		return "company/post";
 	}
 
@@ -244,10 +250,13 @@ public class JobController {
 	 * @return
 	 */
 	@RequestMapping("/post_job.do")
-	public String postJob(@Valid @ModelAttribute("job") Job job, BindingResult result, HttpSession session) {
+	public String postJob(@Valid @ModelAttribute("job") Job job, BindingResult result, HttpSession session,Model model) {
 		Company company = (Company) session.getAttribute(Common.COMPANY);
 		if (company == null) {
 			return "redirect:/user/toCompanyLogin.do";
+		} else if(company.getAuth() != Common.AUTHED) {
+			model.addAttribute("msg","公司暂未认证或认证未通过，不能发布职位，请完善公司信息后发布职位");
+			return "company/account_setting";
 		}
 
 		job.setPost_time(new Date());
@@ -845,7 +854,7 @@ public class JobController {
 		Resume resume = jobService.getResumeById(id);
 		List<Position> positions = new ArrayList<Position>();
 		String[] types = null;
-		if (types != null) {
+		if (types != null && !StringUtil.isEmpty(resume.getJob_type())) {
 			types = resume.getJob_type().split("#");
 			for (String type : types) {
 				if (StringUtil.isNumber(type)) {
@@ -856,7 +865,9 @@ public class JobController {
 			}
 		}
 
-		resume.setPositions(positions);
+		if(resume != null) {
+			resume.setPositions(positions);
+		}
 
 		JSONObject object = JSONObject.fromObject(resume);
 

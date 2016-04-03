@@ -115,6 +115,8 @@
     }
 
     $(function () {
+        $("#login_href").attr("href", "${root}/user/toLogin.do");
+
         $('#regForm').bootstrapValidator({
             message: 'This value is not valid',
             feedbackIcons: {

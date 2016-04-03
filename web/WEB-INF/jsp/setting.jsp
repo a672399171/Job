@@ -121,6 +121,11 @@
                     <input type="password" placeholder="输入新密码" id="newPwd"/>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <input type="password" placeholder="确认新密码" id="newPwd2"/>
+                </td>
+            </tr>
             <tr style="text-align: center;height: 60px">
                 <td>
                     <button type="button" class="btn btn-default" onclick="changePassword()">确认</button>
@@ -154,7 +159,7 @@
         layer.open({
             type: 1,
             title: "修改密码",
-            area: ['300px', '200px'],
+            area: ['300px', '250px'],
             content: $('#changePassword')
         });
     }
@@ -182,19 +187,26 @@
 
     //修改密码
     function changePassword() {
-        $.post("${root}/user/changePassword.do", {
-            originPwd: $("#originPwd").val(),
-            newPwd: $("#newPwd").val()
-        }, function (data) {
-            if (data.msg == "unlogin") {
-                window.location = "${root}/user/toLogin.do"
-            } else if (data.msg == "pwderror") {
-                alert("密码错误");
-            } else {
-                alert("修改成功");
-                layer.closeAll();
-            }
-        }, "JSON");
+        if ($("#originPwd").val().trim() == "" || $("#newPwd").val().trim() == "" ||
+                $("#newPwd2").val().trim() == "") {
+            alert("密码不能为空");
+        } else if ($("#newPwd").val() != $("#newPwd2").val()) {
+            alert("两次密码输入不一致");
+        } else {
+            $.post("${root}/user/changePassword.do", {
+                originPwd: $("#originPwd").val(),
+                newPwd: $("#newPwd").val()
+            }, function (data) {
+                if (data.msg == "unlogin") {
+                    window.location = "${root}/user/toLogin.do"
+                } else if (data.msg == "pwderror") {
+                    alert("密码错误");
+                } else {
+                    alert("修改成功");
+                    layer.closeAll();
+                }
+            }, "JSON");
+        }
     }
 </script>
 </body>

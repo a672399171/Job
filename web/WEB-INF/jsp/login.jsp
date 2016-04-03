@@ -113,7 +113,11 @@
             }, function (data) {
                 console.log(data);
                 if (data.msg == true) {
-                    window.location = "${param.from}";
+                    if("${param.from}".trim() == "") {
+                        window.location = "${root}";
+                    } else {
+                        window.location = "${param.from}";
+                    }
                 } else {
                     $("#msg").text(data.msg);
                 }

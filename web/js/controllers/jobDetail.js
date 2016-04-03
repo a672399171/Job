@@ -4,15 +4,30 @@ app.controller("CommentController", function ($scope, $http) {
         id: app.job_id
     };
 
-    $scope.load = function (page,callback) {
+    $scope.load = function (page, callback) {
         $scope.params.page = page;
 
         $http.get(app.host + '/job/getComments.do', {
             params: $scope.params
         }).success(function (data) {
-            if(callback) {
+            if (callback) {
                 callback(data);
+            } else {
+                $scope.data = data.rows;
             }
+        });
+    };
+
+    //发表评论
+    $scope.postComment = function () {
+        $http.get(app.host + '/user/postComment.do', {
+            params: {
+                j_id: app.job_id,
+                content: $("#comment").val()
+            }
+        }).then(function (response) {
+            $("#comment").val("");
+            $scope.load(1);
         });
     };
 
@@ -23,16 +38,16 @@ app.controller("CommentController", function ($scope, $http) {
 app.controller("CompanyJobController", function ($scope, $http) {
     $scope.params = {
         page: 1,
-        id:app.company_id
+        id: app.company_id
     };
 
-    $scope.load = function (page,callback) {
+    $scope.load = function (page, callback) {
         $scope.params.page = page;
 
         $http.get(app.host + '/job/getJobsByCompany.do', {
             params: $scope.params
         }).success(function (data) {
-            if(callback) {
+            if (callback) {
                 callback(data);
             }
         });

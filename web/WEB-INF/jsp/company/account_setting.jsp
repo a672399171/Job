@@ -59,6 +59,13 @@
 
 <div class="container" id="container">
     <div class="row">
+        <div class="col-md-12">
+            <c:if test="${sessionScope.company.auth != 2}">
+                <span style="color: red">当前公司暂未通过认证，为了用户的安全，请认真填写公司信息，我们将在1个工作日内给予认证回复，谢谢合作。</span>
+            </c:if>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12 title">
             账号信息
         </div>
@@ -216,7 +223,7 @@
 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-default" onclick="return addParams()">保存信息</button>
+                        <button type="submit" class="btn btn-default">保存信息</button>
                     </div>
                 </div>
             </form>
@@ -227,6 +234,10 @@
 <script type="application/javascript">
     //页面加载完后获取当前位置
     $(function () {
+        if("${requestScope.msg}" != "") {
+            alert("${requestScope.msg}");
+        }
+
         $("#hrefUl li a").removeClass("activeTitle");
         $("#account_setting a").addClass("activeTitle");
 

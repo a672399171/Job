@@ -15,94 +15,95 @@
     <script src="${root}/js/moment-with-locales.js"></script>
 </head>
 <body>
-<div class="big">
+<div class="big container">
     <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 
-    <div id="list1">
-        <div id="type_title">选择类目</div>
-        <ul>
-            <c:forEach var="item" items="${requestScope.array}">
-                <li>
-                    <a href="javascript:void(0)">${item.name}</a>
-                    <span></span>
+    <div class="row">
+        <div id="list1" class="col-md-2 col-md-offset-1">
+            <div id="type_title">选择类目</div>
+            <ul>
+                <c:forEach var="item" items="${requestScope.array}">
+                    <li>
+                        <a href="javascript:void(0)">${item.name}</a>
+                        <span></span>
 
-                    <div class='hideDiv'>
-                        <p class='alink'>
-                            <c:forEach items="${item.positions}" var="position">
-                                <a href='javascript:void(0)'
-                                   onclick="toJobList(${item.id},${position.id},1,127,0,'max')">${position.name}</a>
-                            </c:forEach>
-                        </p>
-                    </div>
-                </li>
+                        <div class='hideDiv'>
+                            <p class='alink'>
+                                <c:forEach items="${item.positions}" var="position">
+                                    <a href='javascript:void(0)'
+                                       onclick="toJobList(${item.id},${position.id},1,127,0,'max')">${position.name}</a>
+                                </c:forEach>
+                            </p>
+                        </div>
+                    </li>
+                </c:forEach>
+            </ul>
+        </div>
+
+        <div id="carousel" class="carousel slide col-md-8" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators"></ol>
+
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner" role="listbox"></div>
+
+            <!-- Controls -->
+            <a class="left carousel-control" href="#carousel" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#carousel" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+        <script type="application/javascript">
+            //加载图片轮播配置
+            $.getJSON("${root}/json/pic.json", function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var li = $("<li data-target='#carousel' data-slide-to='" + i + "'></li>");
+                    if (i == 0) {
+                        li.addClass("active");
+                    }
+                    $("#carousel .carousel-indicators").append(li);
+
+                    var div = $("<div class='item'></div>");
+                    div.append("<a href='" + data[i].href + "' target='_blank'><img src='" + data[i].src + "' alt='图片不存在'></a>");
+
+                    if (i == 0) {
+                        div.addClass("active");
+                    }
+
+                    $("#carousel .carousel-inner").append(div);
+                }
+                $('#carousel').carousel()
+            });
+        </script>
+        <div id="middle" class="col-md-10 col-md-offset-1">
+            <h2>最新招聘</h2>
+            <hr>
+            <c:forEach var="item" items="${requestScope.recentJobs}">
+                <div class="job_item" style="display: block" url="${root}/job/detail.do?id=${item.id}">
+                    <table>
+                        <tr>
+                            <td width="30%"><a href="#" class="link">${item.name}</a></td>
+                            <td width="30%" class="font3 date">
+                                <fmt:formatDate value="${item.post_time}" pattern="yyyy-MM-dd HH:mm"/>
+                            </td>
+                            <td width="30%" class="font5">${item.post_company.company_name}</td>
+                        </tr>
+                        <tr>
+                            <td class="font5">${item.type.name}</td>
+                            <td class="font4">${item.low_salary}-${item.high_salary}</td>
+                            <td class="font3">${item.post_company.scope}</td>
+                        </tr>
+                    </table>
+                </div>
             </c:forEach>
-        </ul>
-    </div>
-
-    <div id="carousel" class="carousel slide" data-ride="carousel">
-        <!-- Indicators -->
-        <ol class="carousel-indicators"></ol>
-
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner" role="listbox"></div>
-
-        <!-- Controls -->
-        <a class="left carousel-control" href="#carousel" role="button" data-slide="prev">
-            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="right carousel-control" href="#carousel" role="button" data-slide="next">
-            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
-    </div>
-
-    <script type="application/javascript">
-        //加载图片轮播配置
-        $.getJSON("${root}/json/pic.json", function (data) {
-            for (var i = 0; i < data.length; i++) {
-                var li = $("<li data-target='#carousel' data-slide-to='" + i + "'></li>");
-                if (i == 0) {
-                    li.addClass("active");
-                }
-                $("#carousel .carousel-indicators").append(li);
-
-                var div = $("<div class='item'></div>");
-                div.append("<a href='" + data[i].href + "' target='_blank'><img src='" + data[i].src + "' alt='图片不存在'></a>");
-
-                if (i == 0) {
-                    div.addClass("active");
-                }
-
-                $("#carousel .carousel-inner").append(div);
-            }
-            $('#carousel').carousel()
-        });
-    </script>
-
-    <div id="middle">
-        <h2>最新招聘</h2>
-        <hr>
-        <c:forEach var="item" items="${requestScope.recentJobs}">
-            <div class="job_item" style="display: block" url="${root}/job/detail.do?id=${item.id}">
-                <table>
-                    <tr>
-                        <td width="30%"><a href="#" class="link">${item.name}</a></td>
-                        <td width="30%" class="font3 date">
-                            <fmt:formatDate value="${item.post_time}" pattern="yyyy-MM-dd HH:mm"/>
-                        </td>
-                        <td width="30%" class="font5">${item.post_company.company_name}</td>
-                    </tr>
-                    <tr>
-                        <td class="font5">${item.type.name}</td>
-                        <td class="font4">${item.low_salary}-${item.high_salary}</td>
-                        <td class="font3">${item.post_company.scope}</td>
-                    </tr>
-                </table>
-            </div>
-        </c:forEach>
+        </div>
     </div>
 </div>
+<jsp:include page="/WEB-INF/jsp/right.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 
 <script type="application/javascript">
@@ -113,6 +114,8 @@
         formatDate();
 
         $("#list1 ul li").mouseover(function () {
+            $(this).children(".hideDiv").css("margin-left", $("#list1").width() - 7 + "px");
+            $(this).children(".hideDiv").css("margin-top", -$(this).height() - 3 + "px");
             $(this).children(".hideDiv").show();
             $(this).children("span").css("display", "inline-block");
         });

@@ -73,6 +73,90 @@ public class UserController {
 		return map;
 	}
 
+	/**
+	 * 企业注册
+	 *
+	 * @param username
+	 * @param password
+	 * @param varify
+	 * @param session
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/companyReg.do")
+	@ResponseBody
+	public Map<String, Object> reg(String username, String password, String email,
+	                               String varify, HttpSession session, HttpServletRequest request) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		Company company = userService.existsCompany(username);
+		if (company != null) {
+			map.put("msg", "用户名已存在");
+		} else {
+			company = userService.searchCompanyByEmail(email);
+			if (company != null) {
+				map.put("msg", "该邮箱已绑定过");
+			} else if (varify == null || !varify.equalsIgnoreCase((String) session.getAttribute("code"))) {
+				map.put("msg", "验证码错误");
+			} else {
+
+				String url = request.getScheme() + "://" + request.getServerName() + ":" +
+						request.getServerPort() + request.getContextPath() + "/user/validate_company_reg.do";
+				String randomString = StringUtil.randomString(10);
+				url += "?u=" + StringUtil.toMd5(username) + "&s=" + StringUtil.toMd5(randomString) +
+						"&p=" + StringUtil.toMd5(password);
+
+				Map<String, Object> valMap = new HashMap<String, Object>();
+				valMap.put("url", url);
+
+				mailService.sendEmail(email, "验证邮箱", "companyReg.ftl", valMap);
+
+				Varify varify2 = userService.searchVarify(StringUtil.toMd5(username), Common.COMPANYREG);
+
+				if (varify2 == null) {
+					varify2 = new Varify();
+				}
+
+				varify2.setUsername(StringUtil.toMd5(username));
+				varify2.setTime(new Date());
+				varify2.setEmail(email);
+				varify2.setU(username);
+				varify2.setVarify(StringUtil.toMd5(randomString));
+				varify2.setType(Common.COMPANYREG);
+
+				userService.insertOrUpdateVarify(varify2);
+
+				mailService.sendEmail(email, "企业注册激活", "companyReg.ftl", valMap);
+			}
+		}
+		return map;
+	}
+
+	@RequestMapping("/validate_company_reg.do")
+	public String validateCompanyReg(String u, String s, String p, Model model, HttpSession session) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Varify varify = userService.searchVarify(u, Common.COMPANYREG);
+
+		if (varify != null && varify.getVarify().equals(s)) {
+			int hourGap = (int) ((new Date().getTime() - varify.getTime().getTime()) / (1000 * 3600));
+			if (hourGap <= 48) {
+				Company company = new Company();
+				company.setUsername(varify.getU());
+				company.setPassword(p);
+				company.setEmail(varify.getEmail());
+				userService.addCompany(company);
+
+				return "company/account_setting";
+			} else {
+				model.addAttribute("result", "很遗憾，验证失败！");
+			}
+			userService.deleteVarify(varify);
+		} else {
+			model.addAttribute("result", "很遗憾，验证失败！");
+		}
+		return "reg";
+	}
+
 	@RequestMapping("updateCompany.do")
 	public String updateCompany(MultipartFile logo, HttpSession session, String company_name, String address, String name,
 	                            String phone, String introduce, String type, String scope, String email, double lng, double lat) {
@@ -131,7 +215,23 @@ public class UserController {
 		company = userService.getCompanyById(company.getId());
 		session.setAttribute(Common.COMPANY, company);
 
+		if(company.getAuth() != Common.AUTHED) {
+			sendEmailToAdmin();
+		}
+
 		return "redirect:/job/account_setting.do";
+	}
+
+	/**
+	 * 给管理员群发邮件
+	 */
+	private void sendEmailToAdmin() {
+		List<Admin> admins = userService.getAllAdmins();
+
+		for(Admin admin : admins) {
+			String em = admin.getEmail();
+			mailService.sendEmail(em,"管理员大哥，有新消息啦！","adminMsg.ftl",null);
+		}
 	}
 
 	/**
@@ -198,11 +298,7 @@ public class UserController {
 	public Map<String, Object> reg(String username, String password, String school_num,
 	                               String jwpwd, String varify, HttpSession session) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		System.out.println(username);
-		System.out.println(password);
-		System.out.println(school_num);
-		System.out.println(jwpwd);
-		System.out.println(varify + "---" + session.getAttribute("code"));
+
 		User user = userService.exists(username);
 		if (user != null) {
 			map.put("msg", "用户名已存在");
@@ -220,8 +316,8 @@ public class UserController {
 			user.setPush(false);
 			user.setSchool_num(school_num);
 			user.setSex(Common.NAN);
+			user.setPhoto_src(Common.DEFAULTPHOTO);
 			userService.addUser(user);
-
 			session.setAttribute(Common.USER, user);
 		}
 		return map;
@@ -337,6 +433,23 @@ public class UserController {
 		}
 
 		Resume resume = resumeService.getResumeByUid(user.getId());
+
+		List<Position> positions = new ArrayList<Position>();
+		String[] types = null;
+		if (types != null && !StringUtil.isEmpty(resume.getJob_type())) {
+			types = resume.getJob_type().split("#");
+			for (String type : types) {
+				if (StringUtil.isNumber(type)) {
+					int temp = Integer.parseInt(type);
+					Position position = jobService.getPositionById(temp);
+					positions.add(position);
+				}
+			}
+		}
+
+		if (resume != null) {
+			resume.setPositions(positions);
+		}
 		model.addAttribute(Common.RESUME, resume);
 
 		return "resume";
@@ -353,7 +466,7 @@ public class UserController {
 	 */
 	@RequestMapping("/saveOrUpdateResume.do")
 	public String saveOrUpdateResume(@Valid @ModelAttribute("resume") Resume resume, BindingResult result,
-	                                 String birthday, int major_id, HttpSession session) {
+	                                 String birthday, Integer major_id, HttpSession session) {
 		User user = (User) session.getAttribute(Common.USER);
 		if (user == null) {
 			return "login";
@@ -393,7 +506,7 @@ public class UserController {
 		User user = (User) session.getAttribute(Common.USER);
 		if (user == null) {
 			map.put("msg", "unlogin");
-		} else if (userService.search(user.getUsername(), originPwd) == null) {
+		} else if (userService.search(user.getUsername(), StringUtil.toMd5(originPwd)) == null) {
 			map.put("msg", "pwderror");
 		} else {
 			user.setPassword(StringUtil.toMd5(newPwd));

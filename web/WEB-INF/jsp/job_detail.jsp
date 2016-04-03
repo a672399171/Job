@@ -197,7 +197,7 @@
                 <c:when test="${sessionScope.user != null}">
                     <div style="width: 100%">
                         <textarea rows="3" style="width: 100%" id="comment"></textarea>
-                        <button class="btn btn-danger" onclick="postComment()">发表评论</button>
+                        <button class="btn btn-danger" ng-click="postComment()">发表评论</button>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -226,16 +226,6 @@
         map.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
         var marker = new BMap.Marker(point);        // 创建标注
         map.addOverlay(marker);                     // 将标注添加到地图中
-    }
-
-    //发表评论
-    function postComment() {
-        $.post("${root}/user/postComment.do", {
-            j_id:${requestScope.job.id},
-            content: $("#comment").val()
-        }, function (data) {
-            window.location.reload();
-        }, "JSON");
     }
 
     //格式化时间

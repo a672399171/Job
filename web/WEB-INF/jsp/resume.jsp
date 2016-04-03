@@ -11,10 +11,14 @@
             src="${root}/js/jquery.fullPage.min.js"></script>
     <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
+    <link rel="stylesheet" href="${root}/js/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
     <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <script src="${root}/bootstrapvalidator/js/language/zh_CN.js"></script>
+    <script src="${root}/js/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="${root}/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
     <style type="text/css">
         #typeDiv li:hover {
             cursor: pointer;
@@ -68,7 +72,7 @@
             <div class="col-lg-6">
                 <h4>我的简历</h4>
                 <hr>
-                <form class="form-horizontal" action="${root}/user/saveOrUpdateResume.do" method="post">
+                <form class="form-horizontal" action="${root}/user/saveOrUpdateResume.do" id="form" method="post">
                     <div class="form-group">
                         <label class="col-sm-2 control-label">姓&nbsp;&nbsp;&nbsp;&nbsp;名:</label>
 
@@ -128,8 +132,9 @@
                         <label for="birthday" class="col-sm-2 control-label">出生日期:</label>
 
                         <div class="col-sm-8">
-                            <input type="date" class="form-control" name="birthday" id="birthday" placeholder="出生日期"
-                                   value="<fmt:formatDate value='${resume.birthday}' pattern='yyyy-MM-dd'></fmt:formatDate>"/>
+                            <input type="text" class="form-control" id="birthday" name="birthday" placeholder="出生日期"
+                                   readonly
+                                   value="<fmt:formatDate value='${resume.birthday}' pattern='yyyy-MM-dd'></fmt:formatDate>">
                         </div>
                     </div>
                     <div class="form-group">
@@ -227,15 +232,12 @@
                         <label class="col-sm-2 control-label">职位类型:</label>
 
                         <div class="col-sm-10" id="typeDiv" style="height: 200px">
+                            <div style="color: #2a6496" id="mySelect"></div>
                             <div id="leftDiv">
-                                <ul>
-
-                                </ul>
+                                <ul></ul>
                             </div>
                             <div id="rightDiv">
-                                <ul>
-
-                                </ul>
+                                <ul></ul>
                             </div>
                         </div>
                         <span style="color: red">最多可选三个</span>
@@ -262,7 +264,7 @@
                         <button type="button" class="btn btn-info" style="width: 150px" onclick="getJobTypes()">预览</button>
                     </div>--%>
                     <div class="col-sm-6" style="text-align: center">
-                        <button type="submit" class="btn btn-primary" style="width: 150px" onclick="return setData()">
+                        <button type="submit" class="btn btn-primary" style="width: 150px" >
                             <i class="fa fa-floppy-o"></i> 保存
                         </button>
                     </div>
@@ -274,16 +276,50 @@
 <jsp:include page="footer.jsp"></jsp:include>
 
 <script type="application/javascript">
-    var url = "${root}/json/city.json";
+    var provinceData = undefined;
     var schoolData = undefined;
     var typeData = undefined;
     var mytypes = undefined;
+    var positions = undefined;
 
     $(function () {
+        if ("${requestScope.resume.job_type}".trim() != "") {
+            mytypes = "${requestScope.resume.job_type}".split("#");
+            $("#mySelect").text()
+        } else {
+            mytypes = [];
+        }
+        if ("${requestScope.resume.positions}" != null) {
+            positions = [];
+            <c:forEach items="${requestScope.resume.positions}" var="item">
+            positions.push("${item.name}");
+            </c:forEach>
+        }
 
-        mytypes = "${requestScope.resume.job_type}".split("#");
+        showMySelected();
 
-        $.getJSON(url, function (data) {
+        $('#birthday').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            language: 'zh-CN'
+        });
+
+        loadProvinceData();
+        initData();
+        loadSchoolData();
+        loadTypeData();
+    });
+
+    //显示当前已选的类型
+    function showMySelected() {
+        var str = positions.join("、");
+        $("#mySelect").text(str);
+    }
+
+    //加载省市信息
+    function loadProvinceData() {
+        $.getJSON("${root}/json/city.json", function (data) {
+            provinceData = data;
             data.forEach(function (e) {
                 var provinceSelect = $("#province");
                 provinceSelect.append("<option value='" + e.province + "'>" + e.province + "</option>")
@@ -292,13 +328,7 @@
             $("#province option[value='" + "${resume.province}" + "']").attr("selected", "selected");
             $("#province").change();
         });
-
-        initData();
-
-        loadSchoolData();
-
-        loadTypeData();
-    });
+    }
 
     //加载职位类型数据
     function loadTypeData() {
@@ -314,7 +344,7 @@
                             for (var j = 0; j < typeData[i].children.length; j++) {
                                 var m = typeData[i].children[j];
                                 var li = $("<li></li>");
-                                var checkBox = $("<input type='checkbox' data='" + m.id + "' onclick='check(this)' />");
+                                var checkBox = $("<input type='checkbox' data='" + m.id + "' text='" + m.label + "' onclick='check(this)' />");
                                 li.append(checkBox);
                                 li.append(m.label);
                                 $("#rightDiv ul").append(li);
@@ -338,6 +368,7 @@
         for (var i = 0; i < mytypes.length; i++) {
             if (mytypes[i] == $(e).attr("data")) {
                 mytypes.splice(i, 1);
+                positions.splice(i,1);
                 return;
             }
         }
@@ -347,8 +378,10 @@
                 $(e).attr("checked", false);
             } else {
                 mytypes.push($(e).attr("data"));
+                positions.push($(e).attr("text"))
             }
         }
+        showMySelected();
     }
 
     //加载学院数据
@@ -356,7 +389,7 @@
         $.getJSON("${root}/job/school_data.do", function (data) {
             schoolData = data;
             data.forEach(function (e) {
-                if (e.id == ${requestScope.resume.major.school.id}) {
+                if (e.id == "${requestScope.resume.major.school.id}") {
                     $("#school").append("<option value='" + e.id + "' selected>" + e.school + "</option>");
 
                     $("#major").html("");
@@ -381,6 +414,7 @@
                     }
                 });
             });
+            $("#school").change();
         });
     }
 
@@ -408,7 +442,7 @@
         } else {
             spareStr = spareStr.substr(spareStr.length - 7);
         }
-        //console.log(spareStr);
+
         var week = $("#week td :checkbox");
 
         for (var i = 0; i < spareStr.length; i++) {
@@ -429,17 +463,15 @@
         var citySelect = $("#city");
         citySelect.html("");
         citySelect.append("<option value=''>选择城市</option>");
-        $.getJSON(url, function (data) {
-            data.forEach(function (e) {
-                if (e.province == $("#province").val()) {
-                    e.citys.forEach(function (city) {
-                        citySelect.append("<option value='" + city + "'>" + city + "</option>")
-                    });
-                    // 设置select选中某值
-                    $("#city option[value='" + "${resume.city}" + "']").attr("selected", "selected");
-                    return;
-                }
-            });
+        provinceData.forEach(function (e) {
+            if (e.province == $("#province").val()) {
+                e.citys.forEach(function (city) {
+                    citySelect.append("<option value='" + city + "'>" + city + "</option>")
+                });
+                // 设置select选中某值
+                $("#city option[value='" + "${resume.city}" + "']").attr("selected", "selected");
+                return;
+            }
         });
     });
 
@@ -463,9 +495,56 @@
         for (var i = 1; i < str.length; i++) {
             number += str.charAt(i) * Math.pow(2, 7 - i);
         }
-        console.log(str);
         return number;
     }
+
+    $('#form').bootstrapValidator({
+        message: 'This value is not valid',
+        feedbackIcons: {
+            valid: 'glyphicon glyphicon-ok',
+            invalid: 'glyphicon glyphicon-remove',
+            validating: 'glyphicon glyphicon-refresh'
+        },
+        fields: {
+            name: {
+                message: '姓名不能为空',
+                validators: {
+                    notEmpty: {
+                        message: '用户名不能为空'
+                    },
+                    stringLength: {
+                        min: 0,
+                        max: 20,
+                        message: '姓名为0-20位之间'
+                    }
+                }
+            },
+            title: {
+                message: '简历标题不能为空',
+                validators: {
+                    notEmpty: {
+                        message: '简历标题不能为空'
+                    },
+                    stringLength: {
+                        min: 0,
+                        max: 50,
+                        message: '简历标题为0-50位之间'
+                    }
+                }
+            }
+        }
+    }).on('success.form.bv', function (e) {
+        // Prevent form submission
+        e.preventDefault();
+
+        // Get the form instance
+        var $form = $(e.target);
+
+        // Get the BootstrapValidator instance
+        var bv = $form.data('bootstrapValidator');
+
+        setData();
+    });
 </script>
 </body>
 </html>

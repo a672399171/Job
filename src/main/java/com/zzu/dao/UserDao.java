@@ -101,6 +101,20 @@ public class UserDao {
 		return users;
 	}
 
+	//判断该用户名的公司是否存在
+	public Company existsCompany(String username) {
+		Company company = null;
+		company = session.selectOne("mapping.UserMapper.existsCompany",username);
+		return company;
+	}
+
+	//根据email查找公司
+	public Company searchCompanyByEmail(String email) {
+		Company company = null;
+		company = session.selectOne("mapping.UserMapper.searchCompanyByEmail",email);
+		return company;
+	}
+
 	//根据学号查找用户
 	public User searchUserBySchoolNum(String school_num) {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -302,4 +316,10 @@ public class UserDao {
 		session.insert("mapping.UserMapper.addComment", comment);
 	}
 
+	//获取所有的管理员
+	public List<Admin> getAllAdmins() {
+		List<Admin> admins = null;
+		admins = session.selectList("mapping.UserMapper.getAllAdmins");
+		return admins;
+	}
 }

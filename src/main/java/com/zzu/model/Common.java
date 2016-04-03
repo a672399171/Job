@@ -38,4 +38,7 @@ public class Common {
 	//邮件验证的类型
 	public static final int BINGEMAIL = 1;
 	public static final int FINDPWD = 2;
+	public static final int COMPANYREG = 3;
+	//默认的头像路径
+	public static final String DEFAULTPHOTO = "headphoto.png";
 }

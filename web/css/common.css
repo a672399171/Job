@@ -56,7 +56,6 @@ a:hover {
 #header {
     height: 70px;
     background-color: white;
-    width: 100%;
     margin-bottom: 15px;
 }
 
@@ -112,7 +111,7 @@ a:hover {
 #input {
     height: 100%;
     outline: none;
-    width: 520px;
+    width: 85%;
     border: 2px solid red;
     padding-left: 10px;
     font-size: 16px;
@@ -121,7 +120,7 @@ a:hover {
 
 #searchBtn {
     outline: none;
-    width: 100px;
+    width: 15%;
     background: red;
     color: white;
     float: left;
@@ -150,14 +149,20 @@ a:hover {
     font-size: 40px;
 }
 
+#right {
+    position: absolute;
+    top: 45%;
+    right: 10px;
+}
+
 #footer {
     clear: both;
     width: 100%;
-    height: 100px;
-    background: grey;
+    height: 60px;
+    background: #C1C1C1;
     margin-top: 60px;
-    color: white;
     text-align: center;
+    border-top: 1px solid #EEE;
 }
 
 #footer li {

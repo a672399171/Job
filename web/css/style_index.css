@@ -26,10 +26,7 @@
 }
 
 #list1 {
-    margin-left: 200px;
-    width: 200px;
     background: white;
-    float: left;
 }
 
 #list1 ul {
@@ -86,8 +83,6 @@
     display: none;
     position: absolute;
     z-index: 100;
-    margin-left: 190px;
-    margin-top: -31px;
     background: white;
     box-shadow: 0 0 8px red;
     -moz-box-shadow: 0 0 8px red;
@@ -118,10 +113,7 @@
 }
 
 #middle {
-    clear: both;
     padding-top: 50px;
-    width: 70%;
-    margin: 0 auto;
     min-width: 800px;
     background: #F8F8F8;
 }

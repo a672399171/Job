@@ -70,7 +70,7 @@
                 <img src="${root}/images/icon-succeed.png">
 
                 <div>
-                    <span class="usernameStyle">672399171${sessionScope.user.username}</span>
+                    <span class="usernameStyle">${sessionScope.user.username}</span>
                     <span class="successStyle">恭喜你注册成功！</span>
                 </div>
             </div>
