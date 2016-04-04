@@ -27,38 +27,42 @@ app.directive("xlPage", [function () {
                 scope.getData();
             }
         };
+
+        scope.createPage = function (data) {
+            //最大页
+            scope.maxPage = Math.ceil(data.total / scope.pageSize);
+            scope.pages = [];
+
+            if (scope.currentPage > Math.ceil(scope.N / 2)) {
+                if (scope.maxPage > scope.N) {
+                    var temp = scope.maxPage > Math.floor(scope.N / 2) ? Math.floor(scope.N / 2) : scope.maxPage;
+                    for (var i = temp - N; i <= temp; i++) {
+                        scope.pages.push(i);
+                    }
+                } else {
+                    for (var i = 1; i <= scope.maxPage; i++) {
+                        scope.pages.push(i);
+                    }
+                }
+            } else {
+                var temp = scope.maxPage > scope.N ? scope.N : scope.maxPage;
+                for (var i = 1; i <= temp; i++) {
+                    scope.pages.push(i);
+                }
+            }
+
+            scope.data = data.rows;
+            scope.total = data.total;
+        };
+
         //获取数据
         scope.getData = function (page) {
+            console.log(page);
             if (page > 0) {
                 scope.currentPage = page;
             }
 
-            scope[attrs.method](scope.currentPage, function (data) {
-                //最大页
-                scope.maxPage = Math.ceil(data.total / scope.pageSize);
-                scope.pages = [];
-
-                if (scope.currentPage > Math.ceil(scope.N / 2)) {
-                    if (scope.maxPage > scope.N) {
-                        var temp = scope.maxPage > Math.floor(scope.N / 2) ? Math.floor(scope.N / 2) : scope.maxPage;
-                        for (var i = temp - N; i <= temp; i++) {
-                            scope.pages.push(i);
-                        }
-                    } else {
-                        for (var i = 1; i <= scope.maxPage; i++) {
-                            scope.pages.push(i);
-                        }
-                    }
-                } else {
-                    var temp = scope.maxPage > scope.N ? scope.N : scope.maxPage;
-                    for (var i = 1; i <= temp; i++) {
-                        scope.pages.push(i);
-                    }
-                }
-
-                scope.data = data.rows;
-                scope.total = data.total;
-            });
+            scope[attrs.method](scope.currentPage, scope.createPage);
         };
         scope.getData();
     }

@@ -17,7 +17,7 @@
     <div class="panel-body">
         <table>
             <tr ng-repeat="item in array">
-                <td><input type="text" class="form-control" ng-model="item.src"/></td>
+                <td><input type="text" class="form-control" ng-model="item.src" readonly/></td>
                 <td><input type="text" class="form-control" ng-model="item.href"/></td>
                 <td>
                     <div class="button" ngf-select="upload($file,item)">选择文件</div>

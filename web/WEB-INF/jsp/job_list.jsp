@@ -14,6 +14,7 @@
     <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
+    <script src="${root}/layer/layer.js"></script>
     <style type="text/css">
         .row {
             clear: both;
@@ -169,14 +170,22 @@
             high: "max"
         };
 
-        $scope.load = function (page,callback) {
-            $scope.params.page = page;
+        $scope.load = function (page, callback) {
+            if (page > 0) {
+                $scope.params.page = page;
+            }
+
+            //loading
+            layer.load();
 
             $http.get(app.host + '/job/searchJobs.do', {
                 params: $scope.params
             }).success(function (data) {
-                if(callback) {
+                layer.closeAll('loading');
+                if (callback) {
                     callback(data);
+                } else {
+                    $scope.data = data.rows;
                 }
             });
         };
@@ -198,20 +207,14 @@
         //改变参数中的p_id
         $scope.changePid = function (p_id) {
             $scope.params.p_id = p_id;
-            $scope.load();
+            $scope.load(1, $scope.createPage);
         };
 
         //改变参数中的salary
         $scope.changeSalary = function (low, high) {
             $scope.params.low = low;
             $scope.params.high = high;
-            $scope.load();
-        };
-
-        //改变参数中的page
-        $scope.changePage = function (page) {
-            $scope.params.page = page;
-            $scope.load();
+            $scope.load(1, $scope.createPage);
         };
 
         //改变参数中的时间
@@ -243,7 +246,7 @@
                 }
             }
             $scope.params.time = num;
-            $scope.load();
+            $scope.load(1, $scope.createPage);
         };
 
         $scope.resetTime = function () {
@@ -257,7 +260,7 @@
         $scope.loadPositions();
 
         //初始加载职位列表
-        $scope.load(1);
+        $scope.load();
     });
 </script>
 <script src="${root}/js/page.js"></script>

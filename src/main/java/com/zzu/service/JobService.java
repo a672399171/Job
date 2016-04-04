@@ -132,8 +132,8 @@ public class JobService {
 	 *
 	 * @return
 	 */
-	public List<Job> searchJobs(int[] p_ids, int time, int low, int high, int page,String filter,int state) {
-		List<Job> jobs = jobDao.searchJobs(p_ids, time, low, high, page,filter,state);
+	public List<Job> searchJobsByPid(int[] p_ids, int time, int low, int high, int page,String filter,int state) {
+		List<Job> jobs = jobDao.searchJobsByPid(p_ids, time, low, high, page,filter,state);
 
 		/*//使用增强的for循环会抛出java.util.ConcurrentModificationException,用iterator替代
 		Iterator<Job> iterator = jobs.iterator();

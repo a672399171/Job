@@ -311,7 +311,7 @@ public class JobController {
 		if (p_id != 0) {
 			p_ids = new int[]{p_id};
 		}
-		List<Job> jobs = jobService.searchJobs(p_ids, time, l, h, page, null, 0);
+		List<Job> jobs = jobService.searchJobsByPid(p_ids, time, l, h, page, null, 0);
 		int count = jobService.getJobCount(p_ids, time, l, h, null, 0);
 
 		object.put("rows", jobs);
@@ -706,7 +706,7 @@ public class JobController {
 			state = 0;
 		}
 
-		List<Job> jobs = jobService.searchJobs(null, 127, 0, -1, page, filter, state);
+		List<Job> jobs = jobService.searchJobsByPid(null, 127, 0, -1, page, filter, state);
 		int count = jobService.getJobCount(null, 127, 0, -1, filter, state);
 
 		object.put("total", count);

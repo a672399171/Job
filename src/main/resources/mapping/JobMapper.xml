@@ -137,7 +137,8 @@
     </select>
 
     <select id="getApplies" resultMap="applyResultMap" parameterType="hashmap">
-        select r.*,a.*,j.name as j_name,c.company_name from tb_resume r,tb_apply a,tb_job j,tb_company c WHERE a.r_id=r.id and a.j_id=j.id and j.post_company=c.id
+        select r.*,a.*,j.name as j_name,c.company_name from tb_resume r,tb_apply a,tb_job j,tb_company c WHERE
+        a.r_id=r.id and a.j_id=j.id and j.post_company=c.id
         <if test="u_id != 0">
             and r.u_id=#{u_id}
         </if>
@@ -226,12 +227,17 @@
                 #{item}
             </foreach>
         </if>
-        <if test="l != -1">
-            and j.low_salary &gt;=#{l}
-        </if>
-        <if test="h != -1">
-            and j.high_salary &lt;=#{h}
-        </if>
+        <choose>
+            <when test="l &lt;= 0 and h == -1">
+
+            </when>
+            <when test="l &gt; 0 and h == -1">
+                and j.high_salary &gt;= #{l}
+            </when>
+            <otherwise>
+                and (j.low_salary&lt;=#{h} and j.high_salary&gt;=#{l})
+            </otherwise>
+        </choose>
         <if test="filter != null">
             and (j.name like '%${filter}%' or c.company_name like '%${filter}%' or p.name like '%${filter}%')
         </if>
@@ -261,12 +267,17 @@
                 #{item}
             </foreach>
         </if>
-        <if test="l != -1">
-            and j.low_salary &gt;=#{l}
-        </if>
-        <if test="h != -1">
-            and j.high_salary &lt;=#{h}
-        </if>
+        <choose>
+            <when test="l &lt;= 0 and h == -1">
+
+            </when>
+            <when test="l &gt; 0 and h == -1">
+                and j.high_salary &gt;= #{l}
+            </when>
+            <otherwise>
+                and (j.low_salary&lt;=#{h} and j.high_salary&gt;=#{l})
+            </otherwise>
+        </choose>
         <if test="filter != null">
             and (j.name like '%${filter}%' or c.company_name like '%${filter}%' or p.name like '%${filter}%')
         </if>
@@ -295,12 +306,17 @@
         c,tb_position p,tb_classify classify where
         j.type=p.id and j.post_company=c.id and p.c_id=classify.id and (j.name like '%${keyword}%' or c.company_name
         like '%${keyword}%') and #{time} &amp; j.work_time &lt;&gt; 0
-        <if test="l != -1">
-            and j.low_salary &gt;=${l}
-        </if>
-        <if test="h != -1">
-            and j.high_salary &lt;=${h}
-        </if>
+        <choose>
+            <when test="l &lt;= 0 and h == -1">
+
+            </when>
+            <when test="l &gt; 0 and h == -1">
+                and j.high_salary &gt;= #{l}
+            </when>
+            <otherwise>
+                and (j.low_salary&lt;=#{h} and j.high_salary&gt;=#{l})
+            </otherwise>
+        </choose>
         <if test="c_id != 0">
             and classify.id=${c_id}
         </if>
@@ -314,12 +330,17 @@
         SELECT count(*) as num FROM tb_job j,tb_company c,tb_position p,tb_classify classify where
         j.type=p.id and j.post_company=c.id and p.c_id=classify.id and (j.name like '%${keyword}%' or c.company_name
         like '%${keyword}%') and #{time} &amp; j.work_time &lt;&gt; 0
-        <if test="l != -1">
-            and j.low_salary &gt;=#{l}
-        </if>
-        <if test="h != -1">
-            and j.high_salary &lt;=#{h}
-        </if>
+        <choose>
+            <when test="l &lt;= 0 and h == -1">
+
+            </when>
+            <when test="l &gt; 0 and h == -1">
+                and j.high_salary &gt;= #{l}
+            </when>
+            <otherwise>
+                and (j.low_salary&lt;=#{h} and j.high_salary&gt;=#{l})
+            </otherwise>
+        </choose>
         <if test="c_id != 0">
             and classify.id=#{c_id}
         </if>

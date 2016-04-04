@@ -10,13 +10,15 @@
         float: left;
         font-size: 20px;
         margin-top: 20px;
-        margin-left: 50px;
+        margin-left: 20px;
     }
 </style>
 <div id="header" class="container">
     <div class="row">
         <div class="col-md-2 col-md-offset-1">
-            <img src="${root}/images/logo.gif"/>
+            <a href="${root}/">
+                <img src="${root}/images/logo.gif"/>
+            </a>
         </div>
         <div class="col-md-6">
             <ul id="hrefUl">
@@ -43,7 +45,7 @@
     //退出
     function quit() {
         $.post("${root}/user/quit.do", function (data) {
-            window.location = "${root}";
+            window.location = "${root}" + "/";
         });
     }
 </script>

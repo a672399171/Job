@@ -175,7 +175,7 @@ public class JobDao {
 	 *
 	 * @return
 	 */
-	public List<Job> searchJobs(int[] p_ids, int time, int l, int h, int page,String filter,int state) {
+	public List<Job> searchJobsByPid(int[] p_ids, int time, int l, int h, int page,String filter,int state) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("p_ids", p_ids);
 		map.put("l", l);

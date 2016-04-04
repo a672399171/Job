@@ -264,7 +264,7 @@
                         <button type="button" class="btn btn-info" style="width: 150px" onclick="getJobTypes()">预览</button>
                     </div>--%>
                     <div class="col-sm-6" style="text-align: center">
-                        <button type="submit" class="btn btn-primary" style="width: 150px" >
+                        <button type="submit" class="btn btn-primary" onclick="return setData()" style="width: 150px">
                             <i class="fa fa-floppy-o"></i> 保存
                         </button>
                     </div>
@@ -368,7 +368,7 @@
         for (var i = 0; i < mytypes.length; i++) {
             if (mytypes[i] == $(e).attr("data")) {
                 mytypes.splice(i, 1);
-                positions.splice(i,1);
+                positions.splice(i, 1);
                 return;
             }
         }
@@ -531,19 +531,20 @@
                         message: '简历标题为0-50位之间'
                     }
                 }
+            },
+            phone: {
+                message: '手机号码不能为空',
+                validators: {
+                    notEmpty: {
+                        message: '手机号码不能为空'
+                    },
+                    regexp: {
+                        regexp: /^[0-9_\.]{11}$/,
+                        message: '手机号格式不正确'
+                    }
+                }
             }
         }
-    }).on('success.form.bv', function (e) {
-        // Prevent form submission
-        e.preventDefault();
-
-        // Get the form instance
-        var $form = $(e.target);
-
-        // Get the BootstrapValidator instance
-        var bv = $form.data('bootstrapValidator');
-
-        setData();
     });
 </script>
 </body>

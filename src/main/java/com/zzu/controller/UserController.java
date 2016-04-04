@@ -282,6 +282,15 @@ public class UserController {
 	}
 
 	/**
+	 * 转到公司注册界面
+	 * @return
+	 */
+	@RequestMapping("/toCompanyReg.do")
+	public String toCompanyReg() {
+		return "company/reg";
+	}
+
+	/**
 	 * 处理注册
 	 *
 	 * @param username

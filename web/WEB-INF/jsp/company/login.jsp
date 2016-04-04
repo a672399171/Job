@@ -62,7 +62,7 @@
 
             <button type="submit" class="btn btn-default">登&nbsp;录</button>
             <div id="msg"></div>
-            <a href="${root}/user/toReg.do" id="zhuce">没有账号？立即注册</a>
+            <a href="${root}/user/toCompanyReg.do" id="zhuce">没有账号？立即注册</a>
         </form>
     </div>
 </div>

@@ -58,6 +58,7 @@
             </a>
         </div>
         <script type="application/javascript">
+            $("#carousel").height($("#list1").height());
             //加载图片轮播配置
             $.getJSON("${root}/json/pic.json", function (data) {
                 for (var i = 0; i < data.length; i++) {
@@ -68,7 +69,7 @@
                     $("#carousel .carousel-indicators").append(li);
 
                     var div = $("<div class='item'></div>");
-                    div.append("<a href='" + data[i].href + "' target='_blank'><img src='" + data[i].src + "' alt='图片不存在'></a>");
+                    div.append("<a href='" + data[i].href + "' target='_blank'><img src='${root}/images/index/" + data[i].src + "' alt='图片不存在'></a>");
 
                     if (i == 0) {
                         div.addClass("active");
@@ -76,7 +77,15 @@
 
                     $("#carousel .carousel-inner").append(div);
                 }
-                $('#carousel').carousel()
+                $('#carousel').carousel();
+                $(".carousel-inner").width($('#carousel').width() + "px");
+                $(".carousel-inner").height($('#carousel').height() + "px");
+                //console.log($('#carousel').outerWidth() + "  " + $('#carousel').height());
+                var imgs = $(".carousel-inner .item a img");
+                for (var i = 0; i < imgs.length; i++) {
+                    imgs.eq(i).css("width", $('#carousel').width() + "px");
+                    imgs.eq(i).css("height", $('#carousel').height() + "px");
+                }
             });
         </script>
         <div id="middle" class="col-md-10 col-md-offset-1">

@@ -66,7 +66,7 @@
     //退出
     function quit() {
         $.post("${root}/user/quit.do", function (data) {
-            window.location = "${root}";
+            window.location = "${root}" + "/";
         });
     }
 

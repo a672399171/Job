@@ -38,7 +38,11 @@
     </bean>
 
     <!--处理静态资源请求-->
-    <mvc:resources mapping="/admin/**" location="/admin/" cache-period="2592000"/>
+    <mvc:default-servlet-handler/>
+    <!--处理静态资源请求-->
+
+    <!--处理静态资源请求-->
+    <!--<mvc:resources mapping="/admin/**" location="/admin/" cache-period="2592000"/>
     <mvc:resources mapping="/bootstrap-3.3.4-dist/**" location="/bootstrap-3.3.4-dist/" cache-period="31536000"/>
     <mvc:resources mapping="/bootstrap-switch/**" location="/bootstrap-switch/" cache-period="31536000"/>
     <mvc:resources mapping="/bootstrapvalidator/**" location="/bootstrapvalidator/" cache-period="31536000"/>
@@ -50,5 +54,5 @@
     <mvc:resources mapping="/layer/**" location="/layer/" cache-period="31536000"/>
     <mvc:resources mapping="/test/**" location="/test/" cache-period="31536000"/>
     <mvc:resources mapping="/upload/**" location="/upload/" cache-period="31536000"/>
-    <mvc:resources mapping="/tpl/**" location="/tpl/" cache-period="31536000"/>
+    <mvc:resources mapping="/tpl/**" location="/tpl/" cache-period="31536000"/>-->
 </beans>

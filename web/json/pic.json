@@ -1,22 +1,22 @@
 [
   {
-    "src": "http://localhost:8888/Job/images/index/1.jpg",
+    "src": "1.jpg",
     "href": "http://www.baidu.com"
   },
   {
-    "src": "http://localhost:8888/Job/images/index/2.jpg",
+    "src": "2.jpg",
     "href": "http://www.sohu.com"
   },
   {
-    "src": "http://localhost:8888/Job/images/index/3.jpg",
+    "src": "3.jpg",
     "href": "http://www.taobao.com"
   },
   {
-    "src": "http://localhost:8888/Job/images/index/4.jpg",
+    "src": "4.jpg",
     "href": "http://www.zzu.edu.cn"
   },
   {
-    "src": "http://localhost:8888/Job/images/index/5.jpg",
+    "src": "5.jpg",
     "href": "http://www.google.com"
   }
 ]
