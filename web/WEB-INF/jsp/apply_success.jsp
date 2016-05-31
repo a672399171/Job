@@ -3,20 +3,11 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <title>简历投递成功</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
-    <script type="text/javascript"
-            src="${root}/js/jquery.fullPage.min.js"></script>
+    <%@include file="common/head.jsp"%>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <script src="${root}/js/ajaxfileupload.js"></script>
 </head>
@@ -33,10 +24,6 @@
     </div>
 </div>
 <jsp:include page="footer.jsp"></jsp:include>
-
-<script type="application/javascript">
-
-</script>
 </body>
 </html>
 

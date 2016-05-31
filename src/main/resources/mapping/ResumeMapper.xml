@@ -46,7 +46,7 @@
 
     <select id="searchResume" resultMap="resumeResultMap" parameterType="hashmap">
         SELECT r.*,s.id as s_id,s.school as s_school,m.id as major,m.major as m_major,m.s_id as s_id FROM tb_resume
-        r,tb_school s,tb_major m where r.major=m.id and m.s_id=s.id
+        r,tb_school s,tb_major m,tb_user u where r.major=m.id and m.s_id=s.id and r.u_id=u.id
         <if test="grade != 0">
             and r.grade=#{grade}
         </if>
@@ -59,6 +59,9 @@
         <if test="filter != null">
             and r.name like '%${filter}%'
         </if>
+        <if test="push != 0">
+            and u.push=1
+        </if>
         <if test="page > 0">
             limit ${start},${count}
         </if>
@@ -70,7 +73,7 @@
     </select>
 
     <select id="getResumeCount" parameterType="hashmap" resultType="int">
-        select count(*) FROM tb_resume r,tb_school s,tb_major m where r.major=m.id and m.s_id=s.id
+        select count(*) FROM tb_resume r,tb_school s,tb_major m,tb_user u where r.major=m.id and m.s_id=s.id and r.u_id=u.id
         <if test="grade != 0">
             and r.grade=#{grade}
         </if>
@@ -79,6 +82,9 @@
         </if>
         <if test="school != 0">
             and s_id=#{school}
+        </if>
+        <if test="push != 0">
+            and u.push=1
         </if>
         <if test="filter != null">
             and r.name like '%${filter}%'

@@ -59,3 +59,26 @@ app.controller("CompanyJobController", function ($scope, $http) {
 
     $scope.load(1);
 });
+
+app.controller("RecommendController", function ($scope, $http) {
+
+    $scope.params = {
+        u_id: app.u_id,
+        j_id: app.job_id
+    };
+
+    $scope.load = function () {
+        $http.get(app.host + '/job/getRecommendJobs.do', {
+            params: $scope.params
+        }).then(function (response) {
+            console.log(response.data);
+            $scope.data = response.data;
+        });
+    };
+
+    $scope.toUrl = function (id) {
+        window.location = app.host + "/job/detail.do?id=" + id;
+    };
+
+    $scope.load();
+});

@@ -18,19 +18,12 @@
         }
     }
 %>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <title>登录</title>
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
-    <script type="text/javascript"
-            src="${root}/js/jquery.fullPage.min.js"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
+    <%@include file="common/head.jsp"%>
     <link rel="stylesheet" type="text/css" href="${root}/css/style_login.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
 </head>
 <body>
 <div class="big">

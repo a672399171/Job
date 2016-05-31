@@ -2,20 +2,14 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-    <title>主页</title>
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <script type="text/javascript" src="${root}/js/jquery-1.11.2.js"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
-    <link rel="stylesheet" type="text/css" href="${root}/css/style_index.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/js/dateformat.js"></script>
-    <script src="${root}/js/moment-with-locales.js"></script>
+    <title>大学生兼职网</title>
+    <%@include file="common/head.jsp"%>
 </head>
 <body>
-<div class="big container">
+<div class="big">
     <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 
     <div class="row">

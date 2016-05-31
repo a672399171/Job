@@ -23,12 +23,12 @@
     <bean id="viewResolver"
           class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"/>
-        <property name="suffix" value=".jsp"></property>
+        <property name="suffix" value=".jsp"/>
     </bean>
 
     <!-- 完成请求和注解POJO的映射 -->
     <bean id="jsonConverter"
-          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"></bean>
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">
             <list>

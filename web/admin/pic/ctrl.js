@@ -15,7 +15,7 @@ app.controller('PictureController', ['$scope', '$http', 'Upload', function ($sco
             data: {file: file}
         }).then(function (resp) {
             item.local = resp.config.data.file.name;
-            item.src = $scope.app.host + "/images/index/" + resp.data.src;
+            item.src = resp.data.src;
         }, function (resp) {
             console.log('Error status: ' + resp.status);
         }, function (evt) {

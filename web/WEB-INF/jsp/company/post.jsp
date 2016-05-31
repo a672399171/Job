@@ -1,21 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <title>发布新职位</title>
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
-    <script type="text/javascript"
-            src="${root}/js/jquery.fullPage.min.js"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
+    <%@include file="../common/head.jsp"%>
     <link rel="stylesheet" type="text/css" href="${root}/css/post.css"/>
     <link href="${root}/js/summernote/summernote.css" rel="stylesheet">
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <script src="${root}/js/summernote/summernote.js"></script>
     <script src="${root}/js/summernote/lang/summernote-zh-CN.js"></script>
 </head>
@@ -25,7 +17,7 @@
 <div class="container" id="container">
     <div class="row">
         <div class="col-md-8">
-            <form class="form-horizontal" method="post" action="${root}/job/post_job.do">
+            <form class="form-horizontal" method="post" action="${root}/job/post_job.do" id="postForm">
                 <div class="form-group">
                     <label for="name" class="col-sm-2 control-label">职位名称</label>
 
@@ -170,6 +162,52 @@
         $("#bigDiv").width(window.screen.availWidth - 40);
         $("#bigDiv").height(window.screen.availHeight - 40);
         initData();
+
+        $('#postForm').bootstrapValidator({
+            message: 'This value is not valid',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                name: {
+                    message: '职位名称不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '职位名称不能为空'
+                        },
+                        stringLength: {
+                            min: 1,
+                            max: 30,
+                            message: '职位名称为1-30位之间'
+                        }
+                    }
+                },
+                type: {
+                    message: '类型不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '类型不能为空'
+                        }
+                    }
+                },
+                low_salary: {
+                    validators: {
+                        notEmpty: {
+                            message: '工资不能为空'
+                        }
+                    }
+                },
+                high_salary: {
+                    validators: {
+                        notEmpty: {
+                            message: '工资不能为空'
+                        }
+                    }
+                }
+            }
+        });
     });
     $("#rightList ul li").click(function () {
         $("#rightList ul li").css("background", "white");
@@ -216,7 +254,6 @@
                     $(this).css("background", "grey");
                     $("#type").val($(this).text());
                     $("#typeHidden").val($(this).attr("id"));
-                    $("#bigDiv").click();
                 });
             });
         });
@@ -252,42 +289,43 @@
     });
 
     function getSpareTime() {
-        var str = "";
-        var am = $("#am td :checkbox");
-        var pm = $("#pm td :checkbox");
-        for (var i = 0; i < am.length; i++) {
-            if (am.eq(i).is(":checked")) {
-                str += "1";
-            } else {
-                str += "0";
+        var number = 0;
+        var week = $("#week td :checkbox");
+        for (var i = 0; i < week.length; i++) {
+            if (week.eq(i).is(":checked")) {
+                number += Math.pow(2, 7 - 1 - i);
             }
         }
-        for (var i = 0; i < pm.length; i++) {
-            if (pm.eq(i).is(":checked")) {
-                str += "1";
-            } else {
-                str += "0";
-            }
-        }
-        console.log(str);
-        return str;
+
+        return number;
     }
 
     function setData() {
         $("#work_time").val(getSpareTime());
-        var str = "";
+        var array = [];
         if (t1) {
-            str += $("#t1").text();
+            array.push($("#t1").text());
         }
         if (t2) {
-            str += $("#t2").text();
+            array.push($("#t2").text());
         }
-        $("#tag").val(str);
+        $("#tag").val(array.join("#"));
         $("#des").val($('#description').summernote('code'));
         $("#sk").val($('#skill').summernote('code'));
 
+        if ($("input[name='type']").val() == 0) {
+            alert("填写类型");
+            return false;
+        }
+
+        if ($("input[name='low_salary']").val() > $("input[name='high_salary']").val()) {
+            alert("工资范围错误");
+            return false;
+        }
+
         return true;
     }
+
 </script>
 </body>
 </html>

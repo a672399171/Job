@@ -1,20 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <title>账号设置</title>
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
+    <%@include file="common/head.jsp"%>
     <script src="${root}/layer/layer.js"></script>
-    <script type="text/javascript"
-            src="${root}/js/jquery.fullPage.min.js"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <style type="text/css">
         .hideDialog {
             display: none;
@@ -89,21 +81,6 @@
                             </c:otherwise>
                         </c:choose>
                     </tr>
-                    <%--<tr style="height: 50px">
-                        <c:choose>
-                            <c:when test="${empty sessionScope.user.phone}">
-                                <td style="color: red"><i class="fa fa-exclamation-triangle"></i> 手机未认证</td>
-                                <td>认证手机是找回密码等操作时验证您身份的途径之一。</td>
-                                <td><a href="javascript:void(0)">认证</a></td>
-                            </c:when>
-                            <c:otherwise>
-                                <td style="color: green"><i class="fa fa-check-circle"></i> 手机已认证</td>
-                                <td>认证手机是找回密码等操作时验证您身份的途径之一。</td>
-                                <td><a href="javascript:void(0)" data-toggle="modal"
-                                       data-target="#modal2">更换</a></td>
-                            </c:otherwise>
-                        </c:choose>
-                    </tr>--%>
                 </table>
             </div>
         </div>

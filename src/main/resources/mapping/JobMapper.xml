@@ -257,6 +257,14 @@
         </if>
     </select>
 
+    <select id="getRecommendJobs" parameterType="hashmap" resultMap="jobResultMap">
+        SELECT j.*,p.name as p_name,c.id as post_company,
+        c.username,c.password,c.company_name,c.address,c.name as person_name,c.phone,c.introduce,c.type as
+        company_type,c.scope,c.email,c.logo,c.x,c.y,c.auth
+        FROM tb_job j,tb_company c,tb_position p where
+        j.type=p.id and j.post_company=c.id and #{time} &amp; j.work_time &lt;&gt; 0 and j.type=#{p_id} limit 0,${count}
+    </select>
+
     <select id="getJobCount" parameterType="hashmap" resultType="int">
         SELECT count(*) as num FROM tb_job j,tb_company c,tb_position p where
         j.type=p.id and j.post_company=c.id and #{time} &amp; j.work_time &lt;&gt; 0

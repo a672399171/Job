@@ -3,6 +3,7 @@ package com.zzu.controller;
 import com.zzu.model.*;
 import com.zzu.model.Collection;
 import com.zzu.service.JobService;
+import com.zzu.service.MailService;
 import com.zzu.service.ResumeService;
 import com.zzu.service.UserService;
 import com.zzu.util.DateUtil;
@@ -12,6 +13,7 @@ import net.sf.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -31,6 +33,8 @@ public class JobController {
 	private JobService jobService;
 	@Resource
 	private ResumeService resumeService;
+	@Resource
+	private MailService mailService;
 
 	/**
 	 * 加载主页
@@ -182,8 +186,19 @@ public class JobController {
 		} else {
 			if (state != Common.APPLYING && state != Common.APPLYFILED &&
 					state != Common.APPLYSUCCESS) {
-				object.put("error", "未登录");
+				object.put("error", "操作错误，请刷新后重试");
 			} else {
+				Resume resume = jobService.getResumeById(r_id);
+				User user = userService.getUserById(resume.getU_id());
+				if (!StringUtil.isEmail(user.getEmail())) {
+					Map<String, Object> map = new HashMap<String, Object>();
+					if (state == Common.APPLYFILED) {
+						map.put("text", "I'm sorry! 您的申请被回绝！请不要伤心，'职来了'还有一大波工作等着你呢！");
+					} else if (state == Common.APPLYSUCCESS) {
+						map.put("text", "恭喜您，你的职位申请已通过！");
+					}
+					mailService.sendEmail(user.getEmail(), "求职进展", "applyChange.ftl", map);
+				}
 				jobService.updateApply(j_id, r_id, state);
 			}
 		}
@@ -229,12 +244,12 @@ public class JobController {
 	 * @return
 	 */
 	@RequestMapping("/toPost.do")
-	public String toPost(HttpSession session,Model model) {
+	public String toPost(HttpSession session, Model model) {
 		Company company = (Company) session.getAttribute(Common.COMPANY);
 		company = userService.getCompanyById(company.getId());
 
-		if(company.getAuth() != Common.AUTHED) {
-			model.addAttribute("msg","公司暂未认证或认证未通过，不能发布职位，请完善公司信息后发布职位");
+		if (company.getAuth() != Common.AUTHED) {
+			model.addAttribute("msg", "公司暂未认证或认证未通过，不能发布职位，请完善公司信息后发布职位");
 			return "company/account_setting";
 		}
 
@@ -250,17 +265,26 @@ public class JobController {
 	 * @return
 	 */
 	@RequestMapping("/post_job.do")
-	public String postJob(@Valid @ModelAttribute("job") Job job, BindingResult result, HttpSession session,Model model) {
+	public String postJob(@Valid @ModelAttribute("job") Job job, BindingResult result,
+	                      Integer type, HttpSession session, Model model) {
 		Company company = (Company) session.getAttribute(Common.COMPANY);
 		if (company == null) {
 			return "redirect:/user/toCompanyLogin.do";
-		} else if(company.getAuth() != Common.AUTHED) {
-			model.addAttribute("msg","公司暂未认证或认证未通过，不能发布职位，请完善公司信息后发布职位");
-			return "company/account_setting";
+		} else {
+			company = userService.getCompanyById(company.getId());
+			session.setAttribute(Common.COMPANY, company);
+			if (company.getAuth() != Common.AUTHED) {
+				model.addAttribute("msg", "公司暂未认证或认证未通过，不能发布职位，请完善公司信息后发布职位");
+				return "company/account_setting";
+			}
 		}
+		Position position = new Position();
+		position.setId(type);
+		job.setType(position);
 
 		job.setPost_time(new Date());
 		job.setPost_company(company);
+		jobService.addJob(job);
 
 		return "redirect:job_manage.do";
 	}
@@ -388,7 +412,7 @@ public class JobController {
 
 	private int getSalaryNumber(String str) {
 		int num = -1;
-		if (!StringUtil.isEmpty(str) && StringUtil.isNumber(str)) {
+		if (!StringUtil.isEmail(str) && StringUtil.isNumber(str)) {
 			num = Integer.parseInt(str);
 		}
 		return num;
@@ -426,8 +450,8 @@ public class JobController {
 		}
 
 		JSONObject object = new JSONObject();
-		List<Resume> resumes = jobService.searchResume(grade, time, salary, school, page, null);
-		int count = jobService.getResumeCount(grade, time, salary, school, null);
+		List<Resume> resumes = jobService.searchResume(grade, time, salary, school, page, null, true);
+		int count = jobService.getResumeCount(grade, time, salary, school, null, true);
 
 		object.put("rows", resumes);
 		object.put("total", count);
@@ -525,6 +549,36 @@ public class JobController {
 	}
 
 	/**
+	 * 推荐职位
+	 * @param u_id
+	 * @param j_id
+	 * @return
+	 */
+	@RequestMapping("/getRecommendJobs.do")
+	@ResponseBody
+	public JSONArray getRecommendJobs(Integer u_id,Integer j_id) {
+		if(u_id == null) {
+			u_id = 0;
+		}
+		if(j_id == null) {
+			j_id = 0;
+		}
+
+		JSONArray array = null;
+
+		if(u_id != 0 && j_id != 0) {
+			Resume resume = resumeService.getResumeByUid(u_id);
+			int time = resume.getSpare_time();
+			Job job = jobService.getJobById(j_id);
+
+			List<Job> jobs = jobService.getRecommendJobs(time,job.getType().getId());
+			array = JSONArray.fromObject(jobs);
+		}
+
+		return array;
+	}
+
+	/**
 	 * 获取评论列表
 	 *
 	 * @param page
@@ -598,7 +652,7 @@ public class JobController {
 		User user = (User) session.getAttribute(Common.USER);
 
 		if (user == null) {
-			map.put("msg", "请登陆后收藏！");
+			map.put("msg", "请登陆后申请！");
 			return map;
 		}
 
@@ -618,7 +672,13 @@ public class JobController {
 
 	@RequestMapping("/applySuccess.do")
 	public String applySuccess(HttpSession session) {
+		User user = (User) session.getAttribute(Common.USER);
 
+		if (!StringUtil.isEmail(user.getEmail())) {
+			Map<String, Object> valMap = new HashMap<String, Object>();
+			valMap.put("text", "恭喜你，简历投递成功！请耐心等待，我们将以邮件的方式向您汇报职位进展情况，谢谢！");
+			mailService.sendEmail(user.getEmail(), "求职进展", "applyChange.ftl", valMap);
+		}
 		return "apply_success";
 	}
 
@@ -834,8 +894,8 @@ public class JobController {
 			school = 0;
 		}
 
-		List<Resume> resumes = jobService.searchResume(grade, 127, salary, school, page, filter);
-		int count = jobService.getResumeCount(grade, 127, salary, school, filter);
+		List<Resume> resumes = jobService.searchResume(grade, 127, salary, school, page, filter, false);
+		int count = jobService.getResumeCount(grade, 127, salary, school, filter, false);
 
 		object.put("total", count);
 		object.put("rows", resumes);
@@ -854,7 +914,7 @@ public class JobController {
 		Resume resume = jobService.getResumeById(id);
 		List<Position> positions = new ArrayList<Position>();
 		String[] types = null;
-		if (types != null && !StringUtil.isEmpty(resume.getJob_type())) {
+		if (!StringUtil.isEmpty(resume.getJob_type())) {
 			types = resume.getJob_type().split("#");
 			for (String type : types) {
 				if (StringUtil.isNumber(type)) {
@@ -865,7 +925,7 @@ public class JobController {
 			}
 		}
 
-		if(resume != null) {
+		if (resume != null) {
 			resume.setPositions(positions);
 		}
 

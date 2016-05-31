@@ -47,12 +47,29 @@ public class StringUtil {
 		return result;
 	}
 
+	//判断是否为email
+	public static boolean isEmail(String email) {
+		if (isEmpty(email)) {
+			return false;
+		}
+		boolean flag = false;
+		try {
+			String check = "^([a-z0-9A-Z]+[-|_|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+			Pattern regex = Pattern.compile(check);
+			Matcher matcher = regex.matcher(email);
+			flag = matcher.matches();
+		} catch (Exception e) {
+			flag = false;
+		}
+		return flag;
+	}
+
 	//产生指定长度的字符串
 	public static String randomString(int length) {
 		StringBuilder sb = new StringBuilder();
 		Random r = new Random();
 
-		for(int i=0;i<length;i++) {
+		for (int i = 0; i < length; i++) {
 			int index = r.nextInt(STR.length() - 1);
 			sb.append(STR.charAt(index));
 		}

@@ -4,19 +4,12 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
-<html ng-app="jobDetail">
+<html ng-app="jobDetail" lang="zh-CN">
 <head>
     <title>${job.name}</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-    <script type="text/javascript" src="${root}/js/jquery-1.11.2.js"></script>
+    <%@include file="common/head.jsp"%>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
     <link rel="stylesheet" type="text/css" href="${root}/css/style_job_detail.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <script src="${root}/js/dateformat.js"></script>
     <script src="${root}/js/moment-with-locales.js"></script>
     <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
@@ -24,6 +17,11 @@
         var app = angular.module("jobDetail", []);
         app.host = "${root}";
         app.job_id = ${requestScope.job.id};
+        app.u_id = 0;
+
+        <c:if test="${sessionScope.user != null}">
+        app.u_id = ${sessionScope.user.id};
+        </c:if>
         app.company_id = ${requestScope.job.post_company.id};
     </script>
     <script src="${root}/js/controllers/jobDetail.js"></script>
@@ -52,14 +50,19 @@
                 <fmt:formatDate pattern="yyyy-MM-dd hh:MM" value="${requestScope.job.post_time}"></fmt:formatDate>
             </span>
                 <span class="font5">${job.type.name}</span>
-                <c:choose>
-                    <c:when test="${requestScope.apply == null}">
-                        <button class="btn btn-danger" id="apply">申请职位</button>
-                    </c:when>
-                    <c:otherwise>
-                        <button class="btn btn-danger" id="apply" disabled>申请中</button>
-                    </c:otherwise>
-                </c:choose>
+                <c:if test="${requestScope.job.status == 0}">
+                    <span style="color: red;font-size: 18px">该职位暂未运行</span>
+                </c:if>
+                <c:if test="${requestScope.job.status == 1}">
+                    <c:choose>
+                        <c:when test="${requestScope.apply == null}">
+                            <button class="btn btn-danger" id="apply">申请职位</button>
+                        </c:when>
+                        <c:otherwise>
+                            <button class="btn btn-danger" id="apply" disabled>申请中</button>
+                        </c:otherwise>
+                    </c:choose>
+                </c:if>
             </div>
             <div>
                 <c:forEach var="item" items="${fn:split(job.tag,'#')}">
@@ -145,8 +148,26 @@
 
             <xl-page pageSize="5" n="5" method="load"></xl-page>
         </div>
-        <div class="otherJobs">
+        <div class="otherJobs" ng-controller="RecommendController">
             <h4>职位推荐</h4>
+            <c:if test="${sessionScope.user == null}">
+                <span style="color: red">登录后可见</span>
+            </c:if>
+
+            <div class="job_item" style="display: block" ng-repeat="item in data" ng-click="toUrl(item.id)">
+                <table>
+                    <tr>
+                        <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
+                        <td width="30%" class="font3">{{item.post_time.time | date:'yyyy-MM-dd hh:mm'}}</td>
+                        <td width="30%" class="font5">{{item.post_company.company_name}}</td>
+                    </tr>
+                    <tr>
+                        <td class="font5">{{item.type.name}}</td>
+                        <td class="font4">{{item.low_salary}}-{{item.high_salary}}</td>
+                        <td class="font3">{{item.post_company.scope}}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
     <div id="rightDiv">
@@ -266,6 +287,7 @@
         $(":checkbox").attr("disabled", "disabled");
     });
 
+    //收藏
     $("#collect").click(function () {
         if (${sessionScope.user == null}) {
             window.location = "${root}/user/toLogin.do?from=" + window.location.href;
@@ -287,6 +309,7 @@
         }
     });
 
+    //申请职位
     $("#apply").click(function () {
         if (${sessionScope.user == null}) {
             window.location = "${root}/user/toLogin.do?from=" + window.location.href;

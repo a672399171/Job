@@ -2,17 +2,12 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <title>贫困生认证</title>
-    <script type="text/javascript" src="${root}/js/jquery-1.11.2.js"></script>
+    <%@include file="common/head.jsp"%>
     <link href="http://g.alicdn.com/sj/dpl/1.5.1/css/sui.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <script type="text/javascript" src="http://g.alicdn.com/sj/dpl/1.5.1/js/sui.min.js"></script>
 </head>
 <body>
@@ -50,7 +45,7 @@
                 <hr>
 
                 <div class="sui-steps steps-auto">
-                    <c:if test="${poor.status == 0}">
+                    <c:if test="${poor == null || poor.status == 0}">
                         <div class="wrap">
                             <div class="current">
                                 <label>
@@ -61,7 +56,7 @@
                             </div>
                         </div>
                     </c:if>
-                    <c:if test="${poor.status != 0}">
+                    <c:if test="${poor != null && poor.status != 0}">
                         <div class="wrap">
                             <div class="finished">
                                 <label>
@@ -72,7 +67,7 @@
                             </div>
                         </div>
                     </c:if>
-                    <c:if test="${poor.status == 0}">
+                    <c:if test="${poor == null || poor.status == 0}">
                         <div class="wrap">
                             <div class="todo">
                                 <label>
@@ -88,7 +83,7 @@
                             </div>
                         </div>
                     </c:if>
-                    <c:if test="${poor.status == 1}">
+                    <c:if test="${poor != null && poor.status == 1}">
                         <div class="wrap">
                             <div class="current">
                                 <label>
@@ -105,7 +100,7 @@
                             </div>
                         </div>
                     </c:if>
-                    <c:if test="${poor.status == 2}">
+                    <c:if test="${poor != null && poor.status == 2}">
                         <div class="wrap">
                             <div class="finished">
                                 <label>
@@ -137,11 +132,11 @@
                         <label class="col-sm-2 control-label">姓&nbsp;&nbsp;&nbsp;&nbsp;名:</label>
 
                         <div class="col-sm-8">
-                            <c:if test="${poor.status == 0}">
+                            <c:if test="${poor == null || poor.status == 0}">
                                 <input type="text" class="form-control" name="name" placeholder="姓名"
                                        value="${poor.name}">
                             </c:if>
-                            <c:if test="${poor.status != 0}">
+                            <c:if test="${poor != null && poor.status != 0}">
                                 <p class="form-control-static">${poor.name}</p>
                             </c:if>
                         </div>
@@ -150,11 +145,11 @@
                         <label class="col-sm-2 control-label">Email:</label>
 
                         <div class="col-sm-8">
-                            <c:if test="${poor.status == 0}">
+                            <c:if test="${poor == null || poor.status == 0}">
                                 <input type="email" class="form-control" name="email" placeholder="电子邮箱"
                                        value="${poor.email}">
                             </c:if>
-                            <c:if test="${poor.status != 0}">
+                            <c:if test="${poor != null && poor.status != 0}">
                                 <p class="form-control-static">${poor.email}</p>
                             </c:if>
                         </div>
@@ -162,7 +157,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">专业:</label>
 
-                        <c:if test="${poor.status == 0}">
+                        <c:if test="${poor == null || poor.status == 0}">
                             <div class="col-sm-4">
                                 <select class="form-control" id="school"></select>
                             </div>
@@ -171,7 +166,7 @@
                             </div>
                         </c:if>
 
-                        <c:if test="${poor.status != 0}">
+                        <c:if test="${poor != null && poor.status != 0}">
                             <div class="col-sm-8">
                                 <p class="form-control-static">${poor.major.major}</p>
                             </div>
@@ -181,15 +176,15 @@
                         <label for="file" class="col-sm-2 control-label">证明照片:</label>
 
                         <div class="col-sm-8">
-                            <c:if test="${poor.status == 0}">
+                            <c:if test="${poor ==null || poor.status == 0}">
                                 <input type="file" id="file" name="file">
                             </c:if>
-                            <c:if test="${poor.status != 0}">
+                            <c:if test="${poor !=null &&poor.status != 0}">
                                 <img src="${root}/images/${poor.src}" alt="暂无图片"/>
                             </c:if>
                         </div>
                     </div>
-                    <c:if test="${poor.status == 0}">
+                    <c:if test="${poor == null || poor.status == 0}">
                         <div class="col-sm-6" style="text-align: center">
                             <button type="submit" class="btn btn-primary" style="width: 150px"
                                     onclick="return setData()">

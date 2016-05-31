@@ -35,7 +35,7 @@ public class JobDao {
 		return job;
 	}
 
-	public List<Resume> searchResume(int grade, int spare_time, String salary, int school, int page,String filter) {
+	public List<Resume> searchResume(int grade, int spare_time, String salary, int school, int page,String filter,boolean push) {
 		List<Resume> resumes = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("grade", grade);
@@ -46,6 +46,11 @@ public class JobDao {
 		map.put("start", (page - 1) * Common.COUNT);
 		map.put("count", Common.COUNT);
 		map.put("filter",filter);
+		if(push) {
+			map.put("push",1);
+		} else {
+			map.put("push",0);
+		}
 
 		resumes = session.selectList("mapping.ResumeMapper.searchResume", map);
 
@@ -447,7 +452,7 @@ public class JobDao {
 	 * @param school
 	 * @return
 	 */
-	public int getResumeCount(int grade, int time, String salary, int school,String filter) {
+	public int getResumeCount(int grade, int time, String salary, int school,String filter,boolean push) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("grade", grade);
 		map.put("time", time);
@@ -455,10 +460,32 @@ public class JobDao {
 		map.put("grade", grade);
 		map.put("school", school);
 		map.put("filter",filter);
+		if(push) {
+			map.put("push",1);
+		} else {
+			map.put("push",0);
+		}
 
 		int count = 0;
 		count = session.selectOne("mapping.ResumeMapper.getResumeCount",map);
 
 		return count;
+	}
+
+	/**
+	 * 推荐职位
+	 * @param time
+	 * @param p_id
+	 * @return
+	 */
+	public List<Job> getRecommendJobs(int time, int p_id) {
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("time",time);
+		map.put("p_id",p_id);
+		map.put("count",Common.SMALL_COUNT);
+
+		List<Job> jobs = null;
+		jobs = session.selectList("mapping.JobMapper.getRecommendJobs",map);
+		return jobs;
 	}
 }

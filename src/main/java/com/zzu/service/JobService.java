@@ -38,8 +38,8 @@ public class JobService {
 		return jobDao.getJobById(id);
 	}
 
-	public List<Resume> searchResume(int grade, int spare_time, String salary, int school, int page,String filter) {
-		List<Resume> resumes = jobDao.searchResume(grade, spare_time, salary, school, page,filter);
+	public List<Resume> searchResume(int grade, int spare_time, String salary, int school, int page, String filter, boolean push) {
+		List<Resume> resumes = jobDao.searchResume(grade, spare_time, salary, school, page, filter, push);
 
 		return resumes;
 	}
@@ -132,8 +132,8 @@ public class JobService {
 	 *
 	 * @return
 	 */
-	public List<Job> searchJobsByPid(int[] p_ids, int time, int low, int high, int page,String filter,int state) {
-		List<Job> jobs = jobDao.searchJobsByPid(p_ids, time, low, high, page,filter,state);
+	public List<Job> searchJobsByPid(int[] p_ids, int time, int low, int high, int page, String filter, int state) {
+		List<Job> jobs = jobDao.searchJobsByPid(p_ids, time, low, high, page, filter, state);
 
 		/*//使用增强的for循环会抛出java.util.ConcurrentModificationException,用iterator替代
 		Iterator<Job> iterator = jobs.iterator();
@@ -157,8 +157,8 @@ public class JobService {
 	 * @param high
 	 * @return
 	 */
-	public int getJobCount(int[] p_ids, int time, int low, int high,String filter,int state) {
-		return jobDao.getJobCount(p_ids, time, low, high,filter,state);
+	public int getJobCount(int[] p_ids, int time, int low, int high, String filter, int state) {
+		return jobDao.getJobCount(p_ids, time, low, high, filter, state);
 	}
 
 	/**
@@ -293,13 +293,24 @@ public class JobService {
 
 	/**
 	 * 获取搜索到的简历的数量
+	 *
 	 * @param grade
 	 * @param time
 	 * @param salary
 	 * @param school
 	 * @return
 	 */
-	public int getResumeCount(int grade, int time, String salary, int school,String filter) {
-		return jobDao.getResumeCount(grade,time,salary,school,filter);
+	public int getResumeCount(int grade, int time, String salary, int school, String filter, boolean push) {
+		return jobDao.getResumeCount(grade, time, salary, school, filter, push);
+	}
+
+	/**
+	 * 推荐职位
+	 * @param time
+	 * @param p_id
+	 * @return
+	 */
+	public List<Job> getRecommendJobs(int time, int p_id) {
+		return jobDao.getRecommendJobs(time,p_id);
 	}
 }

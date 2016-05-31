@@ -3,19 +3,11 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <title>职位管理</title>
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
-    <script type="text/javascript"
-            src="${root}/js/jquery.fullPage.min.js"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <%@include file="../common/head.jsp"%>
     <script src="${root}/js/ajaxfileupload.js"></script>
     <script src="${root}/js/moment-with-locales.js"></script>
     <style type="text/css">
@@ -41,7 +33,7 @@
     <div class="row">
         <c:choose>
             <c:when test="${fn:length(requestScope.jobs) <= 0}">
-                暂无职位，请先发布职位。
+                <div style="color: red;font-size: 20px;margin: 0 auto;width: 30%">暂无职位，请先发布职位。</div>
             </c:when>
             <c:otherwise>
                 <table class="table table-hover">

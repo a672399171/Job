@@ -140,13 +140,21 @@ public class UserController {
 		if (varify != null && varify.getVarify().equals(s)) {
 			int hourGap = (int) ((new Date().getTime() - varify.getTime().getTime()) / (1000 * 3600));
 			if (hourGap <= 48) {
-				Company company = new Company();
-				company.setUsername(varify.getU());
-				company.setPassword(p);
-				company.setEmail(varify.getEmail());
-				userService.addCompany(company);
+				Company company = userService.existsCompany(varify.getU());
+				if (company != null) {
+					model.addAttribute("result", "请勿重复注册！");
+				} else {
+					company = new Company();
+					company.setUsername(varify.getU());
+					company.setPassword(p);
+					company.setEmail(varify.getEmail());
+					userService.addCompany(company);
 
-				return "company/account_setting";
+					company = userService.existsCompany(company.getUsername());
+					session.setAttribute(Common.COMPANY, company);
+
+					return "redirect:/job/account_setting.do";
+				}
 			} else {
 				model.addAttribute("result", "很遗憾，验证失败！");
 			}
@@ -194,18 +202,20 @@ public class UserController {
 			//如果只是上传一个文件,则只需要MultipartFile类型接收文件即可,而且无需显式指定@RequestParam注解
 			originalFilename = logo.getOriginalFilename();
 
-			String newFile = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
-			String newPath = realPath + "/" + newFile;
-			System.out.println("新文件路径:" + newPath);
+			if (!StringUtil.isEmpty(originalFilename)) {
+				String newFile = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
+				String newPath = realPath + "/" + newFile;
+				System.out.println("新文件路径:" + newPath);
 
-			try {
-				logo.transferTo(new File(newPath));
-			} catch (IOException e) {
-				System.out.println("文件[" + originalFilename + "]上传失败,堆栈轨迹如下");
-				e.printStackTrace();
+				try {
+					logo.transferTo(new File(newPath));
+				} catch (IOException e) {
+					System.out.println("文件[" + originalFilename + "]上传失败,堆栈轨迹如下");
+					e.printStackTrace();
+				}
+
+				company.setLogo(newFile);
 			}
-
-			company.setLogo(newFile);
 		}
 
 		company.setX(lng);
@@ -215,7 +225,7 @@ public class UserController {
 		company = userService.getCompanyById(company.getId());
 		session.setAttribute(Common.COMPANY, company);
 
-		if(company.getAuth() != Common.AUTHED) {
+		if (company.getAuth() != Common.AUTHED) {
 			sendEmailToAdmin();
 		}
 
@@ -228,9 +238,9 @@ public class UserController {
 	private void sendEmailToAdmin() {
 		List<Admin> admins = userService.getAllAdmins();
 
-		for(Admin admin : admins) {
+		for (Admin admin : admins) {
 			String em = admin.getEmail();
-			mailService.sendEmail(em,"管理员大哥，有新消息啦！","adminMsg.ftl",null);
+			mailService.sendEmail(em, "管理员大哥，有新消息啦！", "adminMsg.ftl", null);
 		}
 	}
 
@@ -283,6 +293,7 @@ public class UserController {
 
 	/**
 	 * 转到公司注册界面
+	 *
 	 * @return
 	 */
 	@RequestMapping("/toCompanyReg.do")
@@ -330,6 +341,28 @@ public class UserController {
 			session.setAttribute(Common.USER, user);
 		}
 		return map;
+	}
+
+	/**
+	 * ajax异步校验验证码
+	 *
+	 * @param varify
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/checkVarify.do")
+	@ResponseBody
+	public JSONObject checkVarify(String varify, HttpSession session) {
+		JSONObject object = new JSONObject();
+
+		String code = (String) session.getAttribute("code");
+		if (code.equalsIgnoreCase(varify)) {
+			object.put("valid", true);
+		} else {
+			object.put("valid", false);
+		}
+
+		return object;
 	}
 
 	/**
@@ -445,7 +478,7 @@ public class UserController {
 
 		List<Position> positions = new ArrayList<Position>();
 		String[] types = null;
-		if (types != null && !StringUtil.isEmpty(resume.getJob_type())) {
+		if (!StringUtil.isEmpty(resume.getJob_type())) {
 			types = resume.getJob_type().split("#");
 			for (String type : types) {
 				if (StringUtil.isNumber(type)) {
@@ -743,6 +776,11 @@ public class UserController {
 		poor.setStatus(Common.AUDIT);
 		userService.insertPoor(poor);
 
+		if (!StringUtil.isEmail(email)) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("text", "同学你好，请及时关注贫困生审核进展，我们将以邮件的方式通知给你。");
+			mailService.sendEmail(email, "审核进展", "poorAuditChange.ftl", map);
+		}
 		return "redirect:poor.do";
 	}
 
@@ -830,6 +868,16 @@ public class UserController {
 	}
 
 	/**
+	 * 公司找回密码
+	 *
+	 * @return
+	 */
+	@RequestMapping("/company_find_password.do")
+	public String toCompanyFindPassword() {
+		return "company/find_password";
+	}
+
+	/**
 	 * 验证学号教务密码
 	 *
 	 * @param username
@@ -874,17 +922,26 @@ public class UserController {
 	 */
 	@RequestMapping("/resetPassword.do")
 	@ResponseBody
-	public JSONObject resetPassword(String password, HttpSession session) {
+	public JSONObject resetPassword(String password, String type, HttpSession session) {
 		JSONObject object = new JSONObject();
 		String username = (String) session.getAttribute("auth");
 		if (username == null) {
 			object.put("msg", "未验证");
 		} else {
-			User user = userService.exists(username);
-			if (user != null) {
-				user.setPassword(StringUtil.toMd5(password));
-				userService.changeUserPassword(user);
+			if (Common.USER.equals(type)) {
+				User user = userService.exists(username);
+				if (user != null) {
+					user.setPassword(StringUtil.toMd5(password));
+					userService.changeUserPassword(user);
+				}
+			} else if (Common.COMPANY.equals(type)) {
+				Company company = userService.existsCompany(username);
+				if (company != null) {
+					company.setPassword(password);
+					userService.modifyCompanyPassword(company.getId(), password);
+				}
 			}
+
 		}
 		session.removeAttribute("auth");
 		return object;
@@ -899,43 +956,62 @@ public class UserController {
 	 */
 	@RequestMapping("/varifyEmail.do")
 	@ResponseBody
-	public JSONObject varifyEmail(String username, String email, HttpServletRequest request) {
+	public JSONObject varifyEmail(String username, String email, String type, HttpServletRequest request) {
 		JSONObject object = new JSONObject();
-		User user = userService.exists(username);
-		if (user == null) {
-			object.put("msg", "用户不存在");
-		} else {
-			String _email = user.getEmail();
-			if (StringUtil.isEmpty(_email)) {
-				object.put("msg", "该用户邮箱未绑定");
-			} else if (!_email.equals(email)) {
-				object.put("msg", "邮箱不正确");
+		String _email = "";
+		String u = "";
+
+		if (Common.USER.equals(type)) {
+			User user = userService.exists(username);
+			if (user == null) {
+				object.put("msg", "用户不存在");
 			} else {
-				String url = request.getScheme() + "://" + request.getServerName() + ":" +
-						request.getServerPort() + request.getContextPath() + "/user/validate_find_password.do";
-				String randomString = StringUtil.randomString(10);
-				url += "?u=" + StringUtil.toMd5(user.getUsername()) + "&s=" + StringUtil.toMd5(randomString);
-
-				Map<String, Object> valMap = new HashMap<String, Object>();
-				valMap.put("url", url);
-
-				mailService.sendEmail(email, "验证邮箱", "findPwd.ftl", valMap);
-
-				Varify varify = userService.searchVarify(StringUtil.toMd5(user.getUsername()), Common.FINDPWD);
-
-				if (varify == null) {
-					varify = new Varify();
+				_email = user.getEmail();
+				if (StringUtil.isEmpty(_email)) {
+					object.put("msg", "该用户邮箱未绑定");
+				} else if (!_email.equals(email)) {
+					object.put("msg", "邮箱不正确");
 				}
-
-				varify.setUsername(StringUtil.toMd5(user.getUsername()));
-				varify.setTime(new Date());
-				varify.setEmail(email);
-				varify.setVarify(StringUtil.toMd5(randomString));
-				varify.setType(Common.FINDPWD);
-				varify.setU(username);
-
-				userService.insertOrUpdateVarify(varify);
 			}
+		} else if (Common.COMPANY.equals(type)) {
+			Company company = userService.existsCompany(username);
+			if (company == null) {
+				object.put("msg", "用户不存在");
+			} else {
+				_email = company.getEmail();
+				if (StringUtil.isEmpty(_email)) {
+					object.put("msg", "该用户邮箱未绑定");
+				} else if (!_email.equals(email)) {
+					object.put("msg", "邮箱不正确");
+				}
+			}
+		}
+
+		if (object.get("msg") == null) {
+			String url = request.getScheme() + "://" + request.getServerName() + ":" +
+					request.getServerPort() + request.getContextPath() + "/user/validate_find_password.do";
+			String randomString = StringUtil.randomString(10);
+			url += "?u=" + StringUtil.toMd5(username) + "&s=" + StringUtil.toMd5(randomString);
+
+			Map<String, Object> valMap = new HashMap<String, Object>();
+			valMap.put("url", url);
+
+			mailService.sendEmail(email, "验证邮箱", "findPwd.ftl", valMap);
+
+			Varify varify = userService.searchVarify(StringUtil.toMd5(username), Common.FINDPWD);
+
+			if (varify == null) {
+				varify = new Varify();
+			}
+
+			varify.setUsername(StringUtil.toMd5(username));
+			varify.setTime(new Date());
+			varify.setEmail(email);
+			varify.setVarify(StringUtil.toMd5(randomString));
+			varify.setType(Common.FINDPWD);
+			varify.setU(username);
+
+			userService.insertOrUpdateVarify(varify);
 		}
 		return object;
 	}
@@ -1317,6 +1393,20 @@ public class UserController {
 		JSONObject object = new JSONObject();
 		userService.authPoor(u_id, status);
 
+		Poor poor = userService.searchPoor(u_id);
+		if (!StringUtil.isEmail(poor.getEmail())) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			if (status == Common.SUCCESS) {
+				//审核成功
+				map.put("text", "恭喜你，贫困生审核成功，贫困生将享有优先推荐的资格。");
+				mailService.sendEmail(poor.getEmail(), "审核进展", "poorAuditChange.ftl", map);
+			} else if (status == Common.FAILED) {
+				//审核失败
+				map.put("text", "很遗憾，贫困生审核失败。");
+				mailService.sendEmail(poor.getEmail(), "审核进展", "poorAuditChange.ftl", map);
+			}
+		}
+
 		return object;
 	}
 
@@ -1332,6 +1422,20 @@ public class UserController {
 	public JSONObject auditCompany(int id, int audit) {
 		JSONObject object = new JSONObject();
 		userService.auditCompany(id, audit);
+		//发送邮件
+		Company company = userService.getCompanyById(id);
+		if (!StringUtil.isEmail(company.getEmail())) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			if (audit == Common.UNAUTH) {
+				//认证失败
+				map.put("text", "很遗憾，您的公司信息审核失败!");
+				mailService.sendEmail(company.getEmail(), "审核进展", "companyAuditChange.ftl", map);
+			} else if (audit == Common.AUTHED) {
+				//认证成功
+				map.put("text", "恭喜您，您的公司信息审核成功，您现在可以发布职位了!");
+				mailService.sendEmail(company.getEmail(), "审核进展", "companyAuditChange.ftl", map);
+			}
+		}
 
 		return object;
 	}

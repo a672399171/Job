@@ -5,8 +5,6 @@
 </a>
 
 <script type="application/javascript">
-
-
     $(function () {
         //qq交流随页面滚动
         $(window).scroll(function () {

@@ -1,19 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
-<html ng-app="resumeSearch">
+<!DOCTYPE html>
+<html ng-app="resumeSearch" lang="zh-CN">
 <head>
     <title>搜索简历</title>
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
-    <script type="text/javascript"
-            src="${root}/js/jquery.fullPage.min.js"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <%@include file="../common/head.jsp"%>
     <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
     <script src="${root}/layer/layer.js"></script>
 </head>
@@ -22,7 +14,9 @@
 <div class="container" id="container">
     <div class="row">
         <div class="col-md-12" id="stBar">
-            搜索到{{total}}份简历
+            搜索到
+            <span style="color: red">{{total}}</span>
+            份简历
         </div>
     </div>
     <div class="row selectType" id="gradeDiv">

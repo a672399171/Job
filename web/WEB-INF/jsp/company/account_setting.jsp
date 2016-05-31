@@ -2,18 +2,11 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <title>账号设置</title>
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
+    <%@include file="../common/head.jsp"%>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <script src="${root}/js/ajaxfileupload.js"></script>
     <style type="text/css">
         #container {
@@ -90,7 +83,7 @@
                     <div class="col-sm-10">
                         <c:choose>
                             <c:when test="${empty company.company_name}">
-                                <input type="email" class="form-control" name="company_name" placeholder="公司名称">
+                                <input type="text" class="form-control" name="company_name" placeholder="公司名称">
                             </c:when>
                             <c:otherwise>
                                 <p class="form-control-static">${company.company_name}</p>
@@ -125,7 +118,13 @@
                     <div class="col-sm-10">
                         <c:choose>
                             <c:when test="${empty company.type}">
-                                <input type="text" class="form-control" name="type" placeholder="公司类型">
+                                <select name="type" class="form-control">
+                                    <option value="民营">民营</option>
+                                    <option value="国企">国企</option>
+                                    <option value="中外合资">中外合资</option>
+                                    <option value="个人单位">个人单位</option>
+                                    <option value="其他">其他</option>
+                                </select>
                             </c:when>
                             <c:otherwise>
                                 <p class="form-control-static">${company.type}</p>
@@ -139,7 +138,13 @@
                     <div class="col-sm-10">
                         <c:choose>
                             <c:when test="${empty company.scope}">
-                                <input type="text" class="form-control" name="scope" placeholder="公司规模">
+                                <select name="scope" class="form-control">
+                                    <option value="10人以下">10人以下</option>
+                                    <option value="10-100人">10-100人</option>
+                                    <option value="100-500人">100-500人</option>
+                                    <option value="500-1000人">500-1000人</option>
+                                    <option value="1000人以上">1000人以上</option>
+                                </select>
                             </c:when>
                             <c:otherwise>
                                 <p class="form-control-static">${company.scope}</p>
@@ -166,7 +171,7 @@
 
                     <div class="col-sm-10">
                         <c:choose>
-                            <c:when test="${empty company.introduce}">
+                            <c:when test="${empty company.logo}">
                                 <input type="file" id="logo" name="logo">
                             </c:when>
                             <c:otherwise>
@@ -241,9 +246,9 @@
         $("#hrefUl li a").removeClass("activeTitle");
         $("#account_setting a").addClass("activeTitle");
 
-        var x = ${company.x};
-        var y = ${company.y};
-        if (x != 0 && y != 0) {
+        if ("${company.x}" >= 0.1 && "${company.y}" >= 0.1) {
+            var x = ${company.x};
+            var y = ${company.y};
             $("#lng").val(x);
             $("#lat").val(y);
         }

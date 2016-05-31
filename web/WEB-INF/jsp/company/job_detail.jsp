@@ -1,17 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <title>职位信息</title>
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
-    <script type="text/javascript"
-            src="${root}/js/jquery.fullPage.min.js"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
+    <%@include file="../common/head.jsp"%>
     <link rel="stylesheet" type="text/css" href="${root}/css/post.css"/>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
@@ -79,7 +73,6 @@
                     <div class="col-sm-10">
                         <table id="table" class="weekTable">
                             <tr>
-                                <td></td>
                                 <td>星期一</td>
                                 <td>星期二</td>
                                 <td>星期三</td>
@@ -89,7 +82,6 @@
                                 <td>星期日</td>
                             </tr>
                             <tr id="week">
-                                <td>上午</td>
                                 <td><input type="checkbox"/></td>
                                 <td><input type="checkbox"/></td>
                                 <td><input type="checkbox"/></td>

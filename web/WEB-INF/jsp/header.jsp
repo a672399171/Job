@@ -4,7 +4,7 @@
 <div class="row" id="header">
     <div class="col-md-2 col-md-offset-1">
         <a href="${root}/">
-            <img src="${root}/images/logo.gif"/>
+            <img src="${root}/images/logo.png"/>
         </a>
     </div>
     <div class="col-md-6">
@@ -66,7 +66,7 @@
     //退出
     function quit() {
         $.post("${root}/user/quit.do", function (data) {
-            window.location = "${root}" + "/";
+            window.location = "${root}/";
         });
     }
 

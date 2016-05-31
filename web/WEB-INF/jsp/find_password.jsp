@@ -1,14 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
+<!DOCTYPE html>
 <html>
 <head>
     <title>找回密码</title>
-    <script type="text/javascript" src="${root}/js/jquery-1.11.2.js"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <%@include file="common/head.jsp"%>
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <style type="text/css">
         #panel {
@@ -170,7 +167,8 @@
         }
 
         $.post("${root}/user/resetPassword.do", {
-            password: pwd1
+            password: pwd1,
+            type:"user"
         }, function (data) {
             if(data.msg) {
                 alert(data.msg);
@@ -184,7 +182,8 @@
     function sendEmail() {
         $.post("${root}/user/varifyEmail.do", {
             email: $("#email").val(),
-            username: $("#user").val()
+            username: $("#user").val(),
+            type:"user"
         }, function (data) {
             console.log(data);
             if (data.msg) {

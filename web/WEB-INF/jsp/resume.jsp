@@ -2,18 +2,11 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <title>个人简历</title>
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
-    <script type="text/javascript"
-            src="${root}/js/jquery.fullPage.min.js"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${root}/bootstrapvalidator/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" href="${root}/js/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
+    <%@include file="common/head.jsp"%>
     <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <script src="${root}/bootstrapvalidator/js/language/zh_CN.js"></script>
@@ -280,7 +273,7 @@
     var schoolData = undefined;
     var typeData = undefined;
     var mytypes = undefined;
-    var positions = undefined;
+    var positions = [];
 
     $(function () {
         if ("${requestScope.resume.job_type}".trim() != "") {
@@ -289,12 +282,9 @@
         } else {
             mytypes = [];
         }
-        if ("${requestScope.resume.positions}" != null) {
-            positions = [];
-            <c:forEach items="${requestScope.resume.positions}" var="item">
-            positions.push("${item.name}");
-            </c:forEach>
-        }
+        <c:forEach items="${requestScope.resume.positions}" var="item">
+        positions.push("${item.name}");
+        </c:forEach>
 
         showMySelected();
 
@@ -368,8 +358,9 @@
         for (var i = 0; i < mytypes.length; i++) {
             if (mytypes[i] == $(e).attr("data")) {
                 mytypes.splice(i, 1);
-                positions.splice(i, 1);
-                return;
+            }
+            if(positions[i] == $(e).attr("text")) {
+                positions.splice(i,1);
             }
         }
         if ($(e).is(":checked")) {
@@ -482,18 +473,12 @@
     }
 
     function getSpareTime() {
-        var str = "";
-        var am = $("#week td :checkbox");
-        for (var i = 0; i < am.length; i++) {
-            if (am.eq(i).is(":checked")) {
-                str += "1";
-            } else {
-                str += "0";
-            }
-        }
         var number = 0;
-        for (var i = 1; i < str.length; i++) {
-            number += str.charAt(i) * Math.pow(2, 7 - i);
+        var week = $("#week td :checkbox");
+        for (var i = 0; i < week.length; i++) {
+            if (week.eq(i).is(":checked")) {
+                number += Math.pow(2, 7 - 1 - i);
+            }
         }
         return number;
     }
@@ -510,7 +495,7 @@
                 message: '姓名不能为空',
                 validators: {
                     notEmpty: {
-                        message: '用户名不能为空'
+                        message: '姓名不能为空'
                     },
                     stringLength: {
                         min: 0,
@@ -540,7 +525,7 @@
                     },
                     regexp: {
                         regexp: /^[0-9_\.]{11}$/,
-                        message: '手机号格式不正确'
+                        message: '手机号码格式不正确'
                     }
                 }
             }

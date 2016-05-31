@@ -2,18 +2,13 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}"></c:set>
-<html ng-app="searchJobResult">
+<!DOCTYPE html>
+<html ng-app="searchJobResult" lang="zh-CN">
 <head>
     <title>搜索结果</title>
-    <link rel="stylesheet" href="${root}/font-awesome-4.3.0/css/font-awesome.min.css">
-    <script type="text/javascript"
-            src="${root}/js/jquery-1.11.2.js"></script>
-    <script type="text/javascript"
-            src="${root}/js/jquery.fullPage.min.js"></script>
-    <link rel="stylesheet" href="${root}/bootstrap-3.3.4-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="${root}/css/common.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <%@include file="common/head.jsp"%>
     <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
+    <script src="${root}/layer/layer.js"></script>
     <style type="text/css">
         .row {
             clear: both;
@@ -174,11 +169,16 @@
         $scope.load = function (page,callback) {
             $scope.params.page = page;
 
+            //loading
+            layer.load();
             $http.get(app.host + '/job/vagueSearchJobs.do', {
                 params: $scope.params
             }).success(function (data) {
-                if(callback) {
+                layer.closeAll('loading');
+                if (callback) {
                     callback(data);
+                } else {
+                    $scope.data = data.rows;
                 }
             });
         };
@@ -195,20 +195,20 @@
         //改变参数中的p_id
         $scope.changeCid = function (c_id) {
             $scope.params.c_id = c_id;
-            $scope.load();
+            $scope.load(1, $scope.createPage);
         };
 
         //改变参数中的salary
         $scope.changeSalary = function (low, high) {
             $scope.params.low = low;
             $scope.params.high = high;
-            $scope.load();
+            $scope.load(1, $scope.createPage);
         };
 
         //改变参数中的page
         $scope.changePage = function (page) {
             $scope.params.page = page;
-            $scope.load();
+            $scope.load(1, $scope.createPage);
         };
 
         //转到url
@@ -245,7 +245,7 @@
                 }
             }
             $scope.params.time = num;
-            $scope.load();
+            $scope.load(1, $scope.createPage);
         };
 
         $scope.resetTime = function () {
@@ -259,7 +259,7 @@
         $scope.loadClassifies();
 
         //初始加载职位列表
-        $scope.load(1);
+        $scope.load();
     });
 </script>
 <script src="${root}/js/page.js"></script>
