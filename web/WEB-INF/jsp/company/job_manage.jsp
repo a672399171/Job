@@ -87,7 +87,7 @@
         </c:choose>
     </div>
 </div>
-
+<%@include file="../footer.jsp"%>
 <script type="application/javascript">
     //格式化时间
     function formatDate() {

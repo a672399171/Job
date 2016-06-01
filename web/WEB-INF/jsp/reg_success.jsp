@@ -54,8 +54,8 @@
     </style>
 </head>
 <body>
-<div class="big">
-    <jsp:include page="header.jsp"></jsp:include>
+<div class="big container">
+    <%@include file="/WEB-INF/jsp/header.jsp"%>
     <div id="body">
         <div class="well">
             <div id="top1">

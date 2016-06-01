@@ -14,7 +14,7 @@ body {
 
 .big {
     min-height: 100%;
-    min-width: 1024px;
+    min-width: 1000px;
 }
 
 .font1 {
@@ -55,7 +55,6 @@ a:hover {
 }
 
 #header {
-    height: 70px;
     background-color: white;
     margin-bottom: 15px;
 }
@@ -102,32 +101,8 @@ a:hover {
     line-height: 15px;
 }
 
-#inputDiv {
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
+.inputDiv {
     margin-top: 12px;
-}
-
-#input {
-    height: 100%;
-    outline: none;
-    width: 85%;
-    border: 2px solid red;
-    padding-left: 10px;
-    font-size: 16px;
-    float: left;
-}
-
-#searchBtn {
-    outline: none;
-    width: 15%;
-    background: red;
-    color: white;
-    float: left;
-    border: none;
-    height: 40px;
-    font-size: 18px;
 }
 
 .font3 {

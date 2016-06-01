@@ -12,8 +12,8 @@
     <script src="${root}/js/ajaxfileupload.js"></script>
 </head>
 <body>
-<div class="big">
-    <jsp:include page="header.jsp"></jsp:include>
+<div class="big container">
+    <%@include file="header.jsp"%>
     <div class="container">
         <div class="row">
             <div class="col-md-6 col-md-offset-3">

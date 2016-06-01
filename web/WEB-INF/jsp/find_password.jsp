@@ -32,7 +32,7 @@
     </style>
 </head>
 <body>
-<div class="big">
+<div class="big container">
     <div class="panel panel-default" id="panel">
         <div class="panel-body">
             <div class="row" id="hide" style="display: none">

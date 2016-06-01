@@ -7,13 +7,14 @@
 <head>
     <title>大学生兼职网</title>
     <%@include file="common/head.jsp"%>
+    <link rel="stylesheet" type="text/css" href="${root}/css/style_index.css"/>
 </head>
 <body>
-<div class="big">
-    <jsp:include page="/WEB-INF/jsp/header.jsp"/>
+<div class="big container">
+    <%@include file="/WEB-INF/jsp/header.jsp"%>
 
     <div class="row">
-        <div id="list1" class="col-md-2 col-md-offset-1">
+        <div id="list1" class="col-xs-2 col-xs-offset-1">
             <div id="type_title">选择类目</div>
             <ul>
                 <c:forEach var="item" items="${requestScope.array}">
@@ -82,7 +83,7 @@
                 }
             });
         </script>
-        <div id="middle" class="col-md-10 col-md-offset-1">
+        <div id="middle" class="col-xs-10 col-xs-offset-1">
             <h2>最新招聘</h2>
             <hr>
             <c:forEach var="item" items="${requestScope.recentJobs}">

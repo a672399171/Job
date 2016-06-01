@@ -12,8 +12,8 @@
     <script src="${root}/layer/layer.js"></script>
 </head>
 <body>
-<div class="big">
-    <jsp:include page="header.jsp"></jsp:include>
+<div class="big container">
+    <%@include file="/WEB-INF/jsp/header.jsp"%>
     <div id="body">
         <div class="well" id="well">
             <h2 align="center">用户注册</h2>

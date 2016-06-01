@@ -97,7 +97,7 @@
         </div>
     </div>
 </div>
-
+<%@include file="../footer.jsp"%>
 <script type="application/javascript">
     $(function() {
         $("#hrefUl li a").removeClass("activeTitle");

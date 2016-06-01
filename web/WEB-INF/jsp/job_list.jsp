@@ -17,9 +17,8 @@
         #middle {
             background: white;
             min-width: 800px;
-            width: 80%;
-            margin-left: 150px;
-            margin-top: 20px;
+            width: 100%;
+            margin-top: 10px;
             margin-bottom: 20px;
         }
 
@@ -61,8 +60,8 @@
     </style>
 </head>
 <body ng-controller="JobListController">
-<div class="big">
-    <jsp:include page="/WEB-INF/jsp/header.jsp"/>
+<div class="big container">
+    <%@include file="/WEB-INF/jsp/header.jsp"%>
 
     <div class="container">
         <div class="row selectType" id="positionDiv">

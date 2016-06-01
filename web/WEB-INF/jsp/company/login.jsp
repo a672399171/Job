@@ -24,6 +24,8 @@
     <title>企业登录</title>
     <%@include file="../common/head.jsp"%>
     <link rel="stylesheet" type="text/css" href="${root}/css/style_login.css"/>
+    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
 </head>
 <body>
 <div class="panel panel-default" id="login_panel">

@@ -52,35 +52,35 @@
 
 <div class="container" id="container">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-xs-12">
             <c:if test="${sessionScope.company.auth != 2}">
                 <span style="color: red">当前公司暂未通过认证，为了用户的安全，请认真填写公司信息，我们将在1个工作日内给予认证回复，谢谢合作。</span>
             </c:if>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12 title">
+        <div class="col-xs-12 title">
             账号信息
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-xs-12">
             <button class="btn btn-danger" onclick="openDlg()" style="margin: 10px;margin-left: 30px">修改密码</button>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12 title">
+        <div class="col-xs-12 title">
             公司信息
         </div>
     </div>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-xs-8">
             <form class="form-horizontal" action="${root}/user/updateCompany.do" method="post"
                   enctype="multipart/form-data">
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">公司名称</label>
+                    <label class="col-xs-2 control-label">公司名称</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-xs-10">
                         <c:choose>
                             <c:when test="${empty company.company_name}">
                                 <input type="text" class="form-control" name="company_name" placeholder="公司名称">
@@ -92,9 +92,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">公司地址</label>
+                    <label class="col-xs-2 control-label">公司地址</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-xs-10">
                         <c:choose>
                             <c:when test="${empty company.address}">
                                 <input type="text" class="form-control" name="address" placeholder="公司地址">
@@ -106,16 +106,16 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">标明地址</label>
+                    <label class="col-xs-2 control-label">标明地址</label>
 
-                    <div class="col-sm-10" id="mapContainer">
+                    <div class="col-xs-10" id="mapContainer">
 
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">公司类型</label>
+                    <label class="col-xs-2 control-label">公司类型</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-xs-10">
                         <c:choose>
                             <c:when test="${empty company.type}">
                                 <select name="type" class="form-control">
@@ -133,9 +133,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">公司规模</label>
+                    <label class="col-xs-2 control-label">公司规模</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-xs-10">
                         <c:choose>
                             <c:when test="${empty company.scope}">
                                 <select name="scope" class="form-control">
@@ -153,9 +153,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">公司简介</label>
+                    <label class="col-xs-2 control-label">公司简介</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-xs-10">
                         <c:choose>
                             <c:when test="${empty company.introduce}">
                                 <textarea class="form-control" rows="5" name="introduce" placeholder="公司简介"></textarea>
@@ -167,9 +167,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="logo" class="col-sm-2 control-label">公司logo</label>
+                    <label for="logo" class="col-xs-2 control-label">公司logo</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-xs-10">
                         <c:choose>
                             <c:when test="${empty company.logo}">
                                 <input type="file" id="logo" name="logo">
@@ -181,9 +181,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">联系人姓名</label>
+                    <label class="col-xs-2 control-label">联系人姓名</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-xs-10">
                         <c:choose>
                             <c:when test="${empty company.name}">
                                 <input type="text" class="form-control" name="name" placeholder="联系人姓名">
@@ -195,9 +195,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">联系人手机号</label>
+                    <label class="col-xs-2 control-label">联系人手机号</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-xs-10">
                         <c:choose>
                             <c:when test="${empty company.phone}">
                                 <input type="text" class="form-control" name="phone" placeholder="联系人手机号">
@@ -209,9 +209,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">公司邮箱</label>
+                    <label class="col-xs-2 control-label">公司邮箱</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-xs-10">
                         <c:choose>
                             <c:when test="${empty company.email}">
                                 <input type="email" class="form-control" name="email" placeholder="公司邮箱">
@@ -227,7 +227,7 @@
                 <input type="hidden" value="34.757521" id="lat" name="lat">
 
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
+                    <div class="col-xs-offset-2 col-xs-10">
                         <button type="submit" class="btn btn-default">保存信息</button>
                     </div>
                 </div>
@@ -235,7 +235,7 @@
         </div>
     </div>
 </div>
-
+<%@include file="../footer.jsp"%>
 <script type="application/javascript">
     //页面加载完后获取当前位置
     $(function () {

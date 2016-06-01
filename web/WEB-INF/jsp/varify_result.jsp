@@ -8,7 +8,7 @@
     <%@include file="common/head.jsp"%>
 </head>
 <body>
-<jsp:include page="header.jsp"></jsp:include>
+<%@include file="/WEB-INF/jsp/header.jsp"%>
 <div class="big">
     <div class="container">
         <div class="row">

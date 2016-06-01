@@ -1,20 +1,25 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <div class="row" id="header">
-    <div class="col-md-2 col-md-offset-1">
+    <div class="col-xs-2 col-xs-offset-1">
         <a href="${root}/">
             <img src="${root}/images/logo.png"/>
         </a>
     </div>
-    <div class="col-md-6">
-        <div id="inputDiv">
+    <div class="col-xs-6">
+        <div class="input-group inputDiv">
+            <input type="text" class="form-control" placeholder="输入公司或职位" id="input"
+                   value="${requestScope.keyword}" onkeydown="enterSearch()">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button" id="searchBtn" onclick="searchJobs()">搜 索</button>
+            </span>
+        </div>
+        <%--<div id="inputDiv">
             <input type="text" placeholder="输入公司或职位" id="input" value="${requestScope.keyword}"
                    onkeydown="entersearch()"/>
             <input type="button" value="搜 索" id="searchBtn" onclick="searchJobs()"/>
-        </div>
+        </div>--%>
     </div>
-    <div class="col-md-3" id="login">
+    <div class="col-xs-3" id="login">
         <c:choose>
             <c:when test="${sessionScope.user == null}">
                 <a href="${root}/user/toLogin.do?from=${pageContext.request.requestURL}" id="login_href">登录</a> |
@@ -90,7 +95,7 @@
     }
 
     //回车键搜索
-    function entersearch() {
+    function enterSearch() {
         var event = window.event || arguments.callee.caller.arguments[0];
         if (event.keyCode == 13) {
             searchJobs();

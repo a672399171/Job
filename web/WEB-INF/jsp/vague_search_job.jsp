@@ -6,7 +6,7 @@
 <html ng-app="searchJobResult" lang="zh-CN">
 <head>
     <title>搜索结果</title>
-    <%@include file="common/head.jsp"%>
+    <%@include file="common/head.jsp" %>
     <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
     <script src="${root}/layer/layer.js"></script>
     <style type="text/css">
@@ -17,8 +17,7 @@
         #middle {
             background: white;
             min-width: 800px;
-            width: 80%;
-            margin-left: 150px;
+            width: 100%;
             margin-top: 20px;
             margin-bottom: 20px;
         }
@@ -61,69 +60,65 @@
     </style>
 </head>
 <body ng-controller="JobListController">
-<div class="big">
-    <jsp:include page="/WEB-INF/jsp/header.jsp"/>
-
-    <div class="container">
-        <div class="row selectType" id="positionDiv">
-            <div class="col-md-1">
-                类别:
-            </div>
-            <div class="col-md-11">
-                <ul>
-                    <li ng-class="{on:params.c_id==0}" ng-click="changeCid(0)">不限</li>
-                    <li ng-class="{on:item.id == params.c_id}" ng-repeat="item in classifies"
-                        ng-click="changeCid(item.id)">
-                        {{item.name}}
-                    </li>
-                </ul>
-            </div>
+<div class="big container">
+    <%@include file="/WEB-INF/jsp/header.jsp" %>
+    <div class="row selectType" id="positionDiv">
+        <div class="col-md-1">
+            类别:
         </div>
-        <div class="row selectType" id="timeDiv">
-            <div class="col-md-1">
-                工作时间:
-            </div>
-            <div class="col-md-11">
-                <ul>
-                    <li ng-class="{on:timeArray[0]}" ng-click="changeTime(0)">不限</li>
-                    <li ng-class="{on:timeArray[1]}" ng-click="changeTime(1)">周一</li>
-                    <li ng-class="{on:timeArray[2]}" ng-click="changeTime(2)">周二</li>
-                    <li ng-class="{on:timeArray[3]}" ng-click="changeTime(3)">周三</li>
-                    <li ng-class="{on:timeArray[4]}" ng-click="changeTime(4)">周四</li>
-                    <li ng-class="{on:timeArray[5]}" ng-click="changeTime(5)">周五</li>
-                    <li ng-class="{on:timeArray[6]}" ng-click="changeTime(6)">周六</li>
-                    <li ng-class="{on:timeArray[7]}" ng-click="changeTime(7)">周日</li>
-                </ul>
-            </div>
-        </div>
-        <div class="row selectType" id="salaryDiv">
-            <div class="col-md-1">
-                月薪:
-            </div>
-            <div class="col-md-11">
-                <ul>
-                    <li ng-class="{on:params.low==0 && params.high=='max'}" ng-click="changeSalary(0,'max')">不限</li>
-                    <li ng-class="{on:params.low==0 && params.high==500}" ng-click="changeSalary(0,500)">500以下</li>
-                    <li ng-class="{on:params.low==500 && params.high==1000}" ng-click="changeSalary(500,1000)">
-                        500-1000
-                    </li>
-                    <li ng-class="{on:params.low==1000 && params.high==2000}" ng-click="changeSalary(1000,2000)">
-                        1000-2000
-                    </li>
-                    <li ng-class="{on:params.low==2000 && params.high==3000}" ng-click="changeSalary(2000,3000)">
-                        2000-3000
-                    </li>
-                    <li ng-class="{on:params.low==3000 && params.high==4000}" ng-click="changeSalary(3000,4000)">
-                        3000-4000
-                    </li>
-                    <li ng-class="{on:params.low==4000 && params.high=='max'}" ng-click="changeSalary(4000,'max')">
-                        4000以上
-                    </li>
-                </ul>
-            </div>
+        <div class="col-md-11">
+            <ul>
+                <li ng-class="{on:params.c_id==0}" ng-click="changeCid(0)">不限</li>
+                <li ng-class="{on:item.id == params.c_id}" ng-repeat="item in classifies"
+                    ng-click="changeCid(item.id)">
+                    {{item.name}}
+                </li>
+            </ul>
         </div>
     </div>
-
+    <div class="row selectType" id="timeDiv">
+        <div class="col-md-1">
+            工作时间:
+        </div>
+        <div class="col-md-11">
+            <ul>
+                <li ng-class="{on:timeArray[0]}" ng-click="changeTime(0)">不限</li>
+                <li ng-class="{on:timeArray[1]}" ng-click="changeTime(1)">周一</li>
+                <li ng-class="{on:timeArray[2]}" ng-click="changeTime(2)">周二</li>
+                <li ng-class="{on:timeArray[3]}" ng-click="changeTime(3)">周三</li>
+                <li ng-class="{on:timeArray[4]}" ng-click="changeTime(4)">周四</li>
+                <li ng-class="{on:timeArray[5]}" ng-click="changeTime(5)">周五</li>
+                <li ng-class="{on:timeArray[6]}" ng-click="changeTime(6)">周六</li>
+                <li ng-class="{on:timeArray[7]}" ng-click="changeTime(7)">周日</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row selectType" id="salaryDiv">
+        <div class="col-md-1">
+            月薪:
+        </div>
+        <div class="col-md-11">
+            <ul>
+                <li ng-class="{on:params.low==0 && params.high=='max'}" ng-click="changeSalary(0,'max')">不限</li>
+                <li ng-class="{on:params.low==0 && params.high==500}" ng-click="changeSalary(0,500)">500以下</li>
+                <li ng-class="{on:params.low==500 && params.high==1000}" ng-click="changeSalary(500,1000)">
+                    500-1000
+                </li>
+                <li ng-class="{on:params.low==1000 && params.high==2000}" ng-click="changeSalary(1000,2000)">
+                    1000-2000
+                </li>
+                <li ng-class="{on:params.low==2000 && params.high==3000}" ng-click="changeSalary(2000,3000)">
+                    2000-3000
+                </li>
+                <li ng-class="{on:params.low==3000 && params.high==4000}" ng-click="changeSalary(3000,4000)">
+                    3000-4000
+                </li>
+                <li ng-class="{on:params.low==4000 && params.high=='max'}" ng-click="changeSalary(4000,'max')">
+                    4000以上
+                </li>
+            </ul>
+        </div>
+    </div>
     <div id="middle">
         <div class="job_item" style="display: block" ng-repeat="item in data" ng-click="toUrl(item)">
             <table>
@@ -166,7 +161,7 @@
             high: "max"
         };
 
-        $scope.load = function (page,callback) {
+        $scope.load = function (page, callback) {
             $scope.params.page = page;
 
             //loading
