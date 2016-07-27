@@ -3,29 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
-    <welcome-file-list>
+    <!--<welcome-file-list>
         <welcome-file>job/index.do</welcome-file>
-    </welcome-file-list>
+    </welcome-file-list>-->
 
     <!-- 配置spring配置文件的位置 -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/applicationContext.xml</param-value>
-    </context-param>
-
-    <!-- 配置log4j -->
-    <context-param>
-        <param-name>log4jConfigLocation</param-name>
-        <param-value>/WEB-INF/log4j.properties</param-value>
+        <param-value>classpath:spring-config.xml</param-value>
     </context-param>
 
     <!-- 服务器启动后，spring管理 -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
-    <!-- 配置log4jlistener -->
-    <listener>
-        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
     </listener>
 
     <!-- spring解决编码问题 -->
@@ -43,17 +33,13 @@
     </filter>
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
-        <url-pattern>*.do</url-pattern>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
 
     <!-- 添加对springmvc的支持 -->
     <servlet>
         <servlet-name>springmvc</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>/WEB-INF/spring-mvc.xml</param-value>
-        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>

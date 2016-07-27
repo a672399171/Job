@@ -1,8 +1,8 @@
 package com.zzu.util;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
+/*import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;*/
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -51,11 +51,11 @@ public class PictureUtil {
 		cut(src, x, y, w, w,format);
 
 		//缩放图片
-		zoomPicture(src);
+		//zoomPicture(src);
 	}
 
 	//缩放图片
-	private static void zoomPicture(String src) {
+	/*private static void zoomPicture(String src) {
 		File file = new File(src);
 		ImageIcon ii = null;
 		try {
@@ -106,7 +106,7 @@ public class PictureUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	private static void cut(String src, int x, int y, int w, int h,String format) {
 		Iterator iterator = ImageIO.getImageReadersByFormatName(format);

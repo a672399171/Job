@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <!--POJO 类的所在package，默认类名为其Alias-->
+        <package name="com.zzu.model"/>
+    </typeAliases>
+    <!-- 这里可以写多个实体的映射文件 -->
+    <mappers>
+        <mapper resource="mapping/UserMapper.xml"/>
+        <mapper resource="mapping/ResumeMapper.xml"/>
+        <mapper resource="mapping/JobMapper.xml"/>
+    </mappers>
+</configuration>
