@@ -1,9 +1,5 @@
 package com.zzu.util;
 
-import server.smsService;
-import sun.misc.BASE64Encoder;
-
-import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -74,20 +70,6 @@ public class StringUtil {
 			sb.append(STR.charAt(index));
 		}
 		return sb.toString();
-	}
-
-	//测试发送短信
-	public static void sendMsg() {
-		// 发送短信
-		String userid = "a672399171";   //你的用户名
-		String pass = "a1703628649";    //你的密码
-		String mobiles = "15617536860"; //对方接收的手机号
-		String msg = "JAVA测试短信通过2008-11-13,验证码123456789";  //内容
-		String time = "";
-
-		smsService service = new smsService();
-		String result = service.sendSms(userid, pass, mobiles, msg, time);
-		System.out.println("结果：" + result);
 	}
 
 	//判断是否为数字
