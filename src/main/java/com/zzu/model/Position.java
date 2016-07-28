@@ -1,11 +1,13 @@
 package com.zzu.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2016/3/8.
  */
-public class Position {
+public class Position implements Serializable {
 	private int id;
-	private int c_id;
+	private int cId;
 	private String name;
 
 	public int getId() {
@@ -16,12 +18,12 @@ public class Position {
 		this.id = id;
 	}
 
-	public int getC_id() {
-		return c_id;
+	public int getcId() {
+		return cId;
 	}
 
-	public void setC_id(int c_id) {
-		this.c_id = c_id;
+	public void setcId(int cId) {
+		this.cId = cId;
 	}
 
 	public String getName() {

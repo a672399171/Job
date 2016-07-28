@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzu.dao.JobDao">
+    <sql id="jobDetailSql">
+        j.id,
+        j.name,
+        j.description,
+        j.person_count,
+        j.high_salary,
+        j.low_salary,
+        j.post_time,
+        j.skill,
+        j.tag,
+        j.work_time,
+        j.status,
+        p.id as "type.id",
+        p.name as "type.name",
+        c.id as "post_company.id",
+        c.company_name as "post_company.company_name",
+        c.address as "post_company.address",
+        c.name as "post_company.name",
+        c.phone as "post_company.phone",
+        c.introduce as "post_company.introduce",
+        c.type as "post_company.type",
+        c.scope as "post_company.scope",
+        c.email as "post_company_email",
+        c.logo as "post_company.logo"
+        c.type as "post_company.type",
+        c.x as "post_company.x",
+        c.y as "post_company.y",
+        c.auth as "post_company.auth"
+    </sql>
+
+    <select id="searchJobs" resultType="com.zzu.model.Job">
+        SELECT
+        j.id,
+        j.name,
+        j.person_count,
+        j.high_salary,
+        j.low_salary,
+        j.post_time,
+        p.name as "type.name",
+        c.id as "post_company.id",
+        c.company_name as "post_company.company_name",
+        c.name as "post_company.name",
+        c.phone as "post_company.phone",
+        c.type as "post_company.type",
+        c.scope as "post_company.scope",
+        c.logo as "post_company.logo"
+        FROM
+        tb_job j,
+        tb_company c,
+        tb_position p
+        where
+        j.type=p.id
+        and j.post_company=c.id
+        and j.status=1
+        ORDER BY j.post_time desc
+        <if test="count != 0">
+            limit ${start},${count}
+        </if>
+    </select>
+
+    <select id="getJobById">
+        select
+        <include refid="jobDetailSql"/>
+        FROM
+        tb_job j,
+        tb_company c,
+        tb_position p
+        where
+        j.type=p.id
+        and j.post_company=c.id
+        and j.id=#{id}
+    </select>
+
+</mapper>

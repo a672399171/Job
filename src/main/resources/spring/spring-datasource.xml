@@ -15,7 +15,7 @@
     </bean>
 
     <!-- 使用annotation定义事务 -->
-    <tx:annotation-driven transaction-manager="txManager"/>
+    <!--<tx:annotation-driven transaction-manager="txManager"/>-->
 
     <bean id="txManager"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -23,14 +23,22 @@
     </bean>
 
     <!--配置SqlSessionFactoryBean-->
-    <bean id="factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="classpath:mybatis-config.xml"/>
-        <property name="mapperLocations" value="classpath:mapping/*.xml" />
+        <property name="mapperLocations" value="classpath:mapper/*.xml" />
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 注入sqlSessionFactory -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+
+        <!-- 给出需要扫描Dao接口的包 -->
+        <property name="basePackage" value="com.zzu.dao"/>
     </bean>
 
     <!--配置session-->
     <bean id="session" class="org.mybatis.spring.SqlSessionTemplate">
-        <constructor-arg index="0" ref="factory"/>
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
     </bean>
 </beans>

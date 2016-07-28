@@ -2,7 +2,7 @@
 <div class="row" id="header">
     <div class="col-xs-2 col-xs-offset-1">
         <a href="${root}/">
-            <img src="${root}/images/logo.png"/>
+            <img src="/resources/images/logo.png"/>
         </a>
     </div>
     <div class="col-xs-6">

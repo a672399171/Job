@@ -1,1 +1,23 @@
-haha
+#parse("common/header.vm")
+<link rel="stylesheet" href="/resources/css/style_index.css"/>
+
+<div id="main">
+    <div class="sui-layout">
+        <div class="sidebar" id="list1">
+            <div id="type_title">选择类目</div>
+            <ul>
+                <li>
+                    <a href="javascript:void(0)">财务</a>
+                    <span></span>
+
+                    <div class='hideDiv'>
+                        <p class='alink'>
+                            <a href='javascript:void(0)' onclick="">财务主管</a>
+                        </p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="content">content</div>
+    </div>
+</div>

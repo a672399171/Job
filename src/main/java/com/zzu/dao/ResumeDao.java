@@ -1,35 +1,22 @@
 package com.zzu.dao;
 
 import com.zzu.model.Resume;
-import com.zzu.model.User;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.io.Reader;
+import java.util.List;
 
 /**
- * Created by Administrator on 2016/3/4.
+ * Created by zhanglei53 on 2016/7/28.
  */
-@Component
-public class ResumeDao {
-	@Resource
-	private SqlSession session;
+public interface ResumeDao {
+    Resume getResumeById(int id);
 
-	public Resume getResumeByUid(int u_id) {
-		Resume resume = session.selectOne("mapping.ResumeMapper.getResumeByUid", u_id);
-		return resume;
-	}
+    List<Resume> searchResume(int grade, int spareTime, String salary, int school, int page, String filter, boolean push);
 
-	public void insertResume(Resume resume) {
-		session.insert("mapping.ResumeMapper.insertResume", resume);
-	}
+    int getResumeCount(int grade, int time, String salary, int school, String filter, boolean push);
 
-	public void updateResume(Resume resume) {
-		session.update("mapping.ResumeMapper.updateResume", resume);
-	}
+    Resume getResumeByUid(int uId);
+
+    void insertResume(Resume resume);
+
+    void updateResume(Resume resume);
 }

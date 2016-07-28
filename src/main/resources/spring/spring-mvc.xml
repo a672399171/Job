@@ -13,11 +13,12 @@
     <mvc:annotation-driven/>
 
     <!-- 视图解析器velocity -->
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
-        <property name="cache" value="true"/>
-        <property name="suffix" value=".vm"/>
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="cache" value="false"/>
+        <property name="suffix" value=".jsp"/>
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="requestContextAttribute" value="request"/>
         <property name="contentType" value="text/html;charset=utf-8" />
-        <property name="toolboxConfigLocation" value="/WEB-INF/velocity-tool.xml"/>
     </bean>
 
     <!--规定模板文件的类型和位置-->
@@ -44,7 +45,7 @@
     </bean>
 
     <!--处理静态资源请求-->
-    <!--<mvc:default-servlet-handler/>-->
+    <mvc:default-servlet-handler/>
 
-    <mvc:resources mapping="/resources/**" location="/resources/**" cache-period="31536000"/>
+    <!--<mvc:resources mapping="/resources/**" location="/resources/" cache-period="31536000"/>-->
 </beans>

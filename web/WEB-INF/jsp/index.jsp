@@ -1,13 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>大学生兼职网</title>
     <%@include file="common/head.jsp"%>
-    <link rel="stylesheet" type="text/css" href="${root}/css/style_index.css"/>
+    <link rel="stylesheet" type="text/css" href="/resources/css/style_index.css"/>
 </head>
 <body>
 <div class="big container">
@@ -17,7 +16,7 @@
         <div id="list1" class="col-xs-2 col-xs-offset-1">
             <div id="type_title">选择类目</div>
             <ul>
-                <c:forEach var="item" items="${requestScope.array}">
+                <c:forEach var="item" items="${requestScope.classifies}">
                     <li>
                         <a href="javascript:void(0)">${item.name}</a>
                         <span></span>
@@ -64,7 +63,7 @@
                     $("#carousel .carousel-indicators").append(li);
 
                     var div = $("<div class='item'></div>");
-                    div.append("<a href='" + data[i].href + "' target='_blank'><img src='${root}/images/index/" + data[i].src + "' alt='图片不存在'></a>");
+                    div.append("<a href='" + data[i].href + "' target='_blank'><img src='/resources/images/index/" + data[i].src + "' alt='图片不存在'></a>");
 
                     if (i == 0) {
                         div.addClass("active");
@@ -86,8 +85,8 @@
         <div id="middle" class="col-xs-10 col-xs-offset-1">
             <h2>最新招聘</h2>
             <hr>
-            <c:forEach var="item" items="${requestScope.recentJobs}">
-                <div class="job_item" style="display: block" url="${root}/job/detail.do?id=${item.id}">
+            <c:forEach var="item" items="${requestScope.jobs}">
+                <div class="job_item" style="display: block" url="/job/${item.id}">
                     <table>
                         <tr>
                             <td width="30%"><a href="#" class="link">${item.name}</a></td>
@@ -107,13 +106,13 @@
         </div>
     </div>
 </div>
-<jsp:include page="/WEB-INF/jsp/right.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/jsp/right.jsp"/>
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 
 <script type="application/javascript">
 
     $(function () {
-        $("#login_href").attr("href", "${root}/user/toLogin.do?from=" + window.location.href);
+        $("#login_href").attr("href", "/user/toLogin.do?from=" + window.location.href);
 
         formatDate();
 

@@ -1,11 +1,16 @@
 package com.zzu.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Administrator on 2016/3/8.
  */
-public class Classify {
+public class Classify implements Serializable {
 	private int id;
 	private String name;
+	private List<Position> positions = new ArrayList<Position>();
 
 	public int getId() {
 		return id;
@@ -21,5 +26,13 @@ public class Classify {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public List<Position> getPositions() {
+		return positions;
+	}
+
+	public void setPositions(List<Position> positions) {
+		this.positions = positions;
 	}
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzu.dao.ClassifyDao">
+
+    <select id="getAllClassifies" resultType="com.zzu.model.Classify">
+        SELECT
+        `id`,
+        `name`
+        FROM tb_classify
+    </select>
+
+    <select id="searchPositions" resultType="com.zzu.model.Position">
+        select
+        `id`,
+        `c_id`,
+        `name`
+        from tb_position
+        <if test="cId != 0">
+            where c_id=#{cId}
+        </if>
+    </select>
+
+</mapper>
