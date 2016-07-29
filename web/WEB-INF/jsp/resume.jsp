@@ -95,10 +95,19 @@
                     <label class="col-xs-2 control-label">籍贯:</label>
 
                     <div class="col-xs-4">
-                        <select class="form-control" id="province" name="province" v-model="resume.province"></select>
+                        <select class="form-control" id="province" name="province" v-model="resume.province"
+                                v-on:change="changeCities()">
+                            <option v-for="item in citys" v-bind:value="item.province">
+                                {{ item.province }}
+                            </option>
+                        </select>
                     </div>
                     <div class=col-xs-4>
-                        <select class="form-control" id="city" name="city" v-model="resume.city"></select>
+                        <select class="form-control" id="city" name="city" v-model="resume.city">
+                            <option v-for="item in currentCities" v-bind:value="item">
+                                {{ item }}
+                            </option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -121,7 +130,11 @@
                     <label class="col-xs-2 control-label">年级:</label>
 
                     <div class="col-xs-4">
-                        <select class="form-control" name="grade" id="grade" v-model="resume.grade"></select>
+                        <select class="form-control" name="grade" id="grade" v-model="resume.grade">
+                            <option v-for="item in grades" v-bind:value="item">
+                                {{ item }}
+                            </option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -222,11 +235,11 @@
 <jsp:include page="footer.jsp"></jsp:include>
 
 <script type="application/javascript">
-    var provinceData = undefined;
-    var schoolData = undefined;
     var typeData = undefined;
     var mytypes = undefined;
     var positions = [];
+
+    var vueData = {};
 
     $(function () {
         /*if ("
@@ -253,7 +266,7 @@
          loadSchoolData();
          loadTypeData();*/
         initData();
-        loadProvinceData(initVue);
+        initVue();
     });
 
     function initVue() {
@@ -269,16 +282,28 @@
                 }
             }
 
+            vueData.resume = data.data.resume;
+            vueData.currentCities = [];
+            changeCurrentCities();
             if (data.success) {
                 new Vue({
                     el: '#resumeData',
-                    data: {
-                        resume: data.data.resume,
-                        times: times
+                    data: vueData,
+                    methods: {
+                        changeCities: changeCurrentCities
                     }
                 });
             }
         }, 'JSON');
+    }
+
+    function changeCurrentCities() {
+        for (var i = 0; i < vueData.citys.length; i++) {
+            if (vueData.citys[i].province === vueData.resume.province) {
+                vueData.currentCities = vueData.citys[i].citys;
+                break;
+            }
+        }
     }
 
     //显示当前已选的类型
@@ -288,15 +313,9 @@
     }
 
     //加载省市信息
-    function loadProvinceData(callback) {
+    function loadProvinceData() {
         $.getJSON("/resources/json/city.json", function (data) {
-            provinceData = data;
-            data.forEach(function (e) {
-                var provinceSelect = $("#province");
-                provinceSelect.append("<option value='" + e.province + "'>" + e.province + "</option>")
-            });
-            $("#province").change();
-            callback();
+            vueData.citys = data;
         });
     }
 
@@ -358,42 +377,20 @@
     //加载学院数据
     function loadSchoolData() {
         $.getJSON("/job/schoolData", function (data) {
-            data.forEach(function (e) {
-                if (e.id == "${requestScope.resume.major.school.id}") {
-                    $("#school").append("<option value='" + e.id + "' selected>" + e.school + "</option>");
-
-                    $("#major").html("");
-                    for (var j = 0; j < e.majors.length; j++) {
-                        var m = e.majors[j];
-                        $("#major").append("<option value='" + m.id + "'>" + m.major + "</option>");
-                    }
-                } else {
-                    $("#school").append("<option value='" + e.id + "'>" + e.school + "</option>");
-                }
-                $("#school").change(function () {
-                    var s = $("#school").val();
-                    for (var i = 0; i < schoolData.length; i++) {
-                        if (schoolData[i].id == s) {
-                            $("#major").html("");
-                            for (var j = 0; j < schoolData[i].majors.length; j++) {
-                                var m = schoolData[i].majors[j];
-                                $("#major").append("<option value='" + m.id + "'>" + m.major + "</option>");
-                            }
-                            break;
-                        }
-                    }
-                });
-            });
-            $("#school").change();
+            vueData.schools = data;
         });
     }
 
     //初始化选中数据
     function initData() {
+        var grades = [];
         var year = new Date().getFullYear();
         for (var i = year - 8; i <= year; i++) {
-            $("#grade").append("<option value='" + i + "'>" + i + "</option>");
+            grades.push(i);
         }
+
+        loadProvinceData();
+        loadSchoolData();
 
         /*
          var typeArray = "
@@ -409,19 +406,6 @@
          }
          }*/
     }
-
-    $("#province").change(function () {
-        var citySelect = $("#city");
-        citySelect.html("");
-        provinceData.forEach(function (e) {
-            if (e.province == $("#province").val()) {
-                e.citys.forEach(function (city) {
-                    citySelect.append("<option value='" + city + "'>" + city + "</option>")
-                });
-                return;
-            }
-        });
-    });
 
     $('#form').bootstrapValidator({
         message: 'This value is not valid',

@@ -1,12 +1,13 @@
 package com.zzu.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Administrator on 2016/3/10.
  */
-public class School {
+public class School implements Serializable {
 	private int id;
 	private String school;
 	private List<Major> majors = new ArrayList<Major>();
