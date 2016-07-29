@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzu.dao.UserDao">
+
+    <sql id="userSql">
+        id,
+        username,
+        school_num,
+        nickname,
+        phone,
+        email,
+        photo_src,
+        sex
+    </sql>
+
+    <select id="search" resultType="com.zzu.model.User">
+        SELECT
+        <include refid="userSql"/>
+        FROM
+        tb_user
+        WHERE
+        username=#{username}
+        AND password=#{password}
+    </select>
+
+    <select id="getById" resultType="com.zzu.model.User">
+        SELECT
+        <include refid="userSql"/>
+        FROM
+        tb_user
+        WHERE
+        id=#{id}
+    </select>
+</mapper>

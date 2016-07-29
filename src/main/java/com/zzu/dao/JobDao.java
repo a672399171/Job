@@ -24,14 +24,13 @@ public interface JobDao {
     int deleteJobs(int[] ids);
 
     //List<Job> searchJobs(String keyword, int page, int l, int h, int time, int cId);
-    List<Job> searchJobs(@Param("start") int start,
+    List<Job> searchJobs(@Param("companyId") int companyId,
+                         @Param("start") int start,
                          @Param("count") int count);
 
     int getJobCount(String keyword, int l, int h, int time, int cId);
 
-    List<Job> getJobsByCompany(int company_id, int page);
-
-    int getCompanyJobCount(int id);
+    int getJobCount(@Param("companyId") int companyId);
 
     void changeJobStatus(int jId, int status);
 

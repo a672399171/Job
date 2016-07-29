@@ -15,5 +15,5 @@ public interface SchoolDao {
 
     void addMajors(List<String> majors);
 
-    List<Major> getSchoolsAndMajors();
+    List<Major> getMajors();
 }

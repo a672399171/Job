@@ -2,34 +2,22 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
-<html ng-app="jobDetail" lang="zh-CN">
+<html lang="zh-CN">
 <head>
     <title>${job.name}</title>
-    <%@include file="common/head.jsp"%>
+    <%@include file="common/head.jsp" %>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
-    <link rel="stylesheet" type="text/css" href="${root}/css/style_job_detail.css"/>
-    <script src="${root}/js/dateformat.js"></script>
-    <script src="${root}/js/moment-with-locales.js"></script>
-    <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
-    <script type="application/javascript">
-        var app = angular.module("jobDetail", []);
-        app.host = "${root}";
-        app.job_id = ${requestScope.job.id};
-        app.u_id = 0;
-
-        <c:if test="${sessionScope.user != null}">
-        app.u_id = ${sessionScope.user.id};
-        </c:if>
-        app.company_id = ${requestScope.job.post_company.id};
-    </script>
-    <script src="${root}/js/controllers/jobDetail.js"></script>
-    <script src="${root}/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="/resources/css/style_job_detail.css"/>
+    <script src="/resources/js/dateformat.js"></script>
+    <script src="//cdn.bootcss.com/moment.js/2.14.1/moment-with-locales.min.js"></script>
+    <script src="/resources/scripts/vue.js"></script>
+    <script src="/resources/js/filters/filters.js"></script>
+    <script src="/resources/js/directives/directives.js"></script>
 </head>
 <body>
 <div class="big container">
-    <%@include file="header.jsp"%>
+    <%@include file="header.jsp" %>
 
     <div class="row">
         <div class="col-md-8">
@@ -64,11 +52,11 @@
                     </c:choose>
                 </c:if>
             </div>
-            <div>
+            <ul class="sui-tag tag-selected">
                 <c:forEach var="item" items="${fn:split(job.tag,'#')}">
-                    <span class="label label-info">${item}</span>
+                    <li class="tag-selected">${item}</li>
                 </c:forEach>
-            </div>
+            </ul>
             <div>
                 <h4>职位介绍</h4>
 
@@ -129,7 +117,7 @@
 
         <div class="col-md-4">
             <div class="companyLogo">
-                <img src="${root}/images/${job.post_company.logo}">
+                <img src="/resources/images/${job.post_company.logo}">
                 <table style="margin-top: 10px">
                     <tr>
                         <td>公司全名：</td>
@@ -153,15 +141,15 @@
                     </tr>
                 </table>
             </div>
-            <div class="comment" ng-controller="CommentController">
+            <div class="comment" ng-controller="CommentController" id="allComments">
                 <h4>评论列表</h4>
 
                 <div id="content">
-                    <div ng-repeat="item in data">
+                    <div v-for="item in comments">
                         <div>
-                            <img ng-src="${root}/images/{{item.user.photo_src}}" class='headPhoto'>
+                            <img src="/resources/images/{{item.user.photo_src}}" class='headPhoto'>
                             <span style="color: #2b542c">{{item.user.nickname}}</span>
-                            <span>{{item.c_time.time | date:'yyyy-MM-dd hh:mm:ss'}}</span>
+                            <span>{{item.c_time.time | dateFilter 'YYYY-MM-DD hh:mm'}}</span>
                         </div>
                         <div class='contentDiv'>
                             <p>{{item.content}}</p>
@@ -169,7 +157,7 @@
                     </div>
                 </div>
 
-                <xl-page pageSize="5" n="5" method="load" cla="pagination-sm"></xl-page>
+                <%--<xl-page pageSize="5" n="5" method="load" cla="pagination-sm"></xl-page>--%>
 
                 <c:choose>
                     <c:when test="${sessionScope.user != null}">
@@ -186,14 +174,14 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="allJobs" ng-controller="CompanyJobController">
+                <div class="allJobs" id="allJobs">
                     <h4>该公司所有职位</h4>
 
-                    <div class="job_item" style="display: block" ng-repeat="item in data" ng-click="toUrl(item.id)">
+                    <div class="job_item" style="display: block" v-for="item in jobs" v-on:click="toUrl(item.id)">
                         <table>
                             <tr>
                                 <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
-                                <td width="30%" class="font3">{{item.post_time.time | date:'yyyy-MM-dd hh:mm'}}</td>
+                                <td width="30%" class="font3">{{item.post_time.time | dateFilter 'YYYY-MM-DD hh:mm'}}</td>
                                 <td width="30%" class="font5">{{item.post_company.company_name}}</td>
                             </tr>
                             <tr>
@@ -204,7 +192,7 @@
                         </table>
                     </div>
 
-                    <xl-page pageSize="5" n="5" method="load"></xl-page>
+                    <zl-page></zl-page>
                 </div>
             </div>
         </div>
@@ -220,7 +208,7 @@
                         <table>
                             <tr>
                                 <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
-                                <td width="30%" class="font3">{{item.post_time.time | date:'yyyy-MM-dd hh:mm'}}</td>
+                                <td width="30%" class="font3">{{item.post_time.time | dateFilter 'YYYY-MM-DD hh:mm'}}</td>
                                 <td width="30%" class="font5">{{item.post_company.company_name}}</td>
                             </tr>
                             <tr>
@@ -332,6 +320,42 @@
             }, "JSON");
         }
     });
+
+    $(function () {
+        // 该公司所有职位
+        $.get('/job/company/' + '${requestScope.job.post_company.id}' + '/page/1', function (data) {
+            if (data.success) {
+                new Vue({
+                    el: '#allJobs',
+                    data: {
+                        jobs: data.list
+                    },
+                    methods: {
+                        toUrl: function (id) {
+                            window.location = '/job/' + id;
+                        }
+                    }
+                })
+            } else {
+                alert(data.error);
+            }
+        }, 'JSON');
+
+        // 职位评论
+        $.get('/job/' + '${requestScope.job.id}' + '/comment/page/1', function (data) {
+            if (data.success) {
+                new Vue({
+                    el: '#allComments',
+                    data: {
+                        comments: data.list
+                    }
+                })
+            } else {
+                alert(data.error);
+            }
+        }, 'JSON');
+    });
+
 </script>
 </body>
 </html>

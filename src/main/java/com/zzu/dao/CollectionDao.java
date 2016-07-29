@@ -1,6 +1,7 @@
 package com.zzu.dao;
 
 import com.zzu.model.Collection;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -14,6 +15,9 @@ public interface CollectionDao {
 
     void addCollection(int uId, int jId);
 
-    List<Collection> searchCollections(int id, int page);
+    List<Collection> searchCollections(@Param("u_id") int u_id,
+                                       @Param("start") int start,
+                                       @Param("count") int count);
 
+    int getCollectionCount(@Param("u_id") int u_id);
 }

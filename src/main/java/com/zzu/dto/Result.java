@@ -1,20 +1,33 @@
 package com.zzu.dto;
 
+import com.zzu.model.Common;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by zhanglei53 on 2016/7/28.
  */
-public class Result<E> extends ArrayList<E> {
+public class Result<E> implements Serializable {
     private boolean success = true;
     private Map<String, Object> data = new HashMap<String, Object>();
     private String error;
+    private List<E> list = new ArrayList<E>();
     private int totalPage;
     private int totalItem;
     private int page;
     private int pageSize;
+
+    public Result(int page, int pageSize) {
+        this.page = page;
+        this.pageSize = pageSize;
+        resetPage();
+    }
+
+    public Result() {}
 
     public boolean isSuccess() {
         return success;
@@ -44,16 +57,13 @@ public class Result<E> extends ArrayList<E> {
         return totalPage;
     }
 
-    public void setTotalPage(int totalPage) {
-        this.totalPage = totalPage;
-    }
-
     public int getTotalItem() {
         return totalItem;
     }
 
     public void setTotalItem(int totalItem) {
         this.totalItem = totalItem;
+        resetPage();
     }
 
     public int getPage() {
@@ -70,9 +80,27 @@ public class Result<E> extends ArrayList<E> {
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
+        resetPage();
+    }
+
+    public List<E> getList() {
+        return list;
+    }
+
+    public void setList(List<E> list) {
+        this.list = list;
     }
 
     private void resetPage() {
-
+        if (page <= 0) {
+            page = 1;
+        }
+        if (pageSize <= 0) {
+            pageSize = Common.SMALL_COUNT;
+        }
+        totalPage = totalItem % pageSize == 0 ? totalItem / pageSize : totalItem / pageSize + 1;
+        if (page > totalPage) {
+            page = totalPage;
+        }
     }
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzu.dao.CommentDao">
+
+    <select id="getComments" resultType="com.zzu.model.Comment">
+        SELECT
+        j.id as "job.id",
+        m.id,
+        m.content,
+        m.c_time,
+        u.id as "user.id",
+        u.photo_src as "user.photo_src",
+        u.nickname as "user.nickname"
+        FROM
+        tb_job j,
+        tb_user u,
+        tb_comment m
+        where
+        m.u_id=u.id
+        and m.j_id=j.id
+        and m.j_id=#{id}
+        ORDER BY m.c_time desc
+        <if test="count != null and count &gt; 0">
+            limit ${start},${count}
+        </if>
+    </select>
+
+    <select id="getCommentCount" resultType="int">
+        SELECT
+        count(*) as num
+        FROM
+        tb_job j,
+        tb_user u,
+        tb_comment m
+        where
+        m.u_id=u.id
+        and m.j_id=j.id
+        and m.j_id=#{id}
+    </select>
+</mapper>

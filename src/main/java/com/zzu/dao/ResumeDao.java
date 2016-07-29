@@ -8,7 +8,7 @@ import java.util.List;
  * Created by zhanglei53 on 2016/7/28.
  */
 public interface ResumeDao {
-    Resume getResumeById(int id);
+    Resume getByUid(int id);
 
     List<Resume> searchResume(int grade, int spareTime, String salary, int school, int page, String filter, boolean push);
 

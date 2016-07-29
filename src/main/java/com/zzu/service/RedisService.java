@@ -1,6 +1,7 @@
 package com.zzu.service;
 
 import com.zzu.model.Classify;
+import com.zzu.model.School;
 
 import java.util.List;
 
@@ -9,4 +10,6 @@ import java.util.List;
  */
 public interface RedisService {
     List<Classify> getClassifies();
+
+    List<School> getSchools();
 }

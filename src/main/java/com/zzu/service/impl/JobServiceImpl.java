@@ -1,6 +1,7 @@
 package com.zzu.service.impl;
 
 import com.zzu.dao.JobDao;
+import com.zzu.dto.Result;
 import com.zzu.model.*;
 import com.zzu.service.JobService;
 import org.springframework.stereotype.Component;
@@ -16,14 +17,36 @@ public class JobServiceImpl implements JobService {
     @Resource
     private JobDao jobDao;
 
-    public List<Job> searchJobs(int page, int pageSize) {
+    public Result<Job> searchJobs(int page, int pageSize) {
+        Result<Job> result = new Result<Job>(page,pageSize);
         if (page < 1) {
-            return null;
+            result.setSuccess(false);
+            result.setError("页数错误");
+            return result;
         }
-        return jobDao.searchJobs((page - 1) * pageSize, pageSize);
+        List<Job> jobs = jobDao.searchJobs(0, (page - 1) * pageSize, pageSize);
+        result.setTotalItem(jobDao.getJobCount(0));
+        result.setList(jobs);
+
+        return result;
     }
 
     public Job getJobById(int id) {
         return jobDao.getJobById(id);
     }
+
+    public Result<Job> getCompanyJobs(int companyId, int page, int pageSize) {
+        Result<Job> result = new Result<Job>(page,pageSize);
+        if (page < 1) {
+            result.setSuccess(false);
+            result.setError("页数错误");
+            return result;
+        }
+        List<Job> jobs = jobDao.searchJobs(companyId, (page - 1) * pageSize, pageSize);
+        result.setTotalItem(jobDao.getJobCount(companyId));
+        result.setList(jobs);
+
+        return result;
+    }
+
 }

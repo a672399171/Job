@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzu.dao.ResumeDao">
+
+    <select id="getByUid" resultType="com.zzu.model.Resume">
+        SELECT
+        r.id,
+        r.u_id,
+        r.name,
+        r.sex,
+        r.birthday,
+        r.phone,
+        r.grade,
+        r.province,
+        r.city,
+        r.email,
+        r.spare_time,
+        r.introduce,
+        r.title,
+        r.job_type,
+        r.salary,
+        s.id as "major.school.id",
+        s.school as "major.school.school",
+        m.id as "major.id",
+        m.major as "major.major"
+        FROM
+        tb_resume r,
+        tb_school s,
+        tb_major m
+        where
+        r.major=m.id
+        and m.s_id=s.id
+        and u_id=#{u_id}
+    </select>
+</mapper>

@@ -16,25 +16,25 @@
     <div class="row">
         <div class="col-xs-3 col-xs-offset-1">
             <div class="list-group">
-                <a class="list-group-item" href="${root}/user/info.do">
+                <a class="list-group-item " href="/user/info">
                     <i class="fa fa-user fa-fw"></i>&nbsp; 我的资料
                 </a>
-                <a class="list-group-item" href="${root}/user/resume.do">
+                <a class="list-group-item" href="/user/resume">
                     <i class="fa fa-files-o fa-fw"></i>&nbsp; 我的简历
                 </a>
-                <a class="list-group-item" href="${root}/user/apply.do">
+                <a class="list-group-item" href="/user/apply">
                     <i class="fa fa-comments fa-fw"></i>&nbsp; 求职进展
                 </a>
-                <a class="list-group-item" href="${root}/user/poor.do">
+                <a class="list-group-item" href="/user/poor">
                     <i class="fa fa-user-secret fa-fw"></i>&nbsp; 贫困生认证
                 </a>
-                <a class="list-group-item" href="${root}/user/collection.do">
+                <a class="list-group-item" href="/user/collection">
                     <i class="fa fa-star fa-fw"></i>&nbsp; 我的收藏
                 </a>
-                <a class="list-group-item active" href="${root}/user/secret.do">
+                <a class="list-group-item active" href="/user/secret">
                     <i class="fa fa-lock fa-fw"></i>&nbsp; 隐私设置
                 </a>
-                <a class="list-group-item" href="${root}/user/setting.do">
+                <a class="list-group-item" href="/user/setting">
                     <i class="fa fa-cog fa-fw"></i>&nbsp; 账号设置
                 </a>
             </div>

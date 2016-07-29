@@ -1,28 +1,23 @@
 package com.zzu.service.impl;
 
-import com.zzu.daoback.ResumeDao;
+import com.zzu.dao.ResumeDao;
 import com.zzu.model.Resume;
+import com.zzu.service.ResumeService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
-/**
- * Created by Administrator on 2016/3/4.
- */
-//@Component
-public class ResumeServiceImpl {
+@Service("resumeService")
+public class ResumeServiceImpl implements ResumeService {
 	@Resource
 	private ResumeDao resumeDao;
 
-	public Resume getResumeByUid(int u_id) {
-		return resumeDao.getResumeByUid(u_id);
-	}
-
 	public void saveOrUpdateResume(Resume resume) {
-		if(getResumeByUid(resume.getU_id()) == null) {
+		/*if(getResumeByUid(resume.getU_id()) == null) {
 			insertResume(resume);
 		} else {
 			updateResume(resume);
-		}
+		}*/
 	}
 
 	public void insertResume(Resume resume) {
@@ -31,5 +26,9 @@ public class ResumeServiceImpl {
 
 	public void updateResume(Resume resume) {
 		resumeDao.updateResume(resume);
+	}
+
+	public Resume getByUid(int id) {
+		return resumeDao.getByUid(id);
 	}
 }

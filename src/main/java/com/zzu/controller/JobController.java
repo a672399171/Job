@@ -1,25 +1,18 @@
 package com.zzu.controller;
 
+import com.zzu.dto.Result;
 import com.zzu.model.*;
 import com.zzu.model.Collection;
-import com.zzu.service.impl.JobServiceImpl;
-import com.zzu.service.impl.MailServiceImpl;
-import com.zzu.service.impl.ResumeServiceImpl;
-import com.zzu.service.impl.UserServiceImpl;
-import com.zzu.util.DateUtil;
-import com.zzu.util.StringUtil;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import org.springframework.stereotype.Component;
+import com.zzu.service.CommentService;
+import com.zzu.service.JobService;
+import com.zzu.service.RedisService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import java.util.*;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/3/8.
@@ -28,7 +21,11 @@ import java.util.*;
 @RequestMapping("job")
 public class JobController {
     @Resource
-    private JobServiceImpl jobService;
+    private JobService jobService;
+    @Resource
+    private CommentService commentService;
+    @Resource
+    private RedisService redisService;
 
     /**
      * 用户界面查看职位详情
@@ -60,4 +57,25 @@ public class JobController {
         //model.addAttribute("collection", collection);
         return "job_detail";
     }
+
+    @RequestMapping(value = "/company/{id}/page/{page}", method = RequestMethod.GET)
+    @ResponseBody
+    public Result<Job> companyJobs(@PathVariable("id") int id,
+                                   @PathVariable("page") int page) {
+        return jobService.getCompanyJobs(id, page, Common.SMALL_COUNT);
+    }
+
+    @RequestMapping("/{id}/comment/page/{page}")
+    @ResponseBody
+    public Result<Comment> getComments(@PathVariable("id") int id,
+                                       @PathVariable("page") int page) {
+        return commentService.getComments(id, page, Common.COUNT);
+    }
+
+    @RequestMapping("/schoolData")
+    @ResponseBody
+    public List<School> schoolData() {
+        return redisService.getSchools();
+    }
+
 }

@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <%
     String username = ""; //用户名
     String passward = ""; //密码
@@ -23,9 +22,9 @@
 <head>
     <title>登录</title>
     <%@include file="common/head.jsp"%>
-    <link rel="stylesheet" type="text/css" href="${root}/css/style_login.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/resources/css/style_login.css"/>
+    <script src="/resources/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
 </head>
 <body>
 <div class="big">
@@ -52,12 +51,12 @@
                         %>
                         >记住我
                     </label>
-                    <a href="${root}/user/find_password.do" id="wangji">忘记密码</a>
+                    <a href="/findPassword" id="wangji">忘记密码</a>
                 </div>
 
                 <button type="submit" class="btn btn-default">登&nbsp;录</button>
                 <div id="msg"></div>
-                <a href="${root}/user/toReg.do" id="zhuce">没有账号？立即注册</a>
+                <a href="/reg" id="zhuce">没有账号？立即注册</a>
             </form>
         </div>
     </div>
@@ -101,20 +100,19 @@
             var bv = $form.data('bootstrapValidator');
 
             // Use Ajax to submit form data
-            $.post("${root}/user/login.do", {
+            $.post("/user/login", {
                 username: $("#username").val(),
                 password: $("#password").val(),
                 on: $("#on").is(":checked")
             }, function (data) {
-                console.log(data);
-                if (data.msg == true) {
+                if (data.success) {
                     if("${param.from}".trim() == "") {
-                        window.location = "${root}";
+                        window.location = "/";
                     } else {
                         window.location = "${param.from}";
                     }
                 } else {
-                    $("#msg").text(data.msg);
+                    $("#msg").text(data.error);
                 }
             }, 'json');
         });

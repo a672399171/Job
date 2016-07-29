@@ -1,5 +1,6 @@
 package com.zzu.controller;
 
+import com.zzu.dto.Result;
 import com.zzu.model.Classify;
 import com.zzu.model.Common;
 import com.zzu.model.Job;
@@ -19,8 +20,6 @@ import java.util.List;
 @RequestMapping
 public class PageController {
     @Resource
-    private ClassifyService classifyService;
-    @Resource
     private JobService jobService;
     @Resource
     private RedisService redisService;
@@ -28,10 +27,30 @@ public class PageController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(Model model) {
         List<Classify> classifies = redisService.getClassifies();
-        List<Job> jobs = jobService.searchJobs(1, Common.COUNT);
+        Result<Job> jobs = jobService.searchJobs(1, Common.COUNT);
         model.addAttribute("classifies", classifies);
-        model.addAttribute("jobs",jobs);
+        model.addAttribute("jobs",jobs.getList());
 
         return "index";
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String login(Model model) {
+        return "login";
+    }
+
+    @RequestMapping(value = "/companyLogin", method = RequestMethod.GET)
+    public String companyLogin(Model model) {
+        return "company/login";
+    }
+
+    @RequestMapping(value = "/findPassword", method = RequestMethod.GET)
+    public String findPassword(Model model) {
+        return "find_password";
+    }
+
+    @RequestMapping(value = "/reg", method = RequestMethod.GET)
+    public String reg(Model model) {
+        return "reg";
     }
 }

@@ -26,15 +26,14 @@
         c.type as "post_company.type",
         c.scope as "post_company.scope",
         c.email as "post_company_email",
-        c.logo as "post_company.logo"
+        c.logo as "post_company.logo",
         c.type as "post_company.type",
         c.x as "post_company.x",
         c.y as "post_company.y",
         c.auth as "post_company.auth"
     </sql>
 
-    <select id="searchJobs" resultType="com.zzu.model.Job">
-        SELECT
+    <sql id="jobListSql">
         j.id,
         j.name,
         j.person_count,
@@ -49,6 +48,11 @@
         c.type as "post_company.type",
         c.scope as "post_company.scope",
         c.logo as "post_company.logo"
+    </sql>
+
+    <select id="searchJobs" resultType="com.zzu.model.Job">
+        SELECT
+        <include refid="jobListSql"/>
         FROM
         tb_job j,
         tb_company c,
@@ -57,13 +61,16 @@
         j.type=p.id
         and j.post_company=c.id
         and j.status=1
+        <if test="companyId != null and companyId &gt; 0">
+            and j.post_company=#{companyId}
+        </if>
         ORDER BY j.post_time desc
-        <if test="count != 0">
+        <if test="count != null and count &gt; 0">
             limit ${start},${count}
         </if>
     </select>
 
-    <select id="getJobById">
+    <select id="getJobById" resultType="com.zzu.model.Job">
         select
         <include refid="jobDetailSql"/>
         FROM
@@ -76,4 +83,19 @@
         and j.id=#{id}
     </select>
 
+    <select id="getJobCount" resultType="int">
+        select
+        count(*) as num
+        from
+        tb_job j,
+        tb_company c,
+        tb_position p
+        where
+        j.type=p.id
+        and j.post_company=c.id
+        and j.status=1
+        <if test="companyId != null and companyId &gt; 0">
+            and j.post_company=#{companyId}
+        </if>
+    </select>
 </mapper>

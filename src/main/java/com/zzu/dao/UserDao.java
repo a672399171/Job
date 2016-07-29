@@ -1,6 +1,7 @@
 package com.zzu.dao;
 
 import com.zzu.model.*;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -8,13 +9,14 @@ import java.util.List;
  * Created by zhanglei53 on 2016/7/28.
  */
 public interface UserDao {
-    User search(String username, String password);
+    User search(@Param("username") String username,
+                @Param("password") String password);
 
     User exists(String username);
 
     void modifyInfo(String nickname, String sex, String photo_src, int uId);
 
-    User getUserById(int id);
+    User getById(int id);
 
     void updateSecret(int id, boolean secret);
 

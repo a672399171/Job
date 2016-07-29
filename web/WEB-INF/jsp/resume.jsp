@@ -1,17 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>个人简历</title>
     <%@include file="common/head.jsp" %>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/language/zh_CN.js"></script>
-    <script src="${root}/js/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-    <script src="${root}/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <script src="/resources/bootstrapvalidator/js/language/zh_CN.js"></script>
+    <script src="/resources/js/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="/resources/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="/resources/scripts/vue.js"></script>
     <style type="text/css">
         #typeDiv li:hover {
             cursor: pointer;
@@ -38,86 +37,50 @@
     <div class="row">
         <div class="col-xs-3 col-xs-offset-1">
             <div class="list-group">
-                <a class="list-group-item" href="${root}/user/info.do">
+                <a class="list-group-item " href="/user/info">
                     <i class="fa fa-user fa-fw"></i>&nbsp; 我的资料
                 </a>
-                <a class="list-group-item active" href="${root}/user/resume.do">
+                <a class="list-group-item active" href="/user/resume">
                     <i class="fa fa-files-o fa-fw"></i>&nbsp; 我的简历
                 </a>
-                <a class="list-group-item" href="${root}/user/apply.do">
+                <a class="list-group-item" href="/user/apply">
                     <i class="fa fa-comments fa-fw"></i>&nbsp; 求职进展
                 </a>
-                <a class="list-group-item" href="${root}/user/poor.do">
+                <a class="list-group-item" href="/user/poor">
                     <i class="fa fa-user-secret fa-fw"></i>&nbsp; 贫困生认证
                 </a>
-                <a class="list-group-item" href="${root}/user/collection.do">
+                <a class="list-group-item" href="/user/collection">
                     <i class="fa fa-star fa-fw"></i>&nbsp; 我的收藏
                 </a>
-                <a class="list-group-item" href="${root}/user/secret.do">
+                <a class="list-group-item" href="/user/secret">
                     <i class="fa fa-lock fa-fw"></i>&nbsp; 隐私设置
                 </a>
-                <a class="list-group-item" href="${root}/user/setting.do">
+                <a class="list-group-item" href="/user/setting">
                     <i class="fa fa-cog fa-fw"></i>&nbsp; 账号设置
                 </a>
             </div>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-6" id="resumeData">
             <h4>我的简历</h4>
             <hr>
-            <form class="form-horizontal" action="${root}/user/saveOrUpdateResume.do" id="form" method="post">
+            <form class="form-horizontal" action="/user/saveOrUpdateResume.do" id="form" method="post">
                 <div class="form-group">
                     <label class="col-xs-2 control-label">姓&nbsp;&nbsp;&nbsp;&nbsp;名:</label>
 
                     <div class="col-xs-8">
-                        <input type="text" class="form-control" name="name" placeholder="姓名" value="${resume.name}">
+                        <input type="text" class="form-control" name="name" placeholder="姓名" v-model="resume.name">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-xs-2 control-label">性&nbsp;&nbsp;&nbsp;&nbsp;别:</label>
 
                     <div class="col-xs-8">
-                        <c:choose>
-                            <c:when test="${resume == null || resume.sex == null}">
-                                <c:choose>
-                                    <c:when test="${sessionScope.user.sex == '男'}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="sex" value="男" checked> 男
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="sex" value="女"> 女
-                                        </label>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="sex" value="男"> 男
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="sex" value="女" checked> 女
-                                        </label>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:when>
-                            <c:otherwise>
-                                <c:choose>
-                                    <c:when test="${resume.sex == '男'}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="sex" value="男" checked> 男
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="sex" value="女"> 女
-                                        </label>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="sex" value="男"> 男
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="sex" value="女" checked> 女
-                                        </label>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:otherwise>
-                        </c:choose>
+                        <label class="radio-inline">
+                            <input type="radio" name="sex" value="男" v-model="resume.sex"> 男
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="sex" value="女" v-model="resume.sex"> 女
+                        </label>
                     </div>
                 </div>
                 <div class="form-group">
@@ -125,22 +88,17 @@
 
                     <div class="col-xs-8">
                         <input type="text" class="form-control" id="birthday" name="birthday" placeholder="出生日期"
-                               readonly
-                               value="<fmt:formatDate value='${resume.birthday}' pattern='yyyy-MM-dd'></fmt:formatDate>">
+                               readonly v-model="resume.birthday" data-toggle="datepicker">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-xs-2 control-label">籍贯:</label>
 
                     <div class="col-xs-4">
-                        <select class="form-control" id="province" name="province">
-                            <option value="">选择省份</option>
-                        </select>
+                        <select class="form-control" id="province" name="province" v-model="resume.province"></select>
                     </div>
                     <div class=col-xs-4>
-                        <select class="form-control" id="city" name="city">
-                            <option value="">选择城市</option>
-                        </select>
+                        <select class="form-control" id="city" name="city" v-model="resume.city"></select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -148,7 +106,7 @@
 
                     <div class="col-xs-8">
                         <input type="email" class="form-control" id="email" name="email" placeholder="电子邮箱"
-                               value="${resume.email}">
+                               v-model="resume.email">
                     </div>
                 </div>
                 <div class="form-group">
@@ -156,24 +114,24 @@
 
                     <div class="col-xs-8">
                         <input type="tel" class="form-control" id="phone" name="phone" placeholder="手机号"
-                               value="${resume.phone}">
+                               v-model="resume.phone">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-xs-2 control-label">年级:</label>
 
                     <div class="col-xs-4">
-                        <select class="form-control" name="grade" id="grade"></select>
+                        <select class="form-control" name="grade" id="grade" v-model="resume.grade"></select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-xs-2 control-label">专业:</label>
 
                     <div class="col-xs-4">
-                        <select class="form-control" id="school"></select>
+                        <select class="form-control" id="school" v-model="resume.major.school.school"></select>
                     </div>
                     <div class="col-xs-4">
-                        <select class="form-control" name="major_id" id="major"></select>
+                        <select class="form-control" name="major_id" id="major" v-model="resume.major.major"></select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -191,13 +149,13 @@
                                 <td>星期日</td>
                             </tr>
                             <tr id="week">
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
-                                <td><input type="checkbox"/></td>
+                                <td><input type="checkbox" value="1" v-model="times"/></td>
+                                <td><input type="checkbox" value="2" v-model="times"/></td>
+                                <td><input type="checkbox" value="3" v-model="times"/></td>
+                                <td><input type="checkbox" value="4" v-model="times"/></td>
+                                <td><input type="checkbox" value="5" v-model="times"/></td>
+                                <td><input type="checkbox" value="6" v-model="times"/></td>
+                                <td><input type="checkbox" value="7" v-model="times"/></td>
                             </tr>
                         </table>
                     </div>
@@ -206,8 +164,8 @@
                     <label class="col-xs-2 control-label">自我介绍:</label>
 
                     <div class="col-xs-8">
-                        <textarea class="form-control" rows="6" name="introduce"
-                                  placeholder="说出你的亮点，说不好人家就看上你了哦!">${resume.introduce}</textarea>
+                        <textarea class="form-control" rows="6" name="introduce" v-model="resume.introduce"
+                                  placeholder="说出你的亮点，说不好人家就看上你了哦!"></textarea>
                     </div>
                 </div>
                 <h4>求职意向</h4>
@@ -217,7 +175,7 @@
 
                     <div class="col-xs-8">
                         <input type="text" class="form-control" name="title" placeholder="如：求职销售经理，2年经验"
-                               value="${resume.title}"/>
+                               v-model="resume.title"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -238,7 +196,7 @@
                     <label class="col-xs-2 control-label">期望月薪:</label>
 
                     <div class="col-xs-4">
-                        <select class="form-control" name="salary" id="salary">
+                        <select class="form-control" name="salary" id="salary" v-model="resume.salary">
                             <option value="500元以下">500元以下</option>
                             <option value="500-1000">500-1000</option>
                             <option value="1000-2000">1000-2000</option>
@@ -252,9 +210,6 @@
                 <input type="hidden" name="spare_time" id="spare_time"/>
                 <input type="hidden" name="job_type" id="job_type"/>
 
-                <%--<div class="col-xs-6" style="text-align: center">
-                    <button type="button" class="btn btn-info" style="width: 150px" onclick="getJobTypes()">预览</button>
-                </div>--%>
                 <div class="col-xs-6" style="text-align: center">
                     <button type="submit" class="btn btn-primary" onclick="return setData()" style="width: 150px">
                         <i class="fa fa-floppy-o"></i> 保存
@@ -274,29 +229,57 @@
     var positions = [];
 
     $(function () {
-        if ("${requestScope.resume.job_type}".trim() != "") {
-            mytypes = "${requestScope.resume.job_type}".split("#");
-            $("#mySelect").text()
-        } else {
-            mytypes = [];
-        }
+        /*if ("
+        ${requestScope.resume.job_type}".trim() != "") {
+         mytypes = "
+        ${requestScope.resume.job_type}".split("#");
+         $("#mySelect").text()
+         } else {
+         mytypes = [];
+         }
         <c:forEach items="${requestScope.resume.positions}" var="item">
-        positions.push("${item.name}");
+         positions.push("
+        ${item.name}");
         </c:forEach>
 
-        showMySelected();
+         showMySelected();
 
-        $('#birthday').datepicker({
-            format: 'yyyy-mm-dd',
-            autoclose: true,
-            language: 'zh-CN'
-        });
+         $('#birthday').datepicker({
+         format: 'yyyy-mm-dd',
+         autoclose: true,
+         language: 'zh-CN'
+         });
 
-        loadProvinceData();
+         loadSchoolData();
+         loadTypeData();*/
         initData();
-        loadSchoolData();
-        loadTypeData();
+        loadProvinceData(initVue);
     });
+
+    function initVue() {
+        $.get('/user/resume/${sessionScope.user.id}', function (data) {
+            var spare_time = data.data.resume.spare_time;
+            var times = spare_time.toString(2).split('');
+            if (times.length < 7) {
+                times.splice(0, 7 - times.length, '0');
+            }
+            for (var i = 0; i < times.length; i++) {
+                if (times[i] === '1') {
+                    times.push(i + 7 - times.length);
+                }
+            }
+
+            if (data.success) {
+                new Vue({
+                    el: '#resumeData',
+                    data: {
+                        resume: data.data.resume,
+                        times: times
+                    }
+                });
+            }
+        }, 'JSON');
+    }
 
     //显示当前已选的类型
     function showMySelected() {
@@ -305,16 +288,15 @@
     }
 
     //加载省市信息
-    function loadProvinceData() {
-        $.getJSON("${root}/json/city.json", function (data) {
+    function loadProvinceData(callback) {
+        $.getJSON("/resources/json/city.json", function (data) {
             provinceData = data;
             data.forEach(function (e) {
                 var provinceSelect = $("#province");
                 provinceSelect.append("<option value='" + e.province + "'>" + e.province + "</option>")
             });
-            // 设置select选中某值
-            $("#province option[value='" + "${resume.province}" + "']").attr("selected", "selected");
             $("#province").change();
+            callback();
         });
     }
 
@@ -375,8 +357,7 @@
 
     //加载学院数据
     function loadSchoolData() {
-        $.getJSON("${root}/job/school_data.do", function (data) {
-            schoolData = data;
+        $.getJSON("/job/schoolData", function (data) {
             data.forEach(function (e) {
                 if (e.id == "${requestScope.resume.major.school.id}") {
                     $("#school").append("<option value='" + e.id + "' selected>" + e.school + "</option>");
@@ -414,72 +395,33 @@
             $("#grade").append("<option value='" + i + "'>" + i + "</option>");
         }
 
-        $("#grade option[value='" + "${resume.grade}" + "']").attr("selected", "selected");
-        $("#salary option[value='" + "${resume.salary}" + "']").attr("selected", "selected");
+        /*
+         var typeArray = "
+        ${resume.job_type}".split("#");
 
-        var typeArray = "${resume.job_type}".split("#");
+         var types = $("#typeDiv :checkbox");
 
-        var types = $("#typeDiv :checkbox");
-
-        //格式化
-        var spareStr = parseInt(${requestScope.resume.spare_time}).toString(2);
-        var timeLength = spareStr.length;
-        if (spareStr.length < 7) {
-            for (var i = 0; i < 7 - timeLength; i++) {
-                spareStr = "0" + spareStr;
-            }
-        } else {
-            spareStr = spareStr.substr(spareStr.length - 7);
-        }
-
-        var week = $("#week td :checkbox");
-
-        for (var i = 0; i < spareStr.length; i++) {
-            var c = spareStr.charAt(i);
-            week.eq(i).attr("checked", c == '1');
-        }
-
-        for (var i = 0; i < types.length; i++) {
-            if ($.inArray(types.eq(i).val(), typeArray) != -1) {
-                types.eq(i).attr("checked", true);
-            } else {
-                types.eq(i).attr("checked", false);
-            }
-        }
+         for (var i = 0; i < types.length; i++) {
+         if ($.inArray(types.eq(i).val(), typeArray) != -1) {
+         types.eq(i).attr("checked", true);
+         } else {
+         types.eq(i).attr("checked", false);
+         }
+         }*/
     }
 
     $("#province").change(function () {
         var citySelect = $("#city");
         citySelect.html("");
-        citySelect.append("<option value=''>选择城市</option>");
         provinceData.forEach(function (e) {
             if (e.province == $("#province").val()) {
                 e.citys.forEach(function (city) {
                     citySelect.append("<option value='" + city + "'>" + city + "</option>")
                 });
-                // 设置select选中某值
-                $("#city option[value='" + "${resume.city}" + "']").attr("selected", "selected");
                 return;
             }
         });
     });
-
-    function setData() {
-        $("#spare_time").val(getSpareTime());
-        $("#job_type").val(mytypes.join("#"));
-        return true;
-    }
-
-    function getSpareTime() {
-        var number = 0;
-        var week = $("#week td :checkbox");
-        for (var i = 0; i < week.length; i++) {
-            if (week.eq(i).is(":checked")) {
-                number += Math.pow(2, 7 - 1 - i);
-            }
-        }
-        return number;
-    }
 
     $('#form').bootstrapValidator({
         message: 'This value is not valid',

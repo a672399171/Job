@@ -112,8 +112,6 @@
 <script type="application/javascript">
 
     $(function () {
-        $("#login_href").attr("href", "/user/toLogin.do?from=" + window.location.href);
-
         formatDate();
 
         $("#list1 ul li").mouseover(function () {
@@ -202,7 +200,7 @@
             low: low,
             high: high
         };
-        post("${root}/job/job_list.do", param);
+        post("/job/job_list.do", param);
     }
 
     $(".job_item").click(function () {

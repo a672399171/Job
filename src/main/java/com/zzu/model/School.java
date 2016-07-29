@@ -1,5 +1,6 @@
 package com.zzu.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,6 +9,7 @@ import java.util.List;
 public class School {
 	private int id;
 	private String school;
+	private List<Major> majors = new ArrayList<Major>();
 
 	public int getId() {
 		return id;
@@ -25,4 +27,11 @@ public class School {
 		this.school = school;
 	}
 
+	public List<Major> getMajors() {
+		return majors;
+	}
+
+	public void setMajors(List<Major> majors) {
+		this.majors = majors;
+	}
 }

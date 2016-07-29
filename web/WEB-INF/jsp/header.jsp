@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <div class="row" id="header">
     <div class="col-xs-2 col-xs-offset-1">
-        <a href="${root}/">
+        <a href="/">
             <img src="/resources/images/logo.png"/>
         </a>
     </div>
@@ -22,37 +22,37 @@
     <div class="col-xs-3" id="login">
         <c:choose>
             <c:when test="${sessionScope.user == null}">
-                <a href="${root}/user/toLogin.do?from=${pageContext.request.requestURL}" id="login_href">登录</a> |
-                <a href="${root}/user/toReg.do">注册</a> |
-                <a href="${root}/user/toCompanyLogin.do">企业登录</a>
+                <a href="/login?from=${pageContext.request.requestURL}" id="login_href">登录</a> |
+                <a href="/reg">注册</a> |
+                <a href="/companyLogin">企业登录</a>
             </c:when>
             <c:otherwise>
                 <div id="div1">
-                    <a href="${root}/user/info.do" id="person_href">
-                        <img src="${root}/images/${sessionScope.user.photo_src}" id="photo"/>
+                    <a href="/user/info" id="person_href">
+                        <img src="/resources/images/${sessionScope.user.photo_src}" id="photo"/>
                             ${sessionScope.user.username}
                     </a>
 
                     <div class="list-group" id="list">
-                        <a class="list-group-item" href="${root}/user/info.do">
+                        <a class="list-group-item" href="/user/info">
                             <i class="fa fa-user fa-fw"></i>&nbsp; 我的资料
                         </a>
-                        <a class="list-group-item" href="${root}/user/resume.do">
+                        <a class="list-group-item" href="/user/resume">
                             <i class="fa fa-files-o fa-fw"></i>&nbsp; 我的简历
                         </a>
-                        <a class="list-group-item" href="${root}/user/apply.do">
+                        <a class="list-group-item" href="user/apply">
                             <i class="fa fa-comments fa-fw"></i>&nbsp; 求职进展
                         </a>
-                        <a class="list-group-item" href="${root}/user/poor.do">
+                        <a class="list-group-item" href="/user/poor">
                             <i class="fa fa-user-secret fa-fw"></i>&nbsp; 贫困生认证
                         </a>
-                        <a class="list-group-item" href="${root}/user/collection.do">
+                        <a class="list-group-item" href="/user/collection">
                             <i class="fa fa-star fa-fw"></i>&nbsp; 我的收藏
                         </a>
-                        <a class="list-group-item" href="${root}/user/secret.do">
+                        <a class="list-group-item" href="/user/secret">
                             <i class="fa fa-lock fa-fw"></i>&nbsp; 隐私设置
                         </a>
-                        <a class="list-group-item" href="${root}/user/setting.do">
+                        <a class="list-group-item" href="/user/setting">
                             <i class="fa fa-cog fa-fw"></i>&nbsp; 账号设置
                         </a>
                     </div>
@@ -65,7 +65,7 @@
 
 <script type="application/javascript">
     $(function () {
-        $("#login_href").attr("href", "${root}/user/toLogin.do?from=" + window.location.href);
+        $("#login_href").attr("href", "/login?from=" + window.location.href);
     });
 
     //退出

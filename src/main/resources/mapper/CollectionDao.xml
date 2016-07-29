@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzu.dao.CollectionDao">
+    <select id="searchCollections" resultType="com.zzu.model.Collection">
+        select
+        c.collect_time,
+        j.name as "job.name",
+        j.high_salary as "job.high_salary",
+        j.low_salary as "job.low_salary",
+        com.company_name as "job.post_company.company_name",
+        com.name as "job.post_company.name",
+        com.phone as "job.post_company.phone"
+        from
+        tb_job j,
+        tb_collection c,
+        tb_company com
+        where
+        j.id=c.j_id
+        and com.id=j.post_company
+        and c.u_id=#{u_id}
+        <if test="count!= null and count &gt; 0">
+            limit ${start},${count}
+        </if>
+    </select>
+
+    <select id="getCollectionCount" resultType="int">
+        select
+        count(*) as num
+        from
+        tb_job j,
+        tb_collection c,
+        tb_company com
+        where
+        j.id=c.j_id
+        and com.id=j.post_company
+        and c.u_id=#{u_id}
+    </select>
+</mapper>
