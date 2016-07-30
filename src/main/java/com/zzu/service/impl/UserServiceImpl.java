@@ -1,5 +1,6 @@
 package com.zzu.service.impl;
 
+import com.zzu.dao.ApplyDao;
 import com.zzu.dao.CollectionDao;
 import com.zzu.dao.UserDao;
 import com.zzu.dto.Result;
@@ -17,6 +18,8 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
     @Resource
     private CollectionDao collectionDao;
+    @Resource
+    private ApplyDao applyDao;
 
     public User search(String username, String password) {
         return userDao.search(username, StringUtil.toMd5(password));
@@ -38,6 +41,14 @@ public class UserServiceImpl implements UserService {
         result.setTotalItem(collectionDao.getCollectionCount(u_id));
 
         return result;
+    }
+
+    public List<Apply> getApplies(int uId, int jId) {
+        return applyDao.getApplies(uId, jId);
+    }
+
+    public List<Poor> searchPoor(int uId) {
+        return userDao.searchPoor(uId);
     }
 
     public User exists(String username) {
@@ -75,10 +86,6 @@ public class UserServiceImpl implements UserService {
     //搜索用户
     public List<User> searchUsers(int page, String filter) {
         return userDao.searchUsers(page, filter);
-    }
-
-    public Poor searchPoor(int u_id) {
-        return userDao.searchPoor(u_id);
     }
 
     public void insertPoor(Poor poor) {

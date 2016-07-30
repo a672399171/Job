@@ -4,5 +4,31 @@
 
 <mapper namespace="com.zzu.dao.ApplyDao">
 
-
+    <select id="getApplies" resultType="com.zzu.model.Apply">
+        select
+        state,
+        apply_date,
+        r.id as "resume.id",
+        r.u_id as "resume.user.id",
+        r.name as "resume.name",
+        j.id as "job.id",
+        j.name as "job.name",
+        c.company_name as "job.post_company.company_name"
+        from
+        tb_resume r,
+        tb_job j,
+        tb_apply a,
+        tb_company c
+        where 1
+        and r.id=a.r_id
+        and j.id=a.j_id
+        and j.post_company=c.id
+        <if test="uId != null and uId &gt; 0">
+            and r.u_id=#{uId}
+        </if>
+        <if test="jId != null and jId &gt; 0">
+            and j.id=#{jId}
+        </if>
+        order by apply_date
+    </select>
 </mapper>

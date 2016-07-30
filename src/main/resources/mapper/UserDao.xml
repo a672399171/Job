@@ -33,4 +33,29 @@
         WHERE
         id=#{id}
     </select>
+
+    <select id="searchPoor" resultType="com.zzu.model.Poor">
+        select
+        `name`,
+        p.email as "email",
+        p.major as "major.id",
+        src,
+        status,
+        isNew,
+        m.major as "major.major",
+        s.school as "major.school.school"
+        from
+        tb_user u,
+        tb_poor p,
+        tb_major m,
+        tb_school s
+        where 1
+        and u.id=p.u_id
+        and m.id=p.major
+        and s.id=m.s_id
+        and u.id=p.u_id
+        <if test="uId != null and uId &gt; 0">
+            and u.id=#{uId}
+        </if>
+    </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.zzu.controller;
 
+import com.zzu.common.annotaion.Authorization;
 import com.zzu.dto.Result;
 import com.zzu.model.*;
 import com.zzu.model.Collection;
@@ -67,58 +68,72 @@ public class UserController {
     /**
      * 学生用户个人资料
      *
-     * @param session
      * @return
      */
+    @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping("/info")
-    public String info(HttpSession session) {
-        User user = (User) session.getAttribute(Common.USER);
-        if (user == null) {
-            return "redirect:/login";
-        }
-
+    public String info() {
         return "info";
     }
 
     /**
      * 个人简历
      *
-     * @param session
-     * @param model
      * @return
      */
     @RequestMapping("/resume")
-    public String resume(HttpSession session, Model model) {
-        User user = (User) session.getAttribute(Common.USER);
-        if (user == null) {
-            return "redirect:/login";
-        }
-
+    @Authorization(Common.AUTH_USER_LOGIN)
+    public String resume() {
         return "resume";
     }
 
-    @RequestMapping(value = "/resume/{id}",method = RequestMethod.GET)
+    @RequestMapping("/apply")
+    @Authorization(Common.AUTH_USER_LOGIN)
+    public String apply(HttpSession session, Model model) {
+        User user = (User) session.getAttribute(Common.USER);
+        if (user != null) {
+            model.addAttribute("applies", userService.getApplies(user.getId(), 0));
+        }
+
+        return "apply";
+    }
+
+    @RequestMapping("/poor")
+    @Authorization(Common.AUTH_USER_LOGIN)
+    public String poor(HttpSession session, Model model) {
+        User user = (User) session.getAttribute(Common.USER);
+        if (user != null) {
+            List<Poor> poors = userService.searchPoor(user.getId());
+            if (poors != null) {
+                for (Poor poor : poors) {
+                    if (poor.getU_id() == user.getId()) {
+                        model.addAttribute("poor", poor);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return "poor";
+    }
+
+    @RequestMapping(value = "/resume/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Result getResumeById(@PathVariable("id") int id) {
         Result result = new Result();
         Resume resume = resumeService.getByUid(id);
-        result.getData().put("resume",resume);
+        result.getData().put("resume", resume);
         return result;
     }
 
     /**
      * 账号设置
      *
-     * @param session
      * @return
      */
     @RequestMapping("/setting")
-    public String setting(HttpSession session) {
-        User user = (User) session.getAttribute(Common.USER);
-        if (user == null) {
-            return "redirect:/login";
-        }
-
+    @Authorization(Common.AUTH_USER_LOGIN)
+    public String setting() {
         return "setting";
     }
 
@@ -129,13 +144,13 @@ public class UserController {
      * @return
      */
     @RequestMapping("/secret")
+    @Authorization(Common.AUTH_USER_LOGIN)
     public String secret(HttpSession session) {
         User user = (User) session.getAttribute(Common.USER);
-        if (user == null) {
-            return "redirect:/login";
+        if (user != null) {
+            user = userService.getById(user.getId());
+            session.setAttribute(Common.USER, user);
         }
-        user = userService.getById(user.getId());
-        session.setAttribute(Common.USER, user);
 
         return "secret";
     }
@@ -147,14 +162,13 @@ public class UserController {
      * @return
      */
     @RequestMapping("/collection")
+    @Authorization(Common.AUTH_USER_LOGIN)
     public String collection(HttpSession session, Model model) {
         User user = (User) session.getAttribute(Common.USER);
-        if (user == null) {
-            return "redirect:/login";
+        if (user != null) {
+            Result<Collection> result = userService.searchCollections(user.getId(), 1, Common.COUNT);
+            model.addAttribute("collections", result.getList());
         }
-
-        Result<Collection> result = userService.searchCollections(user.getId(), 1, Common.COUNT);
-        model.addAttribute("collections", result.getList());
 
         return "collection";
     }

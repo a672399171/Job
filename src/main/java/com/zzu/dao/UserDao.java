@@ -5,9 +5,6 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * Created by zhanglei53 on 2016/7/28.
- */
 public interface UserDao {
     User search(@Param("username") String username,
                 @Param("password") String password);
@@ -26,7 +23,7 @@ public interface UserDao {
 
     User searchUserBySchoolNum(String schoolNum);
 
-    Poor searchPoor(int uId);
+    List<Poor> searchPoor(@Param("uId") int uId);
 
     void insertPoor(Poor poor);
 

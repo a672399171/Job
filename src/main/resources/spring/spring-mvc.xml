@@ -12,19 +12,28 @@
     <!-- 注解驱动 -->
     <mvc:annotation-driven/>
 
+    <bean id="loginAuthInterceptor" class="com.zzu.common.interceptor.AuthorizationInterceptor"/>
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/user/**"/>
+            <ref bean="loginAuthInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
     <!-- 视图解析器velocity -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="cache" value="false"/>
         <property name="suffix" value=".jsp"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="requestContextAttribute" value="request"/>
-        <property name="contentType" value="text/html;charset=utf-8" />
+        <property name="contentType" value="text/html;charset=utf-8"/>
     </bean>
 
     <!--规定模板文件的类型和位置-->
     <bean id="velocityConfigurer"
           class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
-        <property name="resourceLoaderPath" value="/WEB-INF/vm/" />
+        <property name="resourceLoaderPath" value="/WEB-INF/vm/"/>
         <property name="velocityProperties">
             <props>
                 <prop key="input.encoding">utf-8</prop>

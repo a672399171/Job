@@ -14,7 +14,7 @@
     <select id="searchPositions" resultType="com.zzu.model.Position">
         select
         `id`,
-        `c_id`,
+        `c_id` as "cId",
         `name`
         from tb_position
         <if test="cId != 0">

@@ -1,14 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>贫困生认证</title>
     <%@include file="common/head.jsp" %>
     <link href="http://g.alicdn.com/sj/dpl/1.5.1/css/sui.min.css" rel="stylesheet">
-    <script type="text/javascript" src="http://g.alicdn.com/sj/dpl/1.5.1/js/sui.min.js"></script>
 </head>
 <body>
 <div class="big container">
@@ -22,10 +20,10 @@
                 <a class="list-group-item" href="/user/resume">
                     <i class="fa fa-files-o fa-fw"></i>&nbsp; 我的简历
                 </a>
-                <a class="list-group-item" href="/user/apply">
+                <a class="list-group-item " href="/user/apply">
                     <i class="fa fa-comments fa-fw"></i>&nbsp; 求职进展
                 </a>
-                <a class="list-group-item poor" href="/user/poor">
+                <a class="list-group-item active" href="/user/poor">
                     <i class="fa fa-user-secret fa-fw"></i>&nbsp; 贫困生认证
                 </a>
                 <a class="list-group-item" href="/user/collection">
@@ -118,7 +116,7 @@
                     </div>
                 </c:if>
             </div>
-            <form class="form-horizontal" action="${root}/user/poor_confirm.do" enctype="multipart/form-data"
+            <form class="form-horizontal" action="/user/poor_confirm.do" enctype="multipart/form-data"
                   method="post">
                 <div class="form-group">
                     <label class="col-xs-2 control-label">学号:</label>
@@ -195,7 +193,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
+<jsp:include page="footer.jsp"/>
 
 <script type="application/javascript">
     $(function () {
@@ -204,7 +202,7 @@
 
     //加载学院数据
     function loadSchoolData() {
-        $.getJSON("${root}/job/school_data.do", function (data) {
+        $.getJSON("/job/schoolData", function (data) {
             schoolData = data;
             data.forEach(function (e) {
                 $("#school").append("<option value='" + e.id + "'>" + e.school + "</option>");

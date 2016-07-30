@@ -54,7 +54,7 @@
         <script type="application/javascript">
             $("#carousel").height($("#list1").height());
             //加载图片轮播配置
-            $.getJSON("${root}/json/pic.json", function (data) {
+            $.getJSON("/resources/json/pic.json", function (data) {
                 for (var i = 0; i < data.length; i++) {
                     var li = $("<li data-target='#carousel' data-slide-to='" + i + "'></li>");
                     if (i == 0) {

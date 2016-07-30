@@ -2,7 +2,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -49,7 +48,7 @@
                         <div class="well well-sm">
                             <div class="contentDiv">
                                 <div class="col-xs-4">
-                                    <a href="${root}/job/detail.do?id=${item.job.id}">${item.job.name}</a>
+                                    <a href="/job/${item.job.id}">${item.job.name}</a>
                                 </div>
                                 <div class="col-xs-4">
                                         ${item.job.post_company.company_name}
@@ -138,10 +137,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
-<script type="application/javascript">
-
-</script>
+<jsp:include page="footer.jsp"/>
 </body>
 </html>
 

@@ -1,6 +1,7 @@
 package com.zzu.dao;
 
 import com.zzu.model.Apply;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -9,7 +10,8 @@ import java.util.List;
  */
 public interface ApplyDao {
 
-    List<Apply> getApplies(int uId, int jId);
+    List<Apply> getApplies(@Param("uId") int uId,
+                           @Param("jId") int jId);
 
     void addApply(Apply apply);
 

@@ -41,4 +41,9 @@ public class Common {
 	public static final int COMPANYREG = 3;
 	//默认的头像路径
 	public static final String DEFAULTPHOTO = "headphoto.png";
+
+	// 权限码
+	public static final String AUTH_USER_LOGIN = "auth_user_login";
+	public static final String AUTH_COMPANY_LOGIN = "auth_company_login";
+	public static final String AUTH_ADMIN_LOGIN = "auth_admin_login";
 }
