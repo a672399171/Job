@@ -18,14 +18,14 @@ public class JobServiceImpl implements JobService {
     private JobDao jobDao;
 
     public Result<Job> searchJobs(int page, int pageSize) {
-        Result<Job> result = new Result<Job>(page,pageSize);
+        Result<Job> result = new Result<Job>(page, pageSize);
         if (page < 1) {
             result.setSuccess(false);
             result.setError("页数错误");
             return result;
         }
-        List<Job> jobs = jobDao.searchJobs(0, (page - 1) * pageSize, pageSize);
-        result.setTotalItem(jobDao.getJobCount(0));
+        List<Job> jobs = jobDao.searchJobs(0, null, 0, 0, 0, null, 1, (page - 1) * pageSize, pageSize);
+        result.setTotalItem(jobDao.getJobCount(0, null, 0, 0, 0, null, 1));
         result.setList(jobs);
 
         return result;
@@ -36,16 +36,29 @@ public class JobServiceImpl implements JobService {
     }
 
     public Result<Job> getCompanyJobs(int companyId, int page, int pageSize) {
-        Result<Job> result = new Result<Job>(page,pageSize);
+        Result<Job> result = new Result<Job>(page, pageSize);
         if (page < 1) {
             result.setSuccess(false);
             result.setError("页数错误");
             return result;
         }
-        List<Job> jobs = jobDao.searchJobs(companyId, (page - 1) * pageSize, pageSize);
-        result.setTotalItem(jobDao.getJobCount(companyId));
+        List<Job> jobs = jobDao.searchJobs(companyId, null, 0, 0, 0, null, 1, (page - 1) * pageSize, pageSize);
+        result.setTotalItem(jobDao.getJobCount(companyId, null, 0, 0, 0, null, 1));
         result.setList(jobs);
 
+        return result;
+    }
+
+    public Result<Job> searchJobs(int[] pIds, int time, int low, int high, String keyword, int page, int pageSize) {
+        Result<Job> result = new Result<Job>(page, pageSize);
+        if (page < 1) {
+            result.setSuccess(false);
+            result.setError("页数错误");
+            return result;
+        }
+        List<Job> jobs = jobDao.searchJobs(0, pIds, time, low, high, keyword, 1, (page - 1) * pageSize, pageSize);
+        result.setTotalItem(jobDao.getJobCount(0, pIds, time, low, high, keyword, 1));
+        result.setList(jobs);
         return result;
     }
 

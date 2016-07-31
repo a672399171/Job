@@ -5,12 +5,12 @@
 <html lang="zh-CN">
 <head>
     <title>大学生兼职网</title>
-    <%@include file="common/head.jsp"%>
+    <%@include file="common/head.jsp" %>
     <link rel="stylesheet" type="text/css" href="/resources/css/style_index.css"/>
 </head>
 <body>
 <div class="big container">
-    <%@include file="/WEB-INF/jsp/header.jsp"%>
+    <%@include file="/WEB-INF/jsp/header.jsp" %>
 
     <div class="row">
         <div id="list1" class="col-xs-2 col-xs-offset-1">
@@ -24,8 +24,7 @@
                         <div class='hideDiv'>
                             <p class='alink'>
                                 <c:forEach items="${item.positions}" var="position">
-                                    <a href='javascript:void(0)'
-                                       onclick="toJobList(${item.id},${position.id},1,127,0,'max')">${position.name}</a>
+                                    <a href='/job/list?cId=${item.id}&pId=${position.id}'>${position.name}</a>
                                 </c:forEach>
                             </p>
                         </div>
@@ -137,39 +136,9 @@
         }
     }
 
-    function getClassifies() {
-        $.getJSON("${root}/job/classifies.do", function (data) {
-            var classifies = data.classifies;
-            var positions = data.positions;
-            for (var i = 0; i < classifies.length; i++) {
-                var classify = classifies[i];
-                var li = $("<li>" + classify.name + "<span></span>" + "</li>");
-                var hideDiv = $("<div class='hideDiv'></div>");
-                var p = $("<p class='alink'></p>");
-                for (var j = 0; j < positions.length; j++) {
-                    var position = positions[j];
-                    if (position.c_id == classify.id) {
-                        p.append("<a href='#'>" + position.name + "</a>");
-                    }
-                }
-                hideDiv.append(p);
-                li.append(hideDiv);
-                $("#list1 ul").append(li);
-            }
-            $("#list1 ul li").mouseover(function () {
-                $(this).children(".hideDiv").show();
-                $(this).children("span").css("display", "inline-block");
-            });
-            $("#list1 ul li").mouseleave(function () {
-                $(this).children(".hideDiv").hide();
-                $(this).children("span").hide();
-            });
-        });
-    }
-
     function quit() {
-        $.post("${root}/user/quit.do", function (data) {
-            window.location = "${root}";
+        $.post("/user/quit.do", function () {
+            window.location = "/";
         });
     }
 
@@ -188,19 +157,6 @@
         document.body.appendChild(temp);
         temp.submit();
         return temp;
-    }
-
-    //转到职位列表页面
-    function toJobList(c_id, p_id, page, time, low, high) {
-        var param = {
-            c_id: c_id,
-            p_id: p_id,
-            page: page,
-            time: time,
-            low: low,
-            high: high
-        };
-        post("/job/job_list.do", param);
     }
 
     $(".job_item").click(function () {

@@ -3,9 +3,7 @@ package com.zzu.controller;
 import com.zzu.dto.Result;
 import com.zzu.model.*;
 import com.zzu.model.Collection;
-import com.zzu.service.CommentService;
-import com.zzu.service.JobService;
-import com.zzu.service.RedisService;
+import com.zzu.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +24,10 @@ public class JobController {
     private CommentService commentService;
     @Resource
     private RedisService redisService;
+    @Resource
+    private UserService userService;
+    @Resource
+    private ClassifyService classifyService;
 
     /**
      * 用户界面查看职位详情
@@ -78,4 +80,57 @@ public class JobController {
         return redisService.getSchools();
     }
 
+    @RequestMapping("/typeData")
+    @ResponseBody
+    public List<Classify> typeData() {
+        return redisService.getClassifies();
+    }
+
+    @RequestMapping("/positionData")
+    @ResponseBody
+    public List<Position> positionData(@RequestParam(value = "cId", required = false) Integer cId) {
+        if (cId == null) {
+            return null;
+        }
+        List<Classify> classifies = redisService.getClassifies();
+        for (Classify c : classifies) {
+            if (c.getId() == cId) {
+                return c.getPositions();
+            }
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public String list() {
+        return "job_list";
+    }
+
+    @RequestMapping(value = "/listData", method = RequestMethod.POST)
+    @ResponseBody
+    public Result<Job> listData(@RequestParam(value = "cId", required = false) Integer cId,
+                                @RequestParam(value = "pId", required = false) Integer pId,
+                                @RequestParam(value = "time", required = false) Integer time,
+                                @RequestParam(value = "low", required = false) Integer low,
+                                @RequestParam(value = "high", required = false) Integer high,
+                                @RequestParam(value = "keyword", required = false) String keyword,
+                                @RequestParam(value = "status", required = false) Integer page) {
+        int[] pIds = null;
+        if (pId != null) {
+            pIds = new int[]{pId};
+        }
+        if (time == null) {
+            time = 0;
+        }
+        if (low == null) {
+            low = 0;
+        }
+        if (high == null) {
+            high = 0;
+        }
+        if (page == null) {
+            page = 1;
+        }
+        return jobService.searchJobs(pIds, time, low, high, keyword, page, Common.COUNT);
+    }
 }

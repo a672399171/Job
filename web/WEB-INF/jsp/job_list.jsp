@@ -1,14 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html ng-app="jobList" lang="zh-CN">
 <head>
     <title>工作列表</title>
-    <%@include file="common/head.jsp"%>
-    <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
-    <script src="${root}/layer/layer.js"></script>
+    <%@include file="common/head.jsp" %>
+    <script src="/resources/scripts/vue.js"></script>
+    <script src="/resources/js/filters/filters.js"></script>
+    <script src="/resources/layer/layer.js"></script>
     <style type="text/css">
         .row {
             clear: both;
@@ -60,24 +60,26 @@
     </style>
 </head>
 <body ng-controller="JobListController">
-<div class="big container">
-    <%@include file="/WEB-INF/jsp/header.jsp"%>
+<div class="big container" id="app">
+    <%@include file="/WEB-INF/jsp/header.jsp" %>
 
     <div class="container">
         <div class="row selectType" id="positionDiv">
             <div class="col-md-1">
                 类别:
             </div>
+            {{param | json}}
             <div class="col-md-11">
                 <ul>
-                    <li ng-class="{on:params.p_id==0}" ng-click="changePid(0)">不限</li>
-                    <li ng-class="{on:item.id == params.p_id}" ng-repeat="item in positions"
+                    <%--<li v-bind:class="{'on':param}" ng-click="changePid(0)">不限</li>
+                    <li v-bind:class="{'on':item.id == param.pId}" v-for="item in positionData"
                         ng-click="changePid(item.id)">
                         {{item.name}}
-                    </li>
+                    </li>--%>
                 </ul>
             </div>
         </div>
+        <%--
         <div class="row selectType" id="timeDiv">
             <div class="col-md-1">
                 工作时间:
@@ -120,15 +122,15 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div>--%>
     </div>
 
     <div id="middle">
-        <div class="job_item" style="display: block" ng-repeat="item in data" ng-click="toUrl(item)">
+        <div class="job_item" style="display: block" v-for="item in list">
             <table>
                 <tr>
                     <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
-                    <td width="30%" class="font3">{{item.post_time.time | date:'yyyy-MM-dd hh:mm'}}</td>
+                    <td width="30%" class="font3">{{item.post_time.time | timestampFilter 'YYYY-MM-DD hh:mm'}}</td>
                     <td width="30%" class="font5">{{item.post_company.company_name}}</td>
                 </tr>
                 <tr>
@@ -140,122 +142,38 @@
         </div>
     </div>
 
-    <div ng-if="data.length <= 0" id="emptyDiv">
+    <div v-if="totalItem <= 0" id="emptyDiv">
         对不起，暂无记录！
     </div>
-    <xl-page pageSize="10" n="5" method="load" cla="pagination-lg"></xl-page>
+    <%--<xl-page pageSize="10" n="5" method="load" cla="pagination-lg"></xl-page>--%>
 </div>
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 
 <script type="application/javascript">
-    var app = angular.module("jobList", []);
-    app.host = "${root}";
+    var vueData = {};
+    vueData.param = {
+        pId:${param.pId},
+        cId:${param.cId}
+    };
+    $(function () {
+        $.getJSON('/job/positionData?cId=${param.cId}', function (data) {
+            vueData.positionData = data;
+        });
 
-    app.controller("JobListController", function ($scope, $http) {
-        $scope.timeArray = [true, false, false, false, false, false, false, false];
+        $.post('/job/listData', vueData.param, function (data) {
+            if (data.success) {
+                vueData = data;
 
-        $scope.params = {
-            c_id:${c_id},
-            p_id:${p_id},
-            page: 1,
-            time: 127,
-            low: 0,
-            high: "max"
-        };
-
-        $scope.load = function (page, callback) {
-            if (page > 0) {
-                $scope.params.page = page;
-            }
-
-            //loading
-            layer.load();
-
-            $http.get(app.host + '/job/searchJobs.do', {
-                params: $scope.params
-            }).success(function (data) {
-                layer.closeAll('loading');
-                if (callback) {
-                    callback(data);
-                } else {
-                    $scope.data = data.rows;
-                }
-            });
-        };
-
-        //转到url
-        $scope.toUrl = function (item) {
-            window.location = "${root}/job/detail.do?id=" + item.id;
-        };
-
-        //加载类型信息
-        $scope.loadPositions = function () {
-            $http.get(app.host + '/job/positions.do', {
-                params: $scope.params
-            }).success(function (data) {
-                $scope.positions = data;
-            });
-        };
-
-        //改变参数中的p_id
-        $scope.changePid = function (p_id) {
-            $scope.params.p_id = p_id;
-            $scope.load(1, $scope.createPage);
-        };
-
-        //改变参数中的salary
-        $scope.changeSalary = function (low, high) {
-            $scope.params.low = low;
-            $scope.params.high = high;
-            $scope.load(1, $scope.createPage);
-        };
-
-        //改变参数中的时间
-        $scope.changeTime = function (p) {
-            if (p == 0) {
-                $scope.resetTime();
+                new Vue({
+                    el: '#app',
+                    data: vueData,
+                    methods: {}
+                });
             } else {
-                $scope.timeArray[0] = false;
-                $scope.timeArray[p] = !$scope.timeArray[p];
-                var flag = true;
-                for (var i = 1; i < $scope.timeArray.length; i++) {
-                    if (!$scope.timeArray[i]) {
-                        flag = false;
-                    }
-                }
-                if (flag) {
-                    $scope.resetTime();
-                }
+                alert(data.error);
             }
-
-            var num = 0;
-            if ($scope.timeArray[0]) {
-                num = 127;
-            } else {
-                for (var i = 1; i < $scope.timeArray.length; i++) {
-                    if ($scope.timeArray[i]) {
-                        num += Math.pow(2, 7 - i);
-                    }
-                }
-            }
-            $scope.params.time = num;
-            $scope.load(1, $scope.createPage);
-        };
-
-        $scope.resetTime = function () {
-            for (var i = 0; i < $scope.timeArray.length; i++) {
-                $scope.timeArray[i] = false;
-            }
-            $scope.timeArray[0] = true;
-        };
-
-        //初始化加载类型信息
-        $scope.loadPositions();
-
-        //初始加载职位列表
-        $scope.load();
+        }, 'JSON');
     });
 </script>
-<script src="${root}/js/page.js"></script>
 </body>
 </html>

@@ -29,6 +29,10 @@ public class ResumeServiceImpl implements ResumeService {
 	}
 
 	public Resume getByUid(int id) {
-		return resumeDao.getByUid(id);
+		Resume resume = resumeDao.getByUid(id);
+		if(resume != null) {
+
+		}
+		return resume;
 	}
 }

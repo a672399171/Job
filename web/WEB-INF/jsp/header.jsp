@@ -13,11 +13,6 @@
                 <button class="btn btn-default" type="button" id="searchBtn" onclick="searchJobs()">搜 索</button>
             </span>
         </div>
-        <%--<div id="inputDiv">
-            <input type="text" placeholder="输入公司或职位" id="input" value="${requestScope.keyword}"
-                   onkeydown="entersearch()"/>
-            <input type="button" value="搜 索" id="searchBtn" onclick="searchJobs()"/>
-        </div>--%>
     </div>
     <div class="col-xs-3" id="login">
         <c:choose>
@@ -70,8 +65,8 @@
 
     //退出
     function quit() {
-        $.post("${root}/user/quit.do", function (data) {
-            window.location = "${root}/";
+        $.post("${root}/user/quit", function (data) {
+            window.location = "/";
         });
     }
 
@@ -89,7 +84,7 @@
     function searchJobs() {
         var val = $("#input").val();
         if (jQuery.trim(val) != "") {
-            var url = "${root}/job/vague_search_job.do?keyword=" + val;
+            var url = "/job/list?keyword=" + val;
             window.location = url;
         }
     }

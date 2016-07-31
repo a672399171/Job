@@ -25,12 +25,24 @@ public interface JobDao {
 
     //List<Job> searchJobs(String keyword, int page, int l, int h, int time, int cId);
     List<Job> searchJobs(@Param("companyId") int companyId,
+                         @Param("pIds") int[] pIds,
+                         @Param("time") int time,
+                         @Param("low") int low,
+                         @Param("high") int high,
+                         @Param("keyword") String keyword,
+                         @Param("status") int status,
                          @Param("start") int start,
                          @Param("count") int count);
 
     int getJobCount(String keyword, int l, int h, int time, int cId);
 
-    int getJobCount(@Param("companyId") int companyId);
+    int getJobCount(@Param("companyId") int companyId,
+                    @Param("pIds") int[] pIds,
+                    @Param("time") int time,
+                    @Param("low") int low,
+                    @Param("high") int high,
+                    @Param("keyword") String keyword,
+                    @Param("state") int state);
 
     void changeJobStatus(int jId, int status);
 
