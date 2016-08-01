@@ -42,7 +42,7 @@
                  style="margin-top: 20px;border: 1px solid black" id="head_photo"/>
         </div>
         <div class="col-xs-5">
-            <form class="form-horizontal" action="${root}/user/modify_info.do" method="post"
+            <form class="form-horizontal" action="/user/modifyInfo" method="post"
                   enctype="multipart/form-data">
                 <div class="form-group">
                     <label class="col-xs-3 control-label">用户名:</label>
@@ -83,21 +83,6 @@
                         </c:choose>
                     </div>
                 </div>
-                <%--<div class="form-group">
-                    <label for="phone" class="col-sm-3 control-label">手机号码:</label>
-                    <div class="col-sm-8">
-                        <input type="tel" class="form-control" id="phone" placeholder="手机号码">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="varify" class="col-sm-3 control-label">验证码:</label>
-                    <div class="col-sm-5">
-                        <input type="tel" class="form-control" id="varify" placeholder="验证码">
-                    </div>
-                    <div class="col-sm-3">
-                        <button type="button" class="btn btn-default">获取验证码</button>
-                    </div>
-                </div>--%>
                 <div class="form-group">
                     <label for="file" class="col-xs-3 control-label">更换头像</label>
 
@@ -115,7 +100,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
+<jsp:include page="footer.jsp"/>
 
 <script type="application/javascript">
     $("#file").change(function () {

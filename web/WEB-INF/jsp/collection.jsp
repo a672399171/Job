@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -67,7 +66,7 @@
             <hr>
             <c:forEach items="${requestScope.collections}" var="item">
                 <div class="list_item">
-                    <table url="${root}/job/detail.do?id=${item.job.id}">
+                    <table url="/job/${item.job.id}">
                         <tr>
                             <td width="40%">
                                 <span class="font4" style="font-size:15px;color: black">${item.job.name}</span>
@@ -94,7 +93,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
+<jsp:include page="footer.jsp"/>
 
 <script type="application/javascript">
     $(formatDate);
@@ -105,16 +104,16 @@
 
     //取消收藏
     function cancelCollection(u_id, j_id) {
-        $.post("${root}/user/cancelCollection.do", {
+        $.post("/user/cancelCollection", {
             u_id: u_id,
             j_id: j_id
         }, function (data) {
             if (data.success) {
                 window.location.reload();
             } else {
-                window.location = "${root}/user/toLogin.do";
+                alert(data.error);
+                window.location = "/login";
             }
-
         }, "JSON");
     }
 

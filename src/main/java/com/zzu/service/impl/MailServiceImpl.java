@@ -1,12 +1,11 @@
 package com.zzu.service.impl;
 
-import freemarker.cache.TemplateLoader;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import javax.annotation.Resource;
@@ -22,7 +21,7 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/4/1.
  */
-//@Component
+@Service("mailService")
 public class MailServiceImpl {
 	@Resource
 	public JavaMailSenderImpl mailSender;

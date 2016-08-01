@@ -1,12 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>账号设置</title>
     <%@include file="common/head.jsp" %>
-    <script src="${root}/layer/layer.js"></script>
+    <script src="/resources/layer/layer.js"></script>
     <style type="text/css">
         .hideDialog {
             display: none;
@@ -126,7 +125,7 @@
         </table>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
+<jsp:include page="footer.jsp"/>
 
 <script type="application/javascript">
     //修改密码对话框
@@ -151,34 +150,32 @@
 
     //发送email
     function bindEmail() {
-        $.post("${root}/user/bindEmail.do",
-                {
-                    email: $("#email").val()
-                }, function (data) {
-                    layer.closeAll();
-                }, "json");
+        $.post("/user/bindEmail", {
+            email: $("#email").val()
+        }, function (data) {
+            layer.closeAll();
+        }, "json");
         layer.msg('发送中', {icon: 16});
     }
 
     //修改密码
     function changePassword() {
-        if ($("#originPwd").val().trim() == "" || $("#newPwd").val().trim() == "" ||
+        if ($("#originPwd").val().trim() == "" ||
+                $("#newPwd").val().trim() == "" ||
                 $("#newPwd2").val().trim() == "") {
             alert("密码不能为空");
         } else if ($("#newPwd").val() != $("#newPwd2").val()) {
             alert("两次密码输入不一致");
         } else {
-            $.post("${root}/user/changePassword.do", {
+            $.post("/user/changePassword", {
                 originPwd: $("#originPwd").val(),
                 newPwd: $("#newPwd").val()
             }, function (data) {
-                if (data.msg == "unlogin") {
-                    window.location = "${root}/user/toLogin.do"
-                } else if (data.msg == "pwderror") {
-                    alert("密码错误");
-                } else {
+                if (data.success) {
                     alert("修改成功");
                     layer.closeAll();
+                } else {
+                    alert(data.error);
                 }
             }, "JSON");
         }

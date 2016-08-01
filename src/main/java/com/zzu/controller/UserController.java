@@ -4,15 +4,19 @@ import com.zzu.common.annotaion.Authorization;
 import com.zzu.dto.Result;
 import com.zzu.model.*;
 import com.zzu.model.Collection;
+import com.zzu.service.RedisService;
 import com.zzu.service.ResumeService;
 import com.zzu.service.UserService;
+import com.zzu.service.impl.MailServiceImpl;
 import com.zzu.util.StringUtil;
+import org.apache.velocity.tools.view.VelocityViewFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.*;
@@ -27,6 +31,10 @@ public class UserController {
     private UserService userService;
     @Resource
     private ResumeService resumeService;
+    @Resource
+    private MailServiceImpl mailService;
+    @Resource
+    private RedisService redisService;
 
     /**
      * 学生用户登录
@@ -172,4 +180,143 @@ public class UserController {
 
         return "collection";
     }
+
+    /**
+     * 个人资料的修改
+     *
+     * @param nickname
+     * @param sex
+     * @param photo_src
+     * @param session
+     * @return
+     */
+    @RequestMapping("/modifyInfo")
+    @Authorization(Common.AUTH_USER_LOGIN)
+    public String modify_info(String nickname, String sex, String photo_src, HttpSession session) {
+        User user = (User) session.getAttribute(Common.USER);
+        if (user != null) {
+            User u = new User();
+            u.setNickname(nickname);
+            u.setSex(sex);
+            u.setPhoto_src(photo_src);
+            u.setId(user.getId());
+            userService.modifyInfo(u);
+            user = userService.getById(user.getId());
+            session.setAttribute(Common.USER, user);
+        }
+
+        return "redirect:/user/info";
+    }
+
+    /**
+     * 取消收藏
+     *
+     * @param session
+     * @param u_id
+     * @param j_id
+     * @return
+     */
+    @Authorization(Common.AUTH_USER_LOGIN)
+    @RequestMapping("/cancelCollection")
+    @ResponseBody
+    public Result cancelCollection(HttpSession session, int u_id, int j_id) {
+        User user = (User) session.getAttribute(Common.USER);
+        Result result = null;
+        if (user != null) {
+            result = userService.deleteCollection(u_id, j_id);
+        }
+
+        return result;
+    }
+
+    @Authorization(Common.AUTH_USER_LOGIN)
+    @RequestMapping("changePassword")
+    @ResponseBody
+    public Result changePassword(String originPwd, String newPwd, HttpSession session) {
+        Result result = new Result();
+        User user = (User) session.getAttribute(Common.USER);
+        user = userService.search(user.getUsername(), originPwd);
+        if (user == null) {
+            result.setSuccess(false);
+            result.setError("密码错误");
+        } else {
+            result = userService.changeUserPassword(user.getId(), newPwd);
+        }
+        return result;
+    }
+
+    /**
+     * 绑定邮箱
+     *
+     * @param session
+     * @param email
+     * @return
+     */
+    @Authorization(Common.AUTH_USER_LOGIN)
+    @RequestMapping("/bindEmail")
+    @ResponseBody
+    public Result bindEmail(HttpSession session, String email, HttpServletRequest request) {
+        Result result = new Result();
+        User user = (User) session.getAttribute(Common.USER);
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (user != null) {
+            String url = request.getScheme() + "://" + request.getServerName() + ":" +
+                    request.getServerPort() + request.getContextPath() + "/user/validate?type=" + Common.BINGEMAIL;
+            String ran = StringUtil.toMd5(user.getUsername() + Common.BINGEMAIL);
+            url += "&s=" + ran;
+            Map<String, Object> valMap = new HashMap<String, Object>();
+            valMap.put("url", url);
+
+            mailService.sendEmail(email, "验证邮箱", "bindEmail.ftl", valMap);
+
+            Verify verify = new Verify();
+            verify.setEmail(email);
+            verify.setVerify(ran);
+            verify.setUsername(user.getUsername());
+            verify.setTime(new Date());
+            verify.setType(Common.BINGEMAIL);
+
+            redisService.insertVerify(verify);
+        }
+
+        return result;
+    }
+
+    /**
+     * 验证邮箱绑定
+     *
+     * @param s
+     * @param model
+     * @return
+     */
+    @RequestMapping("/validate")
+    public String validateResult(String type, String s, Model model, HttpSession session) {
+        User user = (User) session.getAttribute(Common.USER);
+        Verify verify = redisService.searchVerify(s, type);
+
+        if (verify != null && verify.getVerify() != null && verify.getVerify().equals(s)) {
+            int hourGap = (int) ((new Date().getTime() - verify.getTime().getTime()) / (1000 * 3600));
+            if (hourGap <= 48) {
+                if (user == null) {
+                    user = userService.exists(verify.getUsername());
+                    if (user == null) {
+                        model.addAttribute("result", "很遗憾，验证失败！");
+                    }
+                }
+                if (user != null) {
+                    user.setEmail(verify.getEmail());
+                    userService.bindEmail(user);
+                    model.addAttribute("result", "恭喜你，验证成功！");
+                    session.setAttribute(Common.USER, user);
+                }
+            } else {
+                model.addAttribute("result", "很遗憾，验证失败！");
+            }
+        } else {
+            model.addAttribute("result", "很遗憾，验证失败！");
+        }
+
+        return "varify_result";
+    }
+
 }

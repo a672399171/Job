@@ -34,6 +34,15 @@
         id=#{id}
     </select>
 
+    <select id="exists" resultType="com.zzu.model.User">
+        SELECT
+        <include refid="userSql"/>
+        FROM
+        tb_user
+        WHERE
+        username=#{username}
+    </select>
+
     <select id="searchPoor" resultType="com.zzu.model.Poor">
         select
         `name`,
@@ -58,4 +67,42 @@
             and u.id=#{uId}
         </if>
     </select>
+
+    <update id="modifyInfo" parameterType="com.zzu.model.User">
+        update
+        tb_user
+        set
+        nickname=#{nickname},
+        sex=#{sex},
+        photo_src=#{photo_src}
+        where
+        id=#{id}
+    </update>
+
+    <delete id="deleteCollection">
+        delete
+        from
+        tb_collection
+        where
+        u_id=#{uId}
+        and j_id={jId}
+    </delete>
+
+    <update id="bindEmail">
+        update
+        tb_user
+        set
+        email=#{email}
+        where
+        id=#{id}
+    </update>
+
+    <update id="changeUserPassword">
+        update
+        tb_user
+        set
+        password=#{password}
+        where
+        id=#{id}
+    </update>
 </mapper>

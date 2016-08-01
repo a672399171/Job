@@ -36,9 +36,9 @@ public class Common {
 	public static final String CLASSIFY = "classify";
 	public static final String POSITION = "position";
 	//邮件验证的类型
-	public static final int BINGEMAIL = 1;
-	public static final int FINDPWD = 2;
-	public static final int COMPANYREG = 3;
+	public static final String BINGEMAIL = "email";
+	public static final String FINDPWD = "findPwd";
+	public static final String COMPANYREG = "companyReg";
 	//默认的头像路径
 	public static final String DEFAULTPHOTO = "headphoto.png";
 

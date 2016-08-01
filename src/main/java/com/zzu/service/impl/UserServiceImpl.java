@@ -51,24 +51,48 @@ public class UserServiceImpl implements UserService {
         return userDao.searchPoor(uId);
     }
 
+    public Result modifyInfo(User user) {
+        Result result = new Result();
+        if (userDao.modifyInfo(user) < 1) {
+            result.setError("更新失败");
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
+    public Result deleteCollection(int u_id, int j_id) {
+        Result result = new Result();
+        if (collectionDao.deleteCollection(u_id, j_id) < 1) {
+            result.setSuccess(false);
+            result.setError("删除失败");
+        }
+        return result;
+    }
+
     public User exists(String username) {
         return userDao.exists(username);
     }
 
-    /*public void modifyInfo(String nickname, String sex, String photo_src, int u_id) {
-        userDao.modifyInfo(nickname, sex, photo_src, u_id);
+    public void bindEmail(User user) {
+        userDao.bindEmail(user);
     }
 
-    public User getUserById(int id) {
-        return userDao.getUserById(id);
+    public Result changeUserPassword(int id, String password) {
+        Result result = new Result();
+        if (password == null || password.length() < 6) {
+            result.setSuccess(false);
+            result.setError("密码长度最短6位");
+        } else if (userDao.changeUserPassword(id, password) < 1) {
+            result.setSuccess(false);
+            result.setError("修改失败");
+        }
+
+        return result;
     }
 
+    /*
     public void updateSecret(int id, boolean secret) {
         userDao.updateSecret(id, secret);
-    }
-
-    public Verify searchVarify(String username, int type) {
-        return userDao.searchVarify(username, type);
     }
 
     public void insertOrUpdateVarify(Verify varify) {
@@ -150,11 +174,6 @@ public class UserServiceImpl implements UserService {
     //修改密码
     public void changeUserPassword(User user) {
         userDao.changeUserPassword(user);
-    }
-
-    //绑定email
-    public void bindEmail(User user) {
-        userDao.bindEmail(user);
     }
 
     //根据学号查找用户
