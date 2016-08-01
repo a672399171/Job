@@ -2,7 +2,6 @@ package com.zzu.service.impl;
 
 import com.zzu.dao.ClassifyDao;
 import com.zzu.dao.SchoolDao;
-import com.zzu.dto.Result;
 import com.zzu.model.*;
 import com.zzu.service.RedisService;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,9 +10,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 
-/**
- * Created by zhanglei53 on 2016/7/28.
- */
 @Service("redisService")
 public class RedisServiceImpl implements RedisService {
     @Resource

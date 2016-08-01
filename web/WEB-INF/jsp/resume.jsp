@@ -34,7 +34,7 @@
 </head>
 <body>
 <div class="big container">
-    <%@include file="/WEB-INF/jsp/header.jsp" %>
+    <%@include file="/WEB-INF/jsp/common/header.jsp" %>
     <div class="row">
         <div class="col-xs-3 col-xs-offset-1">
             <div class="list-group">
@@ -64,7 +64,7 @@
         <div class="col-xs-6" id="resumeData">
             <h4>我的简历</h4>
             <hr>
-            <form class="form-horizontal" action="/user/saveOrUpdateResume.do" id="form" method="post">
+            <form class="form-horizontal" action="/user/saveOrUpdateResume" id="form" method="post">
                 <div class="form-group">
                     <label class="col-xs-2 control-label">姓&nbsp;&nbsp;&nbsp;&nbsp;名:</label>
 
@@ -245,7 +245,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"/>
+<jsp:include page="common/footer.jsp"/>
 
 <script type="application/javascript">
     var typeData = undefined;

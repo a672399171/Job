@@ -8,7 +8,7 @@
     <div class="col-xs-6">
         <div class="input-group inputDiv">
             <input type="text" class="form-control" placeholder="输入公司或职位" id="input"
-                   value="${requestScope.keyword}" onkeydown="enterSearch()">
+                   value="${param.keyword}" onkeydown="enterSearch()">
             <span class="input-group-btn">
                 <button class="btn btn-default" type="button" id="searchBtn" onclick="searchJobs()">搜 索</button>
             </span>
@@ -84,7 +84,7 @@
     function searchJobs() {
         var val = $("#input").val();
         if (jQuery.trim(val) != "") {
-            var url = "/job/list?keyword=" + val;
+            var url = "/job/vagueList?keyword=" + val;
             window.location = url;
         }
     }

@@ -237,11 +237,11 @@ a:hover {
     margin-left: 15px;
 }
 
-.selectType ul li:hover {
+/*.selectType ul li:hover {
     background: #337ab7;
     color: white;
     border-radius: 5px;
-}
+}*/
 
 .on {
     background: #337ab7;

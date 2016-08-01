@@ -1,18 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>隐私设置</title>
     <%@include file="common/head.jsp" %>
-    <link rel="stylesheet" href="${root}/bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css">
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
-    <script src="${root}/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+    <link rel="stylesheet" href="/resources/bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css">
+    <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <script src="/resources/bootstrap-switch/js/bootstrap-switch.min.js"></script>
 </head>
 <body>
 <div class="big container">
-    <%@include file="/WEB-INF/jsp/header.jsp"%>
+    <%@include file="/WEB-INF/jsp/common/header.jsp" %>
     <div class="row">
         <div class="col-xs-3 col-xs-offset-1">
             <div class="list-group">
@@ -51,7 +50,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
+<jsp:include page="common/footer.jsp"/>
 <script type="application/javascript">
 
     $(function () {
@@ -62,12 +61,11 @@
     });
 
     $("#secret").on('switchChange.bootstrapSwitch', function (event, state) {
-        $.post("${root}/user/updateSecret.do",
-                {
-                    secret: state
-                }, function (data) {
+        $.post("/user/updateSecret.do", {
+            secret: state
+        }, function (data) {
 
-                }, "json");
+        }, "json");
     });
 </script>
 </body>

@@ -4,6 +4,6 @@
     });
     Vue.filter('timestampFilter', function (value, pattern) {
         // 时间戳转化为日期格式
-        return moment(value).format(pattern);
+        return moment(new Date(value)).format(pattern);
     });
 })();

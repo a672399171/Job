@@ -80,8 +80,8 @@
         </if>
         <if test="keyword != null">
             and
-            (j.name like contact("%",#{keyword},"%") OR
-            c.company_name like contact("%",#{keyword},"%"))
+            (j.name like "%"#{keyword}"%" OR
+            c.company_name like "%"#{keyword}"%")
         </if>
         <if test="status != null and status &gt;= 0">
             and j.status = #{status}
@@ -115,9 +115,31 @@
         where
         j.type=p.id
         and j.post_company=c.id
-        and j.status=1
         <if test="companyId != null and companyId &gt; 0">
             and j.post_company=#{companyId}
+        </if>
+        <if test="pIds != null">
+            and p.id in
+            <foreach collection="pIds" separator="," item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="time != null and time &gt; 0">
+            and work_time &amp; #{time} &gt; 0
+        </if>
+        <if test="low != null and low &gt; 0">
+            and j.low_salary &gt;= #{low}
+        </if>
+        <if test="high != null and high &gt; 0">
+            and j.high_salary &lt;= #{low}
+        </if>
+        <if test="keyword != null">
+            and
+            (j.name like "%"#{keyword}"%" OR
+            c.company_name like "%"#{keyword}"%")
+        </if>
+        <if test="status != null and status &gt;= 0">
+            and j.status = #{status}
         </if>
     </select>
 </mapper>

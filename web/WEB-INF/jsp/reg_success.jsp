@@ -55,7 +55,7 @@
 </head>
 <body>
 <div class="big container">
-    <%@include file="/WEB-INF/jsp/header.jsp"%>
+    <%@include file="/WEB-INF/jsp/common/header.jsp"%>
     <div id="body">
         <div class="well">
             <div id="top1">
@@ -78,7 +78,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
+<jsp:include page="common/footer.jsp"></jsp:include>
 </body>
 </html>
 

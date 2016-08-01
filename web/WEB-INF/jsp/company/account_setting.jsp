@@ -235,7 +235,7 @@
         </div>
     </div>
 </div>
-<%@include file="../footer.jsp"%>
+<%@include file="../common/footer.jsp"%>
 <script type="application/javascript">
     //页面加载完后获取当前位置
     $(function () {

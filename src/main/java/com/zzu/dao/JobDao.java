@@ -42,7 +42,7 @@ public interface JobDao {
                     @Param("low") int low,
                     @Param("high") int high,
                     @Param("keyword") String keyword,
-                    @Param("state") int state);
+                    @Param("status") int status);
 
     void changeJobStatus(int jId, int status);
 

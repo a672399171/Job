@@ -1,14 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
-<html ng-app="searchJobResult" lang="zh-CN">
+<html lang="zh-CN">
 <head>
     <title>搜索结果</title>
     <%@include file="common/head.jsp" %>
-    <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
-    <script src="${root}/layer/layer.js"></script>
+    <link href="http://g.alicdn.com/sj/dpl/1.5.1/css/sui.min.css" rel="stylesheet">
+    <script src="/resources/scripts/vue.js"></script>
+    <script src="/resources/js/filters/filters.js"></script>
+    <script src="/resources/layer/layer.js"></script>
     <style type="text/css">
         .row {
             clear: both;
@@ -59,18 +60,21 @@
 
     </style>
 </head>
-<body ng-controller="JobListController">
-<div class="big container">
-    <%@include file="/WEB-INF/jsp/header.jsp" %>
+<body>
+<div class="big container" id="app">
+    <%@include file="/WEB-INF/jsp/common/header.jsp" %>
     <div class="row selectType" id="positionDiv">
         <div class="col-md-1">
             类别:
         </div>
         <div class="col-md-11">
-            <ul>
-                <li ng-class="{on:params.c_id==0}" ng-click="changeCid(0)">不限</li>
-                <li ng-class="{on:item.id == params.c_id}" ng-repeat="item in classifies"
-                    ng-click="changeCid(item.id)">
+            <ul class="sui-tag">
+                <li v-bind:class="{'tag-selected':0==param.cId || param.cId==undefined}"
+                    v-on:click="param.cId=0,getListData()">
+                    不限
+                </li>
+                <li v-bind:class="{'tag-selected':item.id==param.cId}"
+                    v-for="item in classifies" v-on:click="param.cId=item.id,getListData()">
                     {{item.name}}
                 </li>
             </ul>
@@ -81,15 +85,17 @@
             工作时间:
         </div>
         <div class="col-md-11">
-            <ul>
-                <li ng-class="{on:timeArray[0]}" ng-click="changeTime(0)">不限</li>
-                <li ng-class="{on:timeArray[1]}" ng-click="changeTime(1)">周一</li>
-                <li ng-class="{on:timeArray[2]}" ng-click="changeTime(2)">周二</li>
-                <li ng-class="{on:timeArray[3]}" ng-click="changeTime(3)">周三</li>
-                <li ng-class="{on:timeArray[4]}" ng-click="changeTime(4)">周四</li>
-                <li ng-class="{on:timeArray[5]}" ng-click="changeTime(5)">周五</li>
-                <li ng-class="{on:timeArray[6]}" ng-click="changeTime(6)">周六</li>
-                <li ng-class="{on:timeArray[7]}" ng-click="changeTime(7)">周日</li>
+            <ul class="sui-tag" id="time">
+                <li onclick="vueData.param.time=127;changTimeDom()">
+                    不限
+                </li>
+                <li onclick="changeTime(64)">周一</li>
+                <li onclick="changeTime(32)">周二</li>
+                <li onClick="changeTime(16)">周三</li>
+                <li onClick="changeTime(8)">周四</li>
+                <li onClick="changeTime(4)">周五</li>
+                <li onClick="changeTime(2)">周六</li>
+                <li onClick="changeTime(1)">周日</li>
             </ul>
         </div>
     </div>
@@ -98,33 +104,23 @@
             月薪:
         </div>
         <div class="col-md-11">
-            <ul>
-                <li ng-class="{on:params.low==0 && params.high=='max'}" ng-click="changeSalary(0,'max')">不限</li>
-                <li ng-class="{on:params.low==0 && params.high==500}" ng-click="changeSalary(0,500)">500以下</li>
-                <li ng-class="{on:params.low==500 && params.high==1000}" ng-click="changeSalary(500,1000)">
-                    500-1000
-                </li>
-                <li ng-class="{on:params.low==1000 && params.high==2000}" ng-click="changeSalary(1000,2000)">
-                    1000-2000
-                </li>
-                <li ng-class="{on:params.low==2000 && params.high==3000}" ng-click="changeSalary(2000,3000)">
-                    2000-3000
-                </li>
-                <li ng-class="{on:params.low==3000 && params.high==4000}" ng-click="changeSalary(3000,4000)">
-                    3000-4000
-                </li>
-                <li ng-class="{on:params.low==4000 && params.high=='max'}" ng-click="changeSalary(4000,'max')">
-                    4000以上
-                </li>
+            <ul class="sui-tag" id="salary">
+                <li onclick="changeSalary(0,0)">不限</li>
+                <li onclick="changeSalary(0,500)">500以下</li>
+                <li onclick="changeSalary(500,1000)">500-1000</li>
+                <li onclick="changeSalary(1000,2000)">1000-2000</li>
+                <li onclick="changeSalary(2000,3000)">2000-3000</li>
+                <li onclick="changeSalary(3000,4000)">3000-4000</li>
+                <li onclick="changeSalary(4000,0)">4000以上</li>
             </ul>
         </div>
     </div>
     <div id="middle">
-        <div class="job_item" style="display: block" ng-repeat="item in data" ng-click="toUrl(item)">
+        <div class="job_item" style="display: block" v-for="item in list" v-on:click="toUrl(item.id)">
             <table>
                 <tr>
                     <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
-                    <td width="30%" class="font3">{{item.post_time.time | date:'yyyy-MM-dd hh:mm'}}</td>
+                    <td width="30%" class="font3">{{item.post_time | timestampFilter 'YYYY-MM-DD hh:mm'}}</td>
                     <td width="30%" class="font5">{{item.post_company.company_name}}</td>
                 </tr>
                 <tr>
@@ -136,127 +132,113 @@
         </div>
     </div>
 
-    <div ng-if="data.length <= 0" id="emptyDiv">
+    <div v-if="totalItem <= 0" id="emptyDiv">
         对不起，暂无记录！
     </div>
-
-    <xl-page pageSize="10" n="5" method="load" cla="pagination-lg"></xl-page>
 </div>
 
-<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
+<jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
 
 <script type="application/javascript">
-    var app = angular.module("searchJobResult", []);
-    app.host = "${root}";
+    var vueData = {};
+    vueData.param = {
+        cId: '${param.cId}',
+        keyword: '${param.keyword}'
+    };
 
-    app.controller("JobListController", function ($scope, $http) {
-        $scope.timeArray = [true, false, false, false, false, false, false, false];
+    function getListData() {
+        layer.msg('加载中', {icon: 16});
+        $.post('/job/listData', vueData.param, function (data) {
+            layer.closeAll();
+            if (data.success) {
+                vueData.list = data.list;
+                vueData.totalPage = data.totalPage;
+                vueData.pageSize = data.pageSize;
+                vueData.totalItem = data.totalItem;
+                vueData.page = data.page;
 
-        $scope.params = {
-            keyword: "${keyword}",
-            c_id: 0,
-            page: 1,
-            time: 127,
-            low: 0,
-            high: "max"
-        };
-
-        $scope.load = function (page, callback) {
-            $scope.params.page = page;
-
-            //loading
-            layer.load();
-            $http.get(app.host + '/job/vagueSearchJobs.do', {
-                params: $scope.params
-            }).success(function (data) {
-                layer.closeAll('loading');
-                if (callback) {
-                    callback(data);
-                } else {
-                    $scope.data = data.rows;
-                }
-            });
-        };
-
-        //加载类型信息
-        $scope.loadClassifies = function () {
-            $http.get(app.host + '/job/classifyList.do', {
-                params: $scope.params
-            }).success(function (data) {
-                $scope.classifies = data;
-            });
-        };
-
-        //改变参数中的p_id
-        $scope.changeCid = function (c_id) {
-            $scope.params.c_id = c_id;
-            $scope.load(1, $scope.createPage);
-        };
-
-        //改变参数中的salary
-        $scope.changeSalary = function (low, high) {
-            $scope.params.low = low;
-            $scope.params.high = high;
-            $scope.load(1, $scope.createPage);
-        };
-
-        //改变参数中的page
-        $scope.changePage = function (page) {
-            $scope.params.page = page;
-            $scope.load(1, $scope.createPage);
-        };
-
-        //转到url
-        $scope.toUrl = function (item) {
-            window.location = "${root}/job/detail.do?id=" + item.id;
-        };
-
-        //改变参数中的时间
-        $scope.changeTime = function (p) {
-            if (p == 0) {
-                $scope.resetTime();
-            } else {
-                $scope.timeArray[0] = false;
-                $scope.timeArray[p] = !$scope.timeArray[p];
-                var flag = true;
-                for (var i = 1; i < $scope.timeArray.length; i++) {
-                    if (!$scope.timeArray[i]) {
-                        flag = false;
+                new Vue({
+                    el: '#app',
+                    data: vueData,
+                    methods: {
+                        getListData: getListData,
+                        toUrl: function (id) {
+                            window.location = '/job/' + id;
+                        }
                     }
-                }
-                if (flag) {
-                    $scope.resetTime();
-                }
-            }
-
-            var num = 0;
-            if ($scope.timeArray[0]) {
-                num = 127;
+                });
             } else {
-                for (var i = 1; i < $scope.timeArray.length; i++) {
-                    if ($scope.timeArray[i]) {
-                        num += Math.pow(2, 7 - i);
-                    }
-                }
+                alert(data.error);
             }
-            $scope.params.time = num;
-            $scope.load(1, $scope.createPage);
-        };
+        }, 'JSON');
+    }
+    changTimeDom();
+    changeSalaryDom();
 
-        $scope.resetTime = function () {
-            for (var i = 0; i < $scope.timeArray.length; i++) {
-                $scope.timeArray[i] = false;
-            }
-            $scope.timeArray[0] = true;
-        };
+    $(function () {
+        $.getJSON('/job/typeData', function (data) {
+            vueData.classifies = data;
+        });
 
-        //初始化加载类型信息
-        $scope.loadClassifies();
-
-        //初始加载职位列表
-        $scope.load();
+        getListData();
     });
+
+    function changeTime(time) {
+        vueData.param.time %= 127;
+        vueData.param.time |= time;
+        changTimeDom();
+    }
+
+    function changTimeDom() {
+        getListData();
+
+        var domArr = $('#time li');
+        domArr.removeClass('tag-selected');
+
+        if (vueData.param.time == 127
+                || vueData.param.time <= 0
+                || vueData.param.time == undefined) {
+            domArr.eq(0).addClass('tag-selected');
+            return;
+        }
+        for (var i = 1; i <= 7; i++) {
+            if ((vueData.param.time & Math.pow(2, 7 - i)) === Math.pow(2, 7 - i)) {
+                domArr.eq(i).addClass('tag-selected');
+            }
+        }
+    }
+
+    function changeSalary(low, high) {
+        vueData.param.low = low;
+        vueData.param.high = high;
+        changeSalaryDom();
+    }
+
+    function changeSalaryDom() {
+        getListData();
+
+        var domArr = $('#salary li');
+        domArr.removeClass('tag-selected');
+
+        var low = vueData.param.low;
+        var high = vueData.param.high;
+
+        if ((low <= 0 && high <= 0) || (low == undefined && high == undefined)) {
+            domArr.eq(0).addClass('tag-selected');
+        } else if (low <= 0 && high == 500) {
+            domArr.eq(1).addClass('tag-selected');
+        } else if (low == 500 && high == 1000) {
+            domArr.eq(2).addClass('tag-selected');
+        } else if (low == 1000 && high == 2000) {
+            domArr.eq(3).addClass('tag-selected');
+        } else if (low == 2000 && high == 3000) {
+            domArr.eq(4).addClass('tag-selected');
+        } else if (low == 3000 && high == 4000) {
+            domArr.eq(5).addClass('tag-selected');
+        } else if (low == 4000 && (high <= 0 || high == undefined)) {
+            domArr.eq(6).addClass('tag-selected');
+        }
+    }
 </script>
-<script src="${root}/js/page.js"></script>
 </body>
 </html>

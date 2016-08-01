@@ -13,7 +13,7 @@
 </head>
 <body>
 <div class="big container">
-    <%@include file="/WEB-INF/jsp/header.jsp"%>
+    <%@include file="/WEB-INF/jsp/common/header.jsp"%>
     <div id="body">
         <div class="well" id="well">
             <h2 align="center">用户注册</h2>
@@ -97,7 +97,7 @@
     </pre>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
+<jsp:include page="common/footer.jsp"></jsp:include>
 <script type="application/javascript">
     //打开协议对话框
     function openDlg() {

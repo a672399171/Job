@@ -1,5 +1,6 @@
 package com.zzu.controller;
 
+import com.google.code.kaptcha.servlet.KaptchaExtend;
 import com.zzu.common.annotaion.Authorization;
 import com.zzu.dto.Result;
 import com.zzu.model.*;
@@ -12,6 +13,7 @@ import com.zzu.util.StringUtil;
 import org.apache.velocity.tools.view.VelocityViewFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,6 +21,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.*;
 
 /**
@@ -35,6 +38,7 @@ public class UserController {
     private MailServiceImpl mailService;
     @Resource
     private RedisService redisService;
+    private KaptchaExtend kaptchaExtend = new KaptchaExtend();
 
     /**
      * 学生用户登录
@@ -258,7 +262,6 @@ public class UserController {
     public Result bindEmail(HttpSession session, String email, HttpServletRequest request) {
         Result result = new Result();
         User user = (User) session.getAttribute(Common.USER);
-        Map<String, Object> map = new HashMap<String, Object>();
         if (user != null) {
             String url = request.getScheme() + "://" + request.getServerName() + ":" +
                     request.getServerPort() + request.getContextPath() + "/user/validate?type=" + Common.BINGEMAIL;
@@ -283,7 +286,7 @@ public class UserController {
     }
 
     /**
-     * 验证邮箱绑定
+     * 验证
      *
      * @param s
      * @param model
@@ -294,16 +297,23 @@ public class UserController {
         User user = (User) session.getAttribute(Common.USER);
         Verify verify = redisService.searchVerify(s, type);
 
+        if (Common.BINGEMAIL.equals(type)) {
+            return validateBindEmail(verify, user, model, session, s);
+        } else if (Common.FINDPWD.equals(type)) {
+            return validateFindpwd(verify, s, session);
+        }
+
+        return "redirect:/";
+    }
+
+    private String validateBindEmail(Verify verify, User user, Model model, HttpSession session, String s) {
         if (verify != null && verify.getVerify() != null && verify.getVerify().equals(s)) {
             int hourGap = (int) ((new Date().getTime() - verify.getTime().getTime()) / (1000 * 3600));
             if (hourGap <= 48) {
+                user = userService.exists(verify.getUsername());
                 if (user == null) {
-                    user = userService.exists(verify.getUsername());
-                    if (user == null) {
-                        model.addAttribute("result", "很遗憾，验证失败！");
-                    }
-                }
-                if (user != null) {
+                    model.addAttribute("result", "很遗憾，验证失败！");
+                } else {
                     user.setEmail(verify.getEmail());
                     userService.bindEmail(user);
                     model.addAttribute("result", "恭喜你，验证成功！");
@@ -319,4 +329,81 @@ public class UserController {
         return "varify_result";
     }
 
+    private String validateFindpwd(Verify verify, String s, HttpSession session) {
+        if (verify != null && verify.getVerify() != null && verify.getVerify().equals(s)) {
+            int hourGap = (int) ((new Date().getTime() - verify.getTime().getTime()) / (1000 * 3600));
+            if (hourGap <= 48) {
+                session.setAttribute("auth", true);
+            }
+        }
+        return "find_password";
+    }
+
+    @RequestMapping("/findPassword")
+    @ResponseBody
+    public Result findPassword(HttpSession session, String email, String username, HttpServletRequest request) {
+        Result result = new Result();
+        String url = request.getScheme() + "://" + request.getServerName() + ":" +
+                request.getServerPort() + request.getContextPath() + "/user/validate?type=" + Common.FINDPWD;
+        String ran = StringUtil.toMd5(username + Common.FINDPWD);
+        url += "&s=" + ran;
+        Map<String, Object> valMap = new HashMap<String, Object>();
+        valMap.put("url", url);
+
+        mailService.sendEmail(email, "找回密码", "findPwd.ftl", valMap);
+
+        Verify verify = new Verify();
+        verify.setEmail(email);
+        verify.setVerify(ran);
+        verify.setUsername(username);
+        verify.setTime(new Date());
+        verify.setType(Common.FINDPWD);
+
+        redisService.insertVerify(verify);
+
+        return result;
+    }
+
+    @Authorization(Common.AUTH_USER_LOGIN)
+    @RequestMapping("/saveOrUpdateResume")
+    public String saveOrUpdateResume(@Valid @ModelAttribute("resume") Resume resume, BindingResult result,
+                                     String birthday, Integer major_id, HttpSession session) {
+        User user = (User) session.getAttribute(Common.USER);
+        if (user != null) {
+            /*Major major = new Major();
+            major.setId(major_id);
+            resume.setMajor(major);
+
+            resume.setBirthday(DateUtil.toDate(birthday));
+            resume.setU_id(user.getId());
+            resumeService.saveOrUpdateResume(resume);*/
+        }
+
+        return "redirect:/user/resume";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @RequestMapping("/captchaCode")
+    public void captchaCode(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        kaptchaExtend.captcha(req, resp);
+    }
 }

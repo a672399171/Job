@@ -106,6 +106,11 @@ public class JobController {
         return "job_list";
     }
 
+    @RequestMapping(value = "/vagueList", method = RequestMethod.GET)
+    public String vagueList() {
+        return "vague_search_job";
+    }
+
     @RequestMapping(value = "/listData", method = RequestMethod.POST)
     @ResponseBody
     public Result<Job> listData(@RequestParam(value = "cId", required = false) Integer cId,
@@ -116,8 +121,14 @@ public class JobController {
                                 @RequestParam(value = "keyword", required = false) String keyword,
                                 @RequestParam(value = "status", required = false) Integer page) {
         int[] pIds = null;
-        if (pId != null) {
+        if (pId != null && pId > 0) {
             pIds = new int[]{pId};
+        } else if (cId != null && cId > 0) {
+            List<Position> positions = classifyService.searchPositions(cId);
+            pIds = new int[positions.size()];
+            for (int i = 0; i < positions.size(); i++) {
+                pIds[i] = positions.get(i).getId();
+            }
         }
         if (time == null) {
             time = 0;
