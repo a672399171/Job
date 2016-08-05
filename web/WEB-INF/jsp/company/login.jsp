@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <%
     String username = ""; //用户名
     String passward = ""; //密码
@@ -23,9 +22,9 @@
 <head>
     <title>企业登录</title>
     <%@include file="../common/head.jsp"%>
-    <link rel="stylesheet" type="text/css" href="${root}/css/style_login.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style_login.css"/>
+    <script src="/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <script src="/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
 </head>
 <body>
 <div class="panel panel-default" id="login_panel">
@@ -52,12 +51,12 @@
                         %>
                     >记住我
                 </label>
-                <a href="${root}/user/company_find_password.do" id="wangji">忘记密码</a>
+                <a href="/user/company_find_password.do" id="wangji">忘记密码</a>
             </div>
 
             <button type="submit" class="btn btn-default">登&nbsp;录</button>
             <div id="msg"></div>
-            <a href="${root}/user/toCompanyReg.do" id="zhuce">没有账号？立即注册</a>
+            <a href="/user/toCompanyReg.do" id="zhuce">没有账号？立即注册</a>
         </form>
     </div>
 </div>
@@ -100,14 +99,14 @@
             var bv = $form.data('bootstrapValidator');
 
             // Use Ajax to submit form data
-            $.post("${root}/user/companyLogin.do", {
+            $.post("/user/companyLogin.do", {
                 username: $("#username").val(),
                 password: $("#password").val(),
                 on: $("#on").is(":checked")
             }, function (data) {
                 console.log(data);
                 if (data.msg == true) {
-                    window.location = "${root}/job/job_manage.do";
+                    window.location = "/job/job_manage.do";
                 } else {
                     $("#msg").text(data.msg);
                 }

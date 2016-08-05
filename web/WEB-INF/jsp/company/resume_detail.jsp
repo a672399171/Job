@@ -1,16 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>简历详情</title>
     <%@include file="../common/head.jsp"%>
-    <link rel="stylesheet" type="text/css" href="${root}/css/post.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/post.css"/>
 </head>
 <body>
-<jsp:include page="header.jsp"></jsp:include>
+<jsp:include page="header.jsp"/>
 <div id="bigDiv"></div>
 <div class="container" id="container">
     <div class="row">
@@ -35,7 +34,7 @@
 
                     <div class="col-sm-10">
                         <p class="form-control-static">
-                            <fmt:formatDate value="${requestScope.resume.birthday}" pattern="yyyy-MM-dd"></fmt:formatDate>
+                            <fmt:formatDate value="${requestScope.resume.birthday}" pattern="yyyy-MM-dd"/>
                         </p>
                     </div>
                 </div>

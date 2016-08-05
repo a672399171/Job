@@ -1,16 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html ng-app="resumeSearch" lang="zh-CN">
 <head>
     <title>搜索简历</title>
     <%@include file="../common/head.jsp"%>
-    <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
-    <script src="${root}/layer/layer.js"></script>
+    <script src="/js/angular-1.4.8/angular.min.js"></script>
+    <script src="/layer/layer.js"></script>
 </head>
 <body ng-controller="ResumeListController">
-<jsp:include page="header.jsp"></jsp:include>
+<jsp:include page="header.jsp"/>
 <div class="container" id="container">
     <div class="row">
         <div class="col-md-12" id="stBar">
@@ -237,7 +236,7 @@
     });
 
     var app = angular.module("resumeSearch", []);
-    app.host = "${root}";
+    app.host = "";
 
     app.controller("ResumeListController", function ($scope, $http) {
         $scope.currentPage = 1;
@@ -260,7 +259,7 @@
 
         //打开预览对话框
         $scope.openDlg = function (r_id) {
-            $http.get("${root}/job/admin/resumes/detail/" + r_id)
+            $http.get("/job/admin/resumes/detail/" + r_id)
                     .success(function (data) {
                         $scope.currentResume = data;
 

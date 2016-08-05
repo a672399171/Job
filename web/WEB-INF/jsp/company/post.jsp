@@ -1,23 +1,22 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>发布新职位</title>
     <%@include file="../common/head.jsp"%>
-    <link rel="stylesheet" type="text/css" href="${root}/css/post.css"/>
-    <link href="${root}/js/summernote/summernote.css" rel="stylesheet">
-    <script src="${root}/js/summernote/summernote.js"></script>
-    <script src="${root}/js/summernote/lang/summernote-zh-CN.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+    <link href="/js/summernote/summernote.css" rel="stylesheet">
+    <script src="/js/summernote/summernote.js"></script>
+    <script src="/js/summernote/lang/summernote-zh-CN.js"></script>
 </head>
 <body>
-<jsp:include page="header.jsp"></jsp:include>
+<jsp:include page="header.jsp"/>
 <div id="bigDiv"></div>
 <div class="container" id="container">
     <div class="row">
         <div class="col-md-8">
-            <form class="form-horizontal" method="post" action="${root}/job/post_job.do" id="postForm">
+            <form class="form-horizontal" method="post" action="/job/post_job.do" id="postForm">
                 <div class="form-group">
                     <label for="name" class="col-sm-2 control-label">职位名称</label>
 
@@ -215,7 +214,7 @@
     });
 
     function initData() {
-        $.getJSON("${root}/job/classifies.do", function (data) {
+        $.getJSON("/job/classifies.do", function (data) {
             var classifies = data.classifies;
             var positions = data.positions;
             for (var i = 0; i < classifies.length; i++) {

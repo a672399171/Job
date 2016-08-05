@@ -2,14 +2,13 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>职位管理</title>
     <%@include file="../common/head.jsp"%>
-    <script src="${root}/js/ajaxfileupload.js"></script>
-    <script src="${root}/js/moment-with-locales.js"></script>
+    <script src="/resources/js/ajaxfileupload.js"></script>
+    <script src="/resources/js/moment-with-locales.js"></script>
     <style type="text/css">
         #container {
             background: white;
@@ -23,11 +22,11 @@
     </style>
 </head>
 <body>
-<jsp:include page="header.jsp"></jsp:include>
+<jsp:include page="header.jsp"/>
 <div class="container" id="container">
     <div class="row">
         <div class="col-md-12">
-            <a class="btn btn-success" href="${root}/job/toPost.do" id="postBtn">发布新职位</a>
+            <a class="btn btn-success" href="/job/toPost.do" id="postBtn">发布新职位</a>
         </div>
     </div>
     <div class="row">
@@ -49,7 +48,7 @@
                     <tbody>
                     <c:forEach var="job" items="${requestScope.jobs}">
                         <tr>
-                            <td><a href="${root}/job/job_detail.do?id=${job.id}">${job.name}</a></td>
+                            <td><a href="/job/job_detail.do?id=${job.id}">${job.name}</a></td>
                             <td><span class="font3">${job.type.name}</span></td>
                             <td>
                                 <span class="date">
@@ -102,7 +101,7 @@
 
     //改变职位运行状态
     function changeStatus(j_id, status) {
-        $.post("${root}/job/changeJobStatus.do", {
+        $.post("/job/changeJobStatus.do", {
             j_id: j_id,
             status: status
         }, function (data) {

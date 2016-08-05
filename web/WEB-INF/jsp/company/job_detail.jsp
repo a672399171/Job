@@ -1,18 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>职位信息</title>
     <%@include file="../common/head.jsp"%>
-    <link rel="stylesheet" type="text/css" href="${root}/css/post.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
-    <script src="${root}/js/ajaxfileupload.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+    <script src="/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <script src="/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <script src="/js/ajaxfileupload.js"></script>
 </head>
 <body>
-<jsp:include page="header.jsp"></jsp:include>
+<jsp:include page="header.jsp"/>
 <div id="bigDiv"></div>
 <div class="container" id="container">
     <div class="row">

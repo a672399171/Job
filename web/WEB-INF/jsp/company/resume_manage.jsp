@@ -1,13 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html ng-app="resumeApp" lang="zh-CN">
 <head>
     <title>简历管理</title>
     <%@include file="../common/head.jsp"%>
-    <script src="${root}/js/angular-1.4.8/angular.min.js"></script>
-    <script src="${root}/layer/layer.js"></script>
+    <script src="/js/angular-1.4.8/angular.min.js"></script>
+    <script src="/layer/layer.js"></script>
     <style type="text/css">
         #container {
             background: white;
@@ -15,7 +14,7 @@
     </style>
 </head>
 <body ng-controller="ResumeController">
-<jsp:include page="header.jsp"></jsp:include>
+<jsp:include page="header.jsp"/>
 <div class="container" id="container">
     <div class="row">
         <table class="table table-hover">
@@ -33,7 +32,7 @@
                 <td>{{item.resume.name}}</td>
                 <td>{{item.resume.grade}}</td>
                 <td>
-                    <a href="${root}/job/job_detail.do?id={{item.job.id}}">{{item.job.name}}</a>
+                    <a href="/job/job_detail.do?id={{item.job.id}}">{{item.job.name}}</a>
                 </td>
                 <td>
                     <span class="label label-default" ng-if="item.state==0">未处理</span>
@@ -192,7 +191,7 @@
 
         //打开预览对话框
         $scope.openDlg = function (r_id) {
-            $http.get("${root}/job/admin/resumes/detail/" + r_id)
+            $http.get("/job/admin/resumes/detail/" + r_id)
                     .success(function (data) {
                         $scope.currentResume = data;
 
@@ -229,7 +228,7 @@
 
         //更新投递信息
         $scope.updateApply = function (item, state) {
-            $http.get("${root}/job/updateApply.do", {
+            $http.get("/job/updateApply.do", {
                 params: {
                     j_id: item.job.id,
                     r_id: item.resume.id,
@@ -239,7 +238,7 @@
                 if (!data.error) {
                     $scope.loadData(1);
                 } else {
-                    window.location = "${root}/user/toCompanyLogin.do";
+                    window.location = "/user/toCompanyLogin.do";
                 }
             });
         };
@@ -249,7 +248,7 @@
                 $scope.params.page = page;
             }
 
-            $http.get('${root}/job/resumeOfCompany.do', {
+            $http.get('/job/resumeOfCompany.do', {
                 params: $scope.params
             }).success(function (data) {
                 $scope.applies = data.rows;
