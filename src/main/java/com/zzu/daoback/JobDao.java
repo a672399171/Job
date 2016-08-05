@@ -1,8 +1,8 @@
 package com.zzu.daoback;
 
+import com.zzu.common.Common;
 import com.zzu.model.*;
 import org.apache.ibatis.session.*;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.HashMap;

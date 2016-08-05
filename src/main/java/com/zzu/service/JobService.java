@@ -14,7 +14,9 @@ public interface JobService {
 
     Job getJobById(int id);
 
-    Result<Job> getCompanyJobs(int companyId, int page, int pageSize);
+    Result<Job> getCompanyJobs(int companyId, int status, int page, int pageSize);
 
     Result<Job> searchJobs(int[] pIds, int time, int low, int high, String keyword, int page, int pageSize);
+
+    Result changeJobStatus(int jId, int status);
 }

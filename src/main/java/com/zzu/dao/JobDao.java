@@ -13,17 +13,12 @@ public interface JobDao {
 
     Job getJobById(@Param("id") int id);
 
-    List<Job> searchJobsByPid(int[] pIds, int time, int l, int h, int page, String filter, int state);
-
-    int getJobCount(int[] pIds, int time, int l, int h, String filter, int state);
-
     void updateJob(Job job);
 
     void addJob(Job job);
 
     int deleteJobs(int[] ids);
 
-    //List<Job> searchJobs(String keyword, int page, int l, int h, int time, int cId);
     List<Job> searchJobs(@Param("companyId") int companyId,
                          @Param("pIds") int[] pIds,
                          @Param("time") int time,
@@ -34,8 +29,6 @@ public interface JobDao {
                          @Param("start") int start,
                          @Param("count") int count);
 
-    int getJobCount(String keyword, int l, int h, int time, int cId);
-
     int getJobCount(@Param("companyId") int companyId,
                     @Param("pIds") int[] pIds,
                     @Param("time") int time,
@@ -44,7 +37,8 @@ public interface JobDao {
                     @Param("keyword") String keyword,
                     @Param("status") int status);
 
-    void changeJobStatus(int jId, int status);
+    int changeJobStatus(@Param("jId") int jId,
+                        @Param("status") int status);
 
     List<Job> getRecommendJobs(int time, int pId);
 }

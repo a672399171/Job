@@ -1,5 +1,8 @@
 package com.zzu.controller;
 
+import com.zzu.common.Common;
+import com.zzu.common.annotaion.Authorization;
+import com.zzu.common.enums.JobStateEnum;
 import com.zzu.dto.Result;
 import com.zzu.model.*;
 import com.zzu.model.Collection;
@@ -12,9 +15,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
-/**
- * Created by Administrator on 2016/3/8.
- */
 @Controller
 @RequestMapping("job")
 public class JobController {
@@ -64,7 +64,7 @@ public class JobController {
     @ResponseBody
     public Result<Job> companyJobs(@PathVariable("id") int id,
                                    @PathVariable("page") int page) {
-        return jobService.getCompanyJobs(id, page, Common.SMALL_COUNT);
+        return jobService.getCompanyJobs(id, JobStateEnum.RUNNING_JOB.getValue(), page, Common.SMALL_COUNT);
     }
 
     @RequestMapping("/{id}/comment/page/{page}")
@@ -111,6 +111,7 @@ public class JobController {
         return "vague_search_job";
     }
 
+    @Authorization({Common.AUTH_USER_LOGIN, Common.AUTH_ADMIN_LOGIN, Common.COMPANY})
     @RequestMapping(value = "/listData", method = RequestMethod.POST)
     @ResponseBody
     public Result<Job> listData(@RequestParam(value = "cId", required = false) Integer cId,
@@ -143,5 +144,19 @@ public class JobController {
             page = 1;
         }
         return jobService.searchJobs(pIds, time, low, high, keyword, page, Common.COUNT);
+    }
+
+    @RequestMapping("/companyJobs")
+    @ResponseBody
+    public Result companyJobs(@RequestParam(value = "companyId", defaultValue = "0") Integer companyId,
+                              @RequestParam(value = "page", defaultValue = "1") Integer page) {
+        return jobService.getCompanyJobs(companyId, -1, page, Common.COUNT);
+    }
+
+    @RequestMapping("/changeJobStatus")
+    @ResponseBody
+    public Result changeJobStatus(@RequestParam(value = "j_id", defaultValue = "0") Integer j_id,
+                                  @RequestParam(value = "status", defaultValue = "0") Integer status) {
+        return jobService.changeJobStatus(j_id, status);
     }
 }

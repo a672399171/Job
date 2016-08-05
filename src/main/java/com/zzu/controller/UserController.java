@@ -1,6 +1,7 @@
 package com.zzu.controller;
 
 import com.google.code.kaptcha.servlet.KaptchaExtend;
+import com.zzu.common.Common;
 import com.zzu.common.annotaion.Authorization;
 import com.zzu.dto.Result;
 import com.zzu.model.*;
@@ -11,8 +12,6 @@ import com.zzu.service.UserService;
 import com.zzu.service.impl.MailServiceImpl;
 import com.zzu.util.PictureUtil;
 import com.zzu.util.StringUtil;
-import org.apache.velocity.tools.view.VelocityViewFilter;
-import org.springframework.data.convert.WritingConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

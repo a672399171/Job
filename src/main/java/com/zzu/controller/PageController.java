@@ -2,10 +2,8 @@ package com.zzu.controller;
 
 import com.zzu.dto.Result;
 import com.zzu.model.Classify;
-import com.zzu.model.Common;
+import com.zzu.common.Common;
 import com.zzu.model.Job;
-import com.zzu.model.Position;
-import com.zzu.service.ClassifyService;
 import com.zzu.service.JobService;
 import com.zzu.service.RedisService;
 import org.springframework.stereotype.Controller;

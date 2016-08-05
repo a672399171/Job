@@ -6,5 +6,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Authorization {
-    String value() default "";
+    String[] value() default {};
 }

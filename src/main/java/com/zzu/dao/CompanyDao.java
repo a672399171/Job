@@ -1,7 +1,7 @@
 package com.zzu.dao;
 
-import com.zzu.model.Collection;
 import com.zzu.model.Company;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -9,17 +9,17 @@ import java.util.List;
  * Created by zhanglei53 on 2016/7/28.
  */
 public interface CompanyDao {
-    Company existsCompany(String username);
+    Company search(@Param("username") String username,
+                   @Param("password") String password,
+                   @Param("email") String email);
 
-    Company searchCompanyByEmail(String email);
+    Company getById(int id);
 
-    Company getCompanyById(int id);
+    int updateCompany(Company company);
 
-    void updateCompany(Company company);
+    int addCompany(Company company);
 
-    void addCompany(Company company);
-
-    void modifyCompanyPassword(int id, String s);
+    int modifyPassword(int id, String s);
 
     List<Company> searchCompanies(int page, int[] audit, String filter);
 

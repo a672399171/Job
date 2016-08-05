@@ -22,15 +22,15 @@
             <span class="icon-bar"></span>
         </button>
         <a href="/" class="navbar-brand" style="padding: 0;">
-            <img src="/images/logo.png" height="50"/>
+            <img src="/resources/images/logo.png" height="50"/>
         </a>
     </div>
     <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-            <li id="job_manage" class="active"><a href="/job/job_manage.do">职位管理</a></li>
-            <li id="resume_manage"><a href="/job/resume_manage.do">简历管理</a></li>
-            <li id="resume_search"><a href="/job/search_resume.do">搜索简历</a></li>
-            <li id="account_setting"><a href="/job/account_setting.do">账号设置</a></li>
+            <li id="job_manage" class="active"><a href="/company/jobManage">职位管理</a></li>
+            <li id="resume_manage"><a href="/company/resumeManage">简历管理</a></li>
+            <li id="resume_search"><a href="/company/searchResume">搜索简历</a></li>
+            <li id="account_setting"><a href="/company/accountSetting">账号设置</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <c:choose>

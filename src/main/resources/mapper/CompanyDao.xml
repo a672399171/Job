@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzu.dao.CompanyDao">
+
+    <sql id="companyDetailSql">
+        id,
+        username,
+        company_name,
+        address,
+        `name`,
+        phone,
+        introduce,
+        `type`,
+        scope,
+        email,
+        logo,
+        x,
+        y,
+        auth
+    </sql>
+
+    <select id="search" resultType="com.zzu.model.Company">
+        SELECT
+        <include refid="companyDetailSql"/>
+        from
+        tb_company
+        where
+        username=#{username}
+        <if test="password != null">
+            and password=#{password}
+        </if>
+        <if test="email != null">
+            and email=#{email}
+        </if>
+    </select>
+
+    <select id="getById" resultType="com.zzu.model.Company">
+        SELECT
+        <include refid="companyDetailSql"/>
+        from
+        tb_company
+        where
+        id=#{id}
+    </select>
+
+    <update id="modifyPassword">
+        UPDATE
+        tb_company
+        set
+        password=#{password}
+        where
+        id=#{id}
+    </update>
+
+    <insert id="addCompany">
+        insert into
+        tb_company(
+        <include refid="companyDetailSql"/>
+        )
+        values (
+        null,
+        #{username},
+        #{password},
+        #{company_name},
+        #{address},
+        #{name},
+        #{phone},
+        #{introduce},
+        #{type},
+        #{scope},
+        #{email},
+        #{logo},
+        #{x},
+        #{y}
+        )
+    </insert>
+
+</mapper>

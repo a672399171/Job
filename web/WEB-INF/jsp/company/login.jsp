@@ -22,9 +22,8 @@
 <head>
     <title>企业登录</title>
     <%@include file="../common/head.jsp"%>
-    <link rel="stylesheet" type="text/css" href="/css/style_login.css"/>
-    <script src="/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/resources/css/style_login.css"/>
+    <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
 </head>
 <body>
 <div class="panel panel-default" id="login_panel">
@@ -89,26 +88,18 @@
                 }
             }
         }).on('success.form.bv', function (e) {
-            // Prevent form submission
             e.preventDefault();
 
-            // Get the form instance
-            var $form = $(e.target);
-
-            // Get the BootstrapValidator instance
-            var bv = $form.data('bootstrapValidator');
-
             // Use Ajax to submit form data
-            $.post("/user/companyLogin.do", {
+            $.post("/company/login", {
                 username: $("#username").val(),
                 password: $("#password").val(),
                 on: $("#on").is(":checked")
             }, function (data) {
-                console.log(data);
-                if (data.msg == true) {
-                    window.location = "/job/job_manage.do";
+                if (data.success) {
+                    window.location = "/company/jobManage";
                 } else {
-                    $("#msg").text(data.msg);
+                    $("#msg").text(data.error);
                 }
             }, 'json');
         });

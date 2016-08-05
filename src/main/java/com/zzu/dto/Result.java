@@ -1,6 +1,6 @@
 package com.zzu.dto;
 
-import com.zzu.model.Common;
+import com.zzu.common.Common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
