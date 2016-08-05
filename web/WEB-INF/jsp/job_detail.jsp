@@ -187,7 +187,7 @@
                 <div class="allJobs" id="allJobs">
                     <h4>该公司所有职位</h4>
 
-                    <div class="job_item" style="display: block" v-for="item in jobs" v-on:click="toUrl(item.id)">
+                    <div class="job_item" style="display: block" v-for="item in list" v-on:click="toUrl(item.id)">
                         <table>
                             <tr>
                                 <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
@@ -203,7 +203,23 @@
                         </table>
                     </div>
 
-                    <zl-page></zl-page>
+                    <div class="sui-pagination">
+                        <ul>
+                            <li class="prev" v-bind:class="{'disabled':page <= 1}"><a href="javascript:void(0)">«上一页</a></li>
+                            <li v-bind:class="{'active':item+1 == page}" v-for="item in totalPage">
+                                <a href="javascript:void(0)" v-on:click="load(item+1)">{{ item+1 }}</a>
+                            </li>
+                            <li class="dotted" v-if="totalPage < 5"><span>...</span></li>
+                            <li class="next" v-bind:class="{'disabled':page == totalPage}"><a href="javascript:void(0)">下一页»</a></li>
+                        </ul>
+                        <div>
+                            <span>共{{ totalPage }}页&nbsp;</span>
+                            <span v-if="totalPage >= 10">
+                                到<input type="text" class="page-num">
+                                <button class="page-confirm" onclick="alert(1)">确定</button>页
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -330,18 +346,28 @@
         }
     });
 
+    var vm = undefined;
+
     $(function () {
         // 该公司所有职位
         $.get('/job/company/' + '${requestScope.job.post_company.id}' + '/page/1', function (data) {
             if (data.success) {
-                new Vue({
+                vm = new Vue({
                     el: '#allJobs',
-                    data: {
-                        jobs: data.list
-                    },
+                    data: data,
                     methods: {
                         toUrl: function (id) {
                             window.location = '/job/' + id;
+                        },
+                        load: function (page) {
+                            if(page == vm.data.page) {
+                                return;
+                            }
+                            $.get('/job/company/' + '${requestScope.job.post_company.id}' + '/page/' + page, function (data) {
+                                if (data.success) {
+                                    vm.data = data;
+                                }
+                            }, 'JSON');
                         }
                     }
                 })

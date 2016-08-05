@@ -9,12 +9,15 @@ import com.zzu.service.RedisService;
 import com.zzu.service.ResumeService;
 import com.zzu.service.UserService;
 import com.zzu.service.impl.MailServiceImpl;
+import com.zzu.util.PictureUtil;
 import com.zzu.util.StringUtil;
 import org.apache.velocity.tools.view.VelocityViewFilter;
+import org.springframework.data.convert.WritingConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -22,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -93,7 +98,7 @@ public class UserController {
      *
      * @return
      */
-    @RequestMapping("/resume")
+    @RequestMapping(value = "/resume",method = RequestMethod.GET)
     @Authorization(Common.AUTH_USER_LOGIN)
     public String resume() {
         return "resume";
@@ -129,12 +134,26 @@ public class UserController {
         return "poor";
     }
 
+    @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping(value = "/resume/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Result getResumeById(@PathVariable("id") int id) {
         Result result = new Result();
         Resume resume = resumeService.getByUid(id);
         result.getData().put("resume", resume);
+        return result;
+    }
+
+    /**
+     * 修改简历
+     * @return
+     */
+    @RequestMapping(value = "/resume",method = RequestMethod.POST)
+    @Authorization(Common.AUTH_USER_LOGIN)
+    @ResponseBody
+    public Result saveOrModifyResult(@Valid @ModelAttribute("resume") Resume resume,BindingResult bindingResult) {
+        Result result = new Result();
+        System.out.println(resume);
         return result;
     }
 
@@ -365,21 +384,26 @@ public class UserController {
     }
 
     @Authorization(Common.AUTH_USER_LOGIN)
-    @RequestMapping("/saveOrUpdateResume")
-    public String saveOrUpdateResume(@Valid @ModelAttribute("resume") Resume resume, BindingResult result,
-                                     String birthday, Integer major_id, HttpSession session) {
-        User user = (User) session.getAttribute(Common.USER);
-        if (user != null) {
-            /*Major major = new Major();
-            major.setId(major_id);
-            resume.setMajor(major);
+    @RequestMapping("uploadPhoto")
+    @ResponseBody
+    public Map<String, Object> upload_photo(@RequestParam("file") MultipartFile myfile, HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        String realPath = request.getSession().getServletContext().getRealPath("/resources/images");
+        String originalFilename = myfile.getOriginalFilename();
 
-            resume.setBirthday(DateUtil.toDate(birthday));
-            resume.setU_id(user.getId());
-            resumeService.saveOrUpdateResume(resume);*/
+        String newFile = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
+        String newPath = realPath + "/" + newFile;
+        System.out.println("新文件路径:" + newPath);
+
+        try {
+            myfile.transferTo(new File(newPath));
+        } catch (IOException e) {
+            System.out.println("文件[" + originalFilename + "]上传失败");
+            e.printStackTrace();
         }
-
-        return "redirect:/user/resume";
+        PictureUtil.cutPicture(newPath);
+        map.put("src", newFile);
+        return map;
     }
 
 

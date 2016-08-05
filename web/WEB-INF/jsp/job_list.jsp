@@ -89,16 +89,31 @@
             </div>
             <div class="col-md-11">
                 <ul class="sui-tag" id="time">
-                    <li onclick="vueData.param.time=127;changTimeDom()">
+                    <li v-bind:class="{'tag-selected':!param.time || param.time <= 0 || param.time == 127}"
+                        v-on:click="param.time=127;getListData()">
                         不限
                     </li>
-                    <li onclick="changeTime(64)">周一</li>
-                    <li onclick="changeTime(32)">周二</li>
-                    <li onClick="changeTime(16)">周三</li>
-                    <li onClick="changeTime(8)">周四</li>
-                    <li onClick="changeTime(4)">周五</li>
-                    <li onClick="changeTime(2)">周六</li>
-                    <li onClick="changeTime(1)">周日</li>
+                    <li v-bind:class="{'tag-selected':selected(64)}" v-on:click="changeTime(64)">
+                        周一
+                    </li>
+                    <li v-bind:class="{'tag-selected':selected(32)}" v-on:click="changeTime(32)">
+                        周二
+                    </li>
+                    <li v-bind:class="{'tag-selected':selected(16)}" v-on:click="changeTime(16)">
+                        周三
+                    </li>
+                    <li v-bind:class="{'tag-selected':selected(8)}" v-on:click="changeTime(8)">
+                        周四
+                    </li>
+                    <li v-bind:class="{'tag-selected':selected(4)}" v-on:click="changeTime(4)">
+                        周五
+                    </li>
+                    <li v-bind:class="{'tag-selected':selected(2)}" v-on:click="changeTime(2)">
+                        周六
+                    </li>
+                    <li v-bind:class="{'tag-selected':selected(1)}" v-on:click="changeTime(1)">
+                        周日
+                    </li>
                 </ul>
             </div>
         </div>
@@ -109,13 +124,27 @@
             </div>
             <div class="col-md-11">
                 <ul class="sui-tag" id="salary">
-                    <li onclick="changeSalary(0,0)">不限</li>
-                    <li onclick="changeSalary(0,500)">500以下</li>
-                    <li onclick="changeSalary(500,1000)">500-1000</li>
-                    <li onclick="changeSalary(1000,2000)">1000-2000</li>
-                    <li onclick="changeSalary(2000,3000)">2000-3000</li>
-                    <li onclick="changeSalary(3000,4000)">3000-4000</li>
-                    <li onclick="changeSalary(4000,0)">4000以上</li>
+                    <li v-bind:class="{'tag-selected':(!param.low) && (!param.high)}"
+                        v-on:click="changeSalary(0,0)">不限
+                    </li>
+                    <li v-bind:class="{'tag-selected':(param.low==0) && (param.high==500)}"
+                        v-on:click="changeSalary(0,500)">500以下
+                    </li>
+                    <li v-bind:class="{'tag-selected':param.low==500 && param.high==1000}"
+                        v-on:click="changeSalary(500,1000)">500-1000
+                    </li>
+                    <li v-bind:class="{'tag-selected':param.low==1000 && param.high==2000}"
+                        v-on:click="changeSalary(1000,2000)">1000-2000
+                    </li>
+                    <li v-bind:class="{'tag-selected':param.low==2000 && param.high==3000}"
+                        v-on:click="changeSalary(2000,3000)">2000-3000
+                    </li>
+                    <li v-bind:class="{'tag-selected':param.low==3000 && param.high==4000}"
+                        v-on:click="changeSalary(3000,4000)">3000-4000
+                    </li>
+                    <li v-bind:class="{'tag-selected':param.low==4000 && param.high==0}"
+                        v-on:click="changeSalary(4000,0)">4000以上
+                    </li>
                 </ul>
             </div>
         </div>
@@ -147,9 +176,13 @@
 
 <script type="application/javascript">
     var vueData = {};
+    var vm = undefined;
     vueData.param = {
-        pId:'${param.pId}',
-        cId:'${param.cId}'
+        pId: '${param.pId}',
+        cId: '${param.cId}',
+        time: 0,
+        low: 0,
+        high: 0
     };
 
     function getListData() {
@@ -163,13 +196,31 @@
                 vueData.totalItem = data.totalItem;
                 vueData.page = data.page;
 
-                new Vue({
+                vm = new Vue({
                     el: '#app',
                     data: vueData,
                     methods: {
                         getListData: getListData,
                         toUrl: function (id) {
                             window.location = '/job/' + id;
+                        },
+                        changeTime: function (time) {
+                            vueData.param.time %= 127;
+                            vueData.param.time |= time;
+
+                            vm.$set('param.time', vueData.param.time);
+                            getListData();
+                        },
+                        changeSalary: function(low, high) {
+                            vueData.param.low = low;
+                            vueData.param.high = high;
+                            vm.$set('param.low', vueData.param.low);
+                            vm.$set('param.high', vueData.param.high);
+
+                            getListData();
+                        },
+                        selected: function (time) {
+                            return ((vueData.param.time & time) == time) && vueData.param.time < 127;
                         }
                     }
                 });
@@ -178,8 +229,6 @@
             }
         }, 'JSON');
     }
-    changTimeDom();
-    changeSalaryDom();
 
     $(function () {
         $.getJSON('/job/positionData?cId=${param.cId}', function (data) {
@@ -188,64 +237,6 @@
 
         getListData();
     });
-
-    function changeTime(time) {
-        vueData.param.time %= 127;
-        vueData.param.time |= time;
-        changTimeDom();
-    }
-
-    function changTimeDom() {
-        getListData();
-
-        var domArr = $('#time li');
-        domArr.removeClass('tag-selected');
-
-        if (vueData.param.time == 127
-                || vueData.param.time <= 0
-                || vueData.param.time == undefined) {
-            domArr.eq(0).addClass('tag-selected');
-            return;
-        }
-        for (var i = 1; i <= 7; i++) {
-            if ((vueData.param.time & Math.pow(2, 7 - i)) === Math.pow(2, 7 - i)) {
-                domArr.eq(i).addClass('tag-selected');
-            }
-        }
-
-    }
-
-    function changeSalary(low, high) {
-        vueData.param.low = low;
-        vueData.param.high = high;
-        changeSalaryDom();
-    }
-
-    function changeSalaryDom() {
-        getListData();
-
-        var domArr = $('#salary li');
-        domArr.removeClass('tag-selected');
-
-        var low = vueData.param.low;
-        var high = vueData.param.high;
-
-        if ((low <= 0 && high <= 0) || (low == undefined && high == undefined)) {
-            domArr.eq(0).addClass('tag-selected');
-        } else if (low <= 0 && high == 500) {
-            domArr.eq(1).addClass('tag-selected');
-        } else if (low == 500 && high == 1000) {
-            domArr.eq(2).addClass('tag-selected');
-        } else if (low == 1000 && high == 2000) {
-            domArr.eq(3).addClass('tag-selected');
-        } else if (low == 2000 && high == 3000) {
-            domArr.eq(4).addClass('tag-selected');
-        } else if (low == 3000 && high == 4000) {
-            domArr.eq(5).addClass('tag-selected');
-        } else if (low == 4000 && (high <= 0 || high == undefined)) {
-            domArr.eq(6).addClass('tag-selected');
-        }
-    }
 </script>
 </body>
 </html>

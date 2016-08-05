@@ -1,12 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>个人资料</title>
     <%@include file="common/head.jsp" %>
-    <script src="${root}/js/ajaxfileupload.js"></script>
+    <script src="/resources/js/ajaxfileupload.js"></script>
 </head>
 <body>
 <div class="big container">
@@ -38,7 +37,7 @@
             </div>
         </div>
         <div class="col-xs-1">
-            <img src="${root}/images/${sessionScope.user.photo_src}" width="100" height="100"
+            <img src="/resources/images/${sessionScope.user.photo_src}" width="100" height="100"
                  style="margin-top: 20px;border: 1px solid black" id="head_photo"/>
         </div>
         <div class="col-xs-5">
@@ -107,19 +106,18 @@
 
         var filePath = $("#file").val();
         var fileType = filePath.substr(filePath.lastIndexOf(".") + 1);
-        console.log(fileType);
+
         if ($.inArray(fileType, ['jpg', 'JPG', 'gif', 'GIF', 'png', 'PNG']) != -1) {
             var fileSize = getFileSize();
-            console.log(fileSize);
 
             if (fileSize <= 300 * 1024) {
                 $.ajaxFileUpload({
-                    url: '${root}/user/upload_photo.do',
+                    url: '/user/uploadPhoto',
                     secureuri: false,
                     fileElementId: "file",
                     dataType: 'json',
                     success: function (data) {
-                        $("#head_photo").attr("src", "${root}/images/" + data.src);
+                        $("#head_photo").attr("src", "/resources/images/" + data.src);
                         $("#photo_src").val(data.src);
                     },
                     error: function (data, status, e) {

@@ -56,6 +56,8 @@ public class JobServiceImpl implements JobService {
             result.setError("页数错误");
             return result;
         }
+        low = low < 0 ? 0 : low;
+        high = high < 0 ? 0 : high;
         List<Job> jobs = jobDao.searchJobs(0, pIds, time, low, high, keyword, 1, (page - 1) * pageSize, pageSize);
         result.setTotalItem(jobDao.getJobCount(0, pIds, time, low, high, keyword, 1));
         result.setList(jobs);

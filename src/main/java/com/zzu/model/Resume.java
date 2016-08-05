@@ -13,7 +13,7 @@ public class Resume {
 	private int u_id;
 	private String name;
 	private String sex;
-	@DateTimeFormat(pattern="yyyy-MM-dd")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date birthday;
 	private String phone;
 	private Major major;

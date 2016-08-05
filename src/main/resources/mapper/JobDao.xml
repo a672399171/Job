@@ -73,10 +73,10 @@
             and work_time &amp; #{time} &gt; 0
         </if>
         <if test="low != null and low &gt; 0">
-            and j.low_salary &gt;= #{low}
+            and j.low_salary &lt;= #{low}
         </if>
         <if test="high != null and high &gt; 0">
-            and j.high_salary &lt;= #{low}
+            and j.high_salary &gt;= #{high}
         </if>
         <if test="keyword != null">
             and
@@ -128,10 +128,10 @@
             and work_time &amp; #{time} &gt; 0
         </if>
         <if test="low != null and low &gt; 0">
-            and j.low_salary &gt;= #{low}
+            and j.low_salary &lt;= #{low}
         </if>
         <if test="high != null and high &gt; 0">
-            and j.high_salary &lt;= #{low}
+            and j.high_salary &gt;= #{high}
         </if>
         <if test="keyword != null">
             and
