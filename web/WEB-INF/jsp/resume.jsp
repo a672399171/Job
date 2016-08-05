@@ -6,12 +6,11 @@
 <head>
     <title>个人简历</title>
     <%@include file="common/head.jsp" %>
-    <link href="http://g.alicdn.com/sj/dpl/1.5.1/css/sui.min.css" rel="stylesheet">
-    <script type="text/javascript" src="http://g.alicdn.com/sj/dpl/1.5.1/js/sui.min.js"></script>
     <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <script src="/resources/bootstrapvalidator/js/language/zh_CN.js"></script>
+    <script src="/resources/js/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="/resources/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
     <script src="/resources/scripts/vue.js"></script>
-    <script src="/resources/js/filters/filters.js"></script>
     <style type="text/css">
         #typeDiv li:hover {
             cursor: pointer;
@@ -34,7 +33,7 @@
 </head>
 <body>
 <div class="big container">
-    <%@include file="/WEB-INF/jsp/common/header.jsp" %>
+    <%@include file="/WEB-INF/jsp/header.jsp" %>
     <div class="row">
         <div class="col-xs-3 col-xs-offset-1">
             <div class="list-group">
@@ -64,7 +63,7 @@
         <div class="col-xs-6" id="resumeData">
             <h4>我的简历</h4>
             <hr>
-            <form class="form-horizontal" action="/user/saveOrUpdateResume" id="form" method="post">
+            <form class="form-horizontal" action="/user/saveOrUpdateResume.do" id="form" method="post">
                 <div class="form-group">
                     <label class="col-xs-2 control-label">姓&nbsp;&nbsp;&nbsp;&nbsp;名:</label>
 
@@ -89,7 +88,7 @@
 
                     <div class="col-xs-8">
                         <input type="text" class="form-control" id="birthday" name="birthday" placeholder="出生日期"
-                               readonly v-model="resume.birthday | timestampFilter 'YYYY-MM-DD'">
+                               readonly v-model="resume.birthday" data-toggle="datepicker">
                     </div>
                 </div>
                 <div class="form-group">
@@ -142,15 +141,10 @@
                     <label class="col-xs-2 control-label">专业:</label>
 
                     <div class="col-xs-4">
-                        <select class="form-control" id="school" v-model="resume.major.school.id"
-                                v-on:change="changeMajors()">
-                            <option v-bind:value="item.id" v-for="item in schools">{{item.school}}</option>
-                        </select>
+                        <select class="form-control" id="school" v-model="resume.major.school.school"></select>
                     </div>
                     <div class="col-xs-4">
-                        <select class="form-control" name="major_id" id="major" v-model="resume.major.id">
-                            <option v-bind:value="item.id" v-for="item in currentMajors">{{item.major}}</option>
-                        </select>
+                        <select class="form-control" name="major_id" id="major" v-model="resume.major.major"></select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -201,19 +195,12 @@
                     <label class="col-xs-2 control-label">职位类型:</label>
 
                     <div class="col-xs-10" id="typeDiv" style="height: 200px">
-                        <div style="color: #2a6496" id="mySelect">{{ resume.types }}</div>
+                        <div style="color: #2a6496" id="mySelect"></div>
                         <div id="leftDiv">
-                            <ul>
-                                <li v-for="item in typeData" v-on:click="changePositions(item)">{{ item.name }}</li>
-                            </ul>
+                            <ul></ul>
                         </div>
                         <div id="rightDiv">
-                            <ul>
-                                <li v-for="item in currentPositions">
-                                    <input type="checkbox" v-bind:value="item.id" v-model="resume.types"/>
-                                    {{ item.name }}
-                                </li>
-                            </ul>
+                            <ul></ul>
                         </div>
                     </div>
                     <span style="color: red">最多可选三个</span>
@@ -245,7 +232,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="common/footer.jsp"/>
+<jsp:include page="footer.jsp"></jsp:include>
 
 <script type="application/javascript">
     var typeData = undefined;
@@ -255,50 +242,61 @@
     var vueData = {};
 
     $(function () {
-        $('#birthday').datepicker({size: "small"});
+        /*if ("
+        ${requestScope.resume.job_type}".trim() != "") {
+         mytypes = "
+        ${requestScope.resume.job_type}".split("#");
+         $("#mySelect").text()
+         } else {
+         mytypes = [];
+         }
+        <c:forEach items="${requestScope.resume.positions}" var="item">
+         positions.push("
+        ${item.name}");
+        </c:forEach>
+
+         showMySelected();
+
+         $('#birthday').datepicker({
+         format: 'yyyy-mm-dd',
+         autoclose: true,
+         language: 'zh-CN'
+         });
+
+         loadSchoolData();
+         loadTypeData();*/
         initData();
         initVue();
     });
 
     function initVue() {
         $.get('/user/resume/${sessionScope.user.id}', function (data) {
-            vueData.times = [];
             var spare_time = data.data.resume.spare_time;
             var times = spare_time.toString(2).split('');
+            if (times.length < 7) {
+                times.splice(0, 7 - times.length, '0');
+            }
             for (var i = 0; i < times.length; i++) {
                 if (times[i] === '1') {
-                    vueData.times.push(i + 1 + 7 - times.length + "");
+                    times.push(i + 7 - times.length);
                 }
             }
 
             vueData.resume = data.data.resume;
-            /*var types = vueData.resume.job_type.split('#');
-            for(var i=0;i<vueData.typeData.length;i++) {
-                if(types.indexOf(vueData.typeData[i].id))
-            }*/
-
-            vueData.resume.types = vueData.resume.job_type.split('#');
             vueData.currentCities = [];
-            vueData.currentMajors = [];
-            vueData.currentPositions = [];
-
             changeCurrentCities();
-            changeCurrentMajors();
             if (data.success) {
                 new Vue({
                     el: '#resumeData',
                     data: vueData,
                     methods: {
-                        changeCities: changeCurrentCities,
-                        changeMajors: changeCurrentMajors,
-                        changePositions: changeCurrentPositions
+                        changeCities: changeCurrentCities
                     }
                 });
             }
         }, 'JSON');
     }
 
-    // 改变城市列表
     function changeCurrentCities() {
         for (var i = 0; i < vueData.citys.length; i++) {
             if (vueData.citys[i].province === vueData.resume.province) {
@@ -308,24 +306,10 @@
         }
     }
 
-    // 改变专业列表
-    function changeCurrentMajors() {
-        for (var i = 0; i < vueData.schools.length; i++) {
-            if (vueData.schools[i].id === vueData.resume.major.school.id) {
-                vueData.currentMajors = vueData.schools[i].majors;
-                break;
-            }
-        }
-    }
-
-    // 改变子类型
-    function changeCurrentPositions(item) {
-        for (var i = 0; i < vueData.typeData.length; i++) {
-            if (vueData.typeData[i].id === item.id) {
-                vueData.currentPositions = vueData.typeData[i].positions;
-                break;
-            }
-        }
+    //显示当前已选的类型
+    function showMySelected() {
+        var str = positions.join("、");
+        $("#mySelect").text(str);
     }
 
     //加载省市信息
@@ -337,9 +321,101 @@
 
     //加载职位类型数据
     function loadTypeData() {
-        $.getJSON("/job/typeData", function (data) {
-            vueData.typeData = data;
+        $.getJSON("${root}/user/admin/tree_data.do", function (data) {
+            typeData = data;
+            data.forEach(function (e) {
+                $("#leftDiv ul").append("<li>" + e.label + "</li>");
+                $("#leftDiv ul li").click(function () {
+                    var s = $(this).text();
+                    for (var i = 0; i < typeData.length; i++) {
+                        if (typeData[i].label == s) {
+                            $("#rightDiv ul").html("");
+                            for (var j = 0; j < typeData[i].children.length; j++) {
+                                var m = typeData[i].children[j];
+                                var li = $("<li></li>");
+                                var checkBox = $("<input type='checkbox' data='" + m.id + "' text='" + m.label + "' onclick='check(this)' />");
+                                li.append(checkBox);
+                                li.append(m.label);
+                                $("#rightDiv ul").append(li);
+                                for (var k = 0; k < mytypes.length; k++) {
+                                    if (m.id == mytypes[k]) {
+                                        checkBox.attr("checked", true);
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                });
+            });
         });
+    }
+
+    //chexkbox选择后触发
+    function check(e) {
+        for (var i = 0; i < mytypes.length; i++) {
+            if (mytypes[i] == $(e).attr("data")) {
+                mytypes.splice(i, 1);
+            }
+            if (positions[i] == $(e).attr("text")) {
+                positions.splice(i, 1);
+            }
+        }
+        if ($(e).is(":checked")) {
+            if (mytypes.length >= 3) {
+                alert("不能超过三个！");
+                $(e).attr("checked", false);
+            } else {
+                mytypes.push($(e).attr("data"));
+                positions.push($(e).attr("text"))
+            }
+        }
+        showMySelected();
+    }
+
+    //chexkbox选择后触发
+    function check(e) {
+        for (var i = 0; i < mytypes.length; i++) {
+            if (mytypes[i] == $(e).attr("data")) {
+                mytypes.splice(i, 1);
+            }
+            if (positions[i] == $(e).attr("text")) {
+                positions.splice(i, 1);
+            }
+        }
+        if ($(e).is(":checked")) {
+            if (mytypes.length >= 3) {
+                alert("不能超过三个！");
+                $(e).attr("checked", false);
+            } else {
+                mytypes.push($(e).attr("data"));
+                positions.push($(e).attr("text"))
+            }
+        }
+        showMySelected();
+    }
+
+    //chexkbox选择后触发
+    function check(e) {
+        for (var i = 0; i < mytypes.length; i++) {
+            if (mytypes[i] == $(e).attr("data")) {
+                mytypes.splice(i, 1);
+            }
+            if (positions[i] == $(e).attr("text")) {
+                positions.splice(i, 1);
+            }
+        }
+        if ($(e).is(":checked")) {
+            if (mytypes.length >= 3) {
+                alert("不能超过三个！");
+                $(e).attr("checked", false);
+            } else {
+                mytypes.push($(e).attr("data"));
+                positions.push($(e).attr("text"))
+            }
+        }
+        showMySelected();
     }
 
     //加载学院数据
@@ -356,11 +432,23 @@
         for (var i = year - 8; i <= year; i++) {
             grades.push(i);
         }
-        vueData.grades = grades;
 
         loadProvinceData();
         loadSchoolData();
-        loadTypeData();
+
+        /*
+         var typeArray = "
+        ${resume.job_type}".split("#");
+
+         var types = $("#typeDiv :checkbox");
+
+         for (var i = 0; i < types.length; i++) {
+         if ($.inArray(types.eq(i).val(), typeArray) != -1) {
+         types.eq(i).attr("checked", true);
+         } else {
+         types.eq(i).attr("checked", false);
+         }
+         }*/
     }
 
     $('#form').bootstrapValidator({
