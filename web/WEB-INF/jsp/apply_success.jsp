@@ -13,7 +13,7 @@
 </head>
 <body>
 <div class="big container">
-    <%@include file="header.jsp"%>
+    <%@include file="common/header.jsp"%>
     <div class="container">
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
@@ -23,7 +23,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
+<jsp:include page="common/footer.jsp"></jsp:include>
 </body>
 </html>
 

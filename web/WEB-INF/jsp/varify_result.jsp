@@ -8,7 +8,7 @@
     <%@include file="common/head.jsp"%>
 </head>
 <body>
-<%@include file="/WEB-INF/jsp/header.jsp"%>
+<%@include file="/WEB-INF/jsp/common/header.jsp"%>
 <div class="big">
     <div class="container">
         <div class="row">
@@ -18,7 +18,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
+<jsp:include page="common/footer.jsp"></jsp:include>
 </body>
 </html>
 

@@ -11,9 +11,10 @@ import java.util.List;
 public interface CollectionDao {
     Collection getCollection(int uId, int jId);
 
-    void deleteCollection(int uId, int jId);
+    int deleteCollection(@Param("uId") int uId,
+                         @Param("jId") int jId);
 
-    void addCollection(int uId, int jId);
+    int addCollection(int uId, int jId);
 
     List<Collection> searchCollections(@Param("u_id") int u_id,
                                        @Param("start") int start,

@@ -1,19 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>企业注册</title>
     <%@include file="../common/head.jsp"%>
-    <link rel="stylesheet" type="text/css" href="${root}/css/style_reg.css"/>
-    <script src="${root}/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
-    <script src="${root}/layer/layer.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style_reg.css"/>
+    <script src="/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <script src="/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <script src="/layer/layer.js"></script>
 </head>
 <body>
 <div class="big">
-    <jsp:include page="header.jsp"></jsp:include>
+    <jsp:include page="header.jsp"/>
     <div id="body">
         <div class="well" id="well">
             <h2 align="center">企业注册</h2>
@@ -34,7 +33,7 @@
                 <div class="form-group" id="varifyDiv">
                     <input type="text" class="form-control" id="varify" name="varify" placeholder="验证码">
                 </div>
-                <img src="${root}/user/varify.do" width="100" height="31" id="verify_img">
+                <img src="/user/varify.do" width="100" height="31" id="verify_img">
                 <a href="javascript:void(0)" onclick="refresh()" style="color: #1f637b">看不清？换一个</a>
 
                 <div class="checkbox" id="checkDiv">
@@ -114,7 +113,7 @@
     }
 
     $(function () {
-        $("#login_href").attr("href", "${root}/user/toCompanyLogin.do");
+        $("#login_href").attr("href", "/user/toCompanyLogin.do");
 
         $('#regForm').bootstrapValidator({
             message: 'This value is not valid',
@@ -170,7 +169,7 @@
                     },
                     remote:{
                         message:"验证码错误",
-                        url:"${root}/user/checkVarify.do",
+                        url:"/user/checkVarify.do",
                         data:{
                             varify:$("#varify").val()
                         }
@@ -193,7 +192,7 @@
             }
 
             // Use Ajax to submit form data
-            $.post("${root}/user/companyReg.do", {
+            $.post("/user/companyReg.do", {
                 username: $("#username").val(),
                 password: $("#password").val(),
                 email: $("#email").val(),
@@ -209,7 +208,7 @@
     });
 
     function refresh() {
-        $("#verify_img").attr("src", "${root}/user/varify.do?t=" + new Date().getTime());
+        $("#verify_img").attr("src", "/user/varify.do?t=" + new Date().getTime());
     }
 </script>
 </body>

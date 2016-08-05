@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="big container">
-    <%@include file="/WEB-INF/jsp/header.jsp" %>
+    <%@include file="/WEB-INF/jsp/common/header.jsp" %>
 
     <div class="row">
         <div id="list1" class="col-xs-2 col-xs-offset-1">
@@ -105,8 +105,8 @@
         </div>
     </div>
 </div>
-<jsp:include page="/WEB-INF/jsp/right.jsp"/>
-<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
+<jsp:include page="/WEB-INF/jsp/common/right.jsp"/>
+<jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
 
 <script type="application/javascript">
 

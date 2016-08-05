@@ -12,7 +12,7 @@
 </head>
 <body>
 <div class="big container">
-    <%@include file="header.jsp" %>
+    <%@include file="common/header.jsp" %>
     <div class="row">
         <div class="col-xs-3 col-xs-offset-1">
             <div class="list-group">
@@ -137,7 +137,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"/>
+<jsp:include page="common/footer.jsp"/>
 </body>
 </html>
 

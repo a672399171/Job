@@ -1,12 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html>
 <head>
     <title>找回密码</title>
     <%@include file="common/head.jsp"%>
-    <script src="${root}/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <style type="text/css">
         #panel {
             width: 35%;
@@ -79,7 +78,7 @@
                             <input type="text" class="form-control" id="code" placeholder="验证码">
                         </div>
                         <div class="col-md-4">
-                            <img src="${root}/user/varify.do" id="pic" onclick="refresh()"/>
+                            <img src="/user/captchaCode" id="pic" onclick="refresh()"/>
                         </div>
                     </div>
                     <div class="row">
@@ -122,15 +121,15 @@
 
     //刷新验证码
     function refresh() {
-        $("#pic").attr("src", $("#pic").attr("src") + "?d" + new Date());
+        $("#pic").attr("src", '/user/captchaCode' + "?d" + new Date());
     }
 
-    $("#next").click(varifySchoolNum);
+    $("#next").click(verifySchoolNum);
     $("#n").click(sendEmail);
 
     //验证学号和验证码
-    function varifySchoolNum() {
-        $.post("${root}/user/varifySchoolNum.do", {
+    function verifySchoolNum() {
+        $.post("/user/verify", {
             username: $("#username").val(),
             school_num: $("#school_num").val(),
             jwpwd: $("#jwpwd").val(),
@@ -166,21 +165,21 @@
             return;
         }
 
-        $.post("${root}/user/resetPassword.do", {
+        $.post("/user/resetPassword.do", {
             password: pwd1,
             type:"user"
         }, function (data) {
             if(data.msg) {
                 alert(data.msg);
             } else {
-                window.location = "${root}";
+                window.location = "/";
             }
         });
     });
 
     //发送邮件
     function sendEmail() {
-        $.post("${root}/user/varifyEmail.do", {
+        $.post("/user/findPassword", {
             email: $("#email").val(),
             username: $("#user").val(),
             type:"user"

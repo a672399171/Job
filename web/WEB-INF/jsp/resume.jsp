@@ -34,7 +34,7 @@
 </head>
 <body>
 <div class="big container">
-    <%@include file="/WEB-INF/jsp/header.jsp" %>
+    <%@include file="/WEB-INF/jsp/common/header.jsp" %>
     <div class="row">
         <div class="col-xs-3 col-xs-offset-1">
             <div class="list-group">
@@ -64,7 +64,7 @@
         <div class="col-xs-6" id="resumeData">
             <h4>我的简历</h4>
             <hr>
-            <form class="form-horizontal" action="/user/saveOrUpdateResume.do" id="form" method="post">
+            <form class="form-horizontal" id="form" method="post">
                 <div class="form-group">
                     <label class="col-xs-2 control-label">姓&nbsp;&nbsp;&nbsp;&nbsp;名:</label>
 
@@ -210,8 +210,10 @@
                         <div id="rightDiv">
                             <ul>
                                 <li v-for="item in currentPositions">
-                                    <input type="checkbox" v-bind:value="item.id" v-model="resume.types"/>
-                                    {{ item.name }}
+                                    <label>
+                                        <input type="checkbox" value="{{item.id}}" v-model="resume.types"/>
+                                        {{ item.name }}
+                                    </label>
                                 </li>
                             </ul>
                         </div>
@@ -233,11 +235,9 @@
                     </div>
                     元/月
                 </div>
-                <input type="hidden" name="spare_time" id="spare_time"/>
-                <input type="hidden" name="job_type" id="job_type"/>
 
                 <div class="col-xs-6" style="text-align: center">
-                    <button type="submit" class="btn btn-primary" onclick="return setData()" style="width: 150px">
+                    <button type="submit" class="btn btn-primary" onclick="return submitHandler()" style="width: 150px">
                         <i class="fa fa-floppy-o"></i> 保存
                     </button>
                 </div>
@@ -245,13 +245,12 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"/>
+<jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
 
 <script type="application/javascript">
     var typeData = undefined;
-    var mytypes = undefined;
     var positions = [];
-
+    var vm = undefined;
     var vueData = {};
 
     $(function () {
@@ -272,11 +271,6 @@
             }
 
             vueData.resume = data.data.resume;
-            /*var types = vueData.resume.job_type.split('#');
-            for(var i=0;i<vueData.typeData.length;i++) {
-                if(types.indexOf(vueData.typeData[i].id))
-            }*/
-
             vueData.resume.types = vueData.resume.job_type.split('#');
             vueData.currentCities = [];
             vueData.currentMajors = [];
@@ -285,7 +279,7 @@
             changeCurrentCities();
             changeCurrentMajors();
             if (data.success) {
-                new Vue({
+                vm = new Vue({
                     el: '#resumeData',
                     data: vueData,
                     methods: {
@@ -323,6 +317,7 @@
         for (var i = 0; i < vueData.typeData.length; i++) {
             if (vueData.typeData[i].id === item.id) {
                 vueData.currentPositions = vueData.typeData[i].positions;
+                vm.$set('currentPositions', vueData.typeData[i].positions);
                 break;
             }
         }
@@ -361,6 +356,44 @@
         loadProvinceData();
         loadSchoolData();
         loadTypeData();
+    }
+
+    function submitHandler() {
+        vueData.resume.job_type = vueData.resume.types.join('#');
+
+        vueData.resume.spare_time = 0;
+        for (var i = 0; i < vueData.times.length; i++) {
+            vueData.resume.spare_time += Math.pow(2, 7 - parseInt(vueData.times[i]));
+        }
+
+        $.post('/user/resume', {
+            "id": vueData.resume.id,
+            "u_id": vueData.resume.u_id,
+            "name": vueData.resume.name,
+            "sex": vueData.resume.sex,
+            "birthday": moment(new Date(vueData.resume.birthday)).format('YYYY-MM-DD'),
+            "phone": vueData.resume.phone,
+            "major.id": vueData.resume.major.id,
+            "major.major": vueData.resume.major.major,
+            "major.school.id": vueData.resume.major.school.id,
+            "major.school.school": vueData.resume.major.school.school,
+            "city": vueData.resume.city,
+            "province": vueData.resume.province,
+            "introduce": vueData.resume.introduce,
+            "salary": vueData.resume.salary,
+            "title": vueData.resume.title,
+            "email": vueData.resume.email,
+            "job_type": vueData.resume.job_type,
+            "spare_time": vueData.resume.spare_time,
+            "grade":vueData.resume.grade
+        }, function (data) {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.error);
+            }
+        }, 'JSON');
+        return false;
     }
 
     $('#form').bootstrapValidator({

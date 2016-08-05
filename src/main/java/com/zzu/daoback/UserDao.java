@@ -1,5 +1,6 @@
 package com.zzu.daoback;
 
+import com.zzu.common.Common;
 import com.zzu.model.*;
 import org.apache.ibatis.session.SqlSession;
 

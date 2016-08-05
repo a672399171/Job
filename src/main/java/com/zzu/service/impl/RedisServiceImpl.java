@@ -2,10 +2,7 @@ package com.zzu.service.impl;
 
 import com.zzu.dao.ClassifyDao;
 import com.zzu.dao.SchoolDao;
-import com.zzu.model.Classify;
-import com.zzu.model.Major;
-import com.zzu.model.Position;
-import com.zzu.model.School;
+import com.zzu.model.*;
 import com.zzu.service.RedisService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -13,9 +10,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 
-/**
- * Created by zhanglei53 on 2016/7/28.
- */
 @Service("redisService")
 public class RedisServiceImpl implements RedisService {
     @Resource
@@ -63,5 +57,15 @@ public class RedisServiceImpl implements RedisService {
             redisTemplate.boundHashOps("hashData").put("schools", schools);
         }
         return schools;
+    }
+
+    public void insertVerify(Verify verify) {
+        redisTemplate.boundHashOps(verify.getType()).put(verify.getVerify(), verify);
+    }
+
+    public Verify searchVerify(String verify, String type) {
+        Verify v = (Verify) redisTemplate.boundHashOps(type).get(verify);
+        redisTemplate.boundHashOps(type).delete(verify);
+        return v;
     }
 }

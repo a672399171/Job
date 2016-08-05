@@ -1,16 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>个人资料</title>
     <%@include file="common/head.jsp" %>
-    <script src="${root}/js/ajaxfileupload.js"></script>
+    <script src="/resources/js/ajaxfileupload.js"></script>
 </head>
 <body>
 <div class="big container">
-    <%@include file="header.jsp" %>
+    <%@include file="common/header.jsp" %>
     <div class="row">
         <div class="col-xs-3 col-xs-offset-1">
             <div class="list-group">
@@ -38,11 +37,11 @@
             </div>
         </div>
         <div class="col-xs-1">
-            <img src="${root}/images/${sessionScope.user.photo_src}" width="100" height="100"
+            <img src="/resources/images/${sessionScope.user.photo_src}" width="100" height="100"
                  style="margin-top: 20px;border: 1px solid black" id="head_photo"/>
         </div>
         <div class="col-xs-5">
-            <form class="form-horizontal" action="${root}/user/modify_info.do" method="post"
+            <form class="form-horizontal" action="/user/modifyInfo" method="post"
                   enctype="multipart/form-data">
                 <div class="form-group">
                     <label class="col-xs-3 control-label">用户名:</label>
@@ -83,21 +82,6 @@
                         </c:choose>
                     </div>
                 </div>
-                <%--<div class="form-group">
-                    <label for="phone" class="col-sm-3 control-label">手机号码:</label>
-                    <div class="col-sm-8">
-                        <input type="tel" class="form-control" id="phone" placeholder="手机号码">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="varify" class="col-sm-3 control-label">验证码:</label>
-                    <div class="col-sm-5">
-                        <input type="tel" class="form-control" id="varify" placeholder="验证码">
-                    </div>
-                    <div class="col-sm-3">
-                        <button type="button" class="btn btn-default">获取验证码</button>
-                    </div>
-                </div>--%>
                 <div class="form-group">
                     <label for="file" class="col-xs-3 control-label">更换头像</label>
 
@@ -115,26 +99,25 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
+<jsp:include page="common/footer.jsp"/>
 
 <script type="application/javascript">
     $("#file").change(function () {
 
         var filePath = $("#file").val();
         var fileType = filePath.substr(filePath.lastIndexOf(".") + 1);
-        console.log(fileType);
+
         if ($.inArray(fileType, ['jpg', 'JPG', 'gif', 'GIF', 'png', 'PNG']) != -1) {
             var fileSize = getFileSize();
-            console.log(fileSize);
 
             if (fileSize <= 300 * 1024) {
                 $.ajaxFileUpload({
-                    url: '${root}/user/upload_photo.do',
+                    url: '/user/uploadPhoto',
                     secureuri: false,
                     fileElementId: "file",
                     dataType: 'json',
                     success: function (data) {
-                        $("#head_photo").attr("src", "${root}/images/" + data.src);
+                        $("#head_photo").attr("src", "/resources/images/" + data.src);
                         $("#photo_src").val(data.src);
                     },
                     error: function (data, status, e) {

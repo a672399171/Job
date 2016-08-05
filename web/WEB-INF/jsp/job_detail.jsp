@@ -8,6 +8,7 @@
     <title>${job.name}</title>
     <%@include file="common/head.jsp" %>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
+    <link href="http://g.alicdn.com/sj/dpl/1.5.1/css/sui.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/resources/css/style_job_detail.css"/>
     <script src="/resources/js/dateformat.js"></script>
     <script src="//cdn.bootcss.com/moment.js/2.14.1/moment-with-locales.min.js"></script>
@@ -17,7 +18,7 @@
 </head>
 <body>
 <div class="big container">
-    <%@include file="header.jsp" %>
+    <%@include file="common/header.jsp" %>
 
     <div class="row">
         <div class="col-md-8">
@@ -35,7 +36,7 @@
             <div class="require">
                 <span class="font4" style="margin-right: 30px">${job.low_salary}-${job.high_salary}</span>
                 <span class="date" style="margin-right: 30px">
-                    <fmt:formatDate pattern="yyyy-MM-dd hh:MM" value="${requestScope.job.post_time}"></fmt:formatDate>
+                    <fmt:formatDate pattern="yyyy-MM-dd hh:MM" value="${requestScope.job.post_time}"/>
                 </span>
                 <span class="font5">${job.type.name}</span>
                 <c:if test="${requestScope.job.status == 0}">
@@ -141,15 +142,15 @@
                     </tr>
                 </table>
             </div>
-            <div class="comment" ng-controller="CommentController" id="allComments">
+            <div class="comment" id="allComments">
                 <h4>评论列表</h4>
 
                 <div id="content">
-                    <div v-for="item in comments">
+                    <div v-for="item in list">
                         <div>
-                            <img src="/resources/images/{{item.user.photo_src}}" class='headPhoto'>
+                            <img v-bind:src="/resources/images/item.user.photo_src" class='headPhoto'>
                             <span style="color: #2b542c">{{item.user.nickname}}</span>
-                            <span>{{item.c_time.time | dateFilter 'YYYY-MM-DD hh:mm'}}</span>
+                            <span>{{item.c_time | timestampFilter 'YYYY-MM-DD hh:mm'}}</span>
                         </div>
                         <div class='contentDiv'>
                             <p>{{item.content}}</p>
@@ -157,7 +158,16 @@
                     </div>
                 </div>
 
-                <%--<xl-page pageSize="5" n="5" method="load" cla="pagination-sm"></xl-page>--%>
+                <div class="sui-pagination pagination-naked pagination-large">
+                    <ul>
+                        <li class="prev" v-bind:class="{'disabled':page<=1}"><a href="javascript:void(0)"
+                                                                                v-on:click="toPage(page-1)">上一页</a></li>
+                        <li><span class="ex-page-status">{{page}}/{{totalPage}}</span></li>
+                        <li class="next" v-bind:class="{'disabled':page>=totalPage}"><a href="javascript:void(0)"
+                                                                                        v-on:click="toPage(page+1)">下一页 </a>
+                        </li>
+                    </ul>
+                </div>
 
                 <c:choose>
                     <c:when test="${sessionScope.user != null}">
@@ -167,7 +177,7 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <span class="font3"><a href="#" style="color: red" id="loginHref">登录</a>后才能评论哦~</span>
+                        <span class="font3"><a href="/login" style="color: red" id="loginHref">登录</a>后才能评论哦~</span>
                     </c:otherwise>
                 </c:choose>
             </div>
@@ -177,11 +187,12 @@
                 <div class="allJobs" id="allJobs">
                     <h4>该公司所有职位</h4>
 
-                    <div class="job_item" style="display: block" v-for="item in jobs" v-on:click="toUrl(item.id)">
+                    <div class="job_item" style="display: block" v-for="item in list" v-on:click="toUrl(item.id)">
                         <table>
                             <tr>
                                 <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
-                                <td width="30%" class="font3">{{item.post_time.time | dateFilter 'YYYY-MM-DD hh:mm'}}</td>
+                                <td width="30%" class="font3">{{item.post_time | timestampFilter 'YYYY-MM-DD hh:mm'}}
+                                </td>
                                 <td width="30%" class="font5">{{item.post_company.company_name}}</td>
                             </tr>
                             <tr>
@@ -192,13 +203,29 @@
                         </table>
                     </div>
 
-                    <zl-page></zl-page>
+                    <div class="sui-pagination">
+                        <ul>
+                            <li class="prev" v-bind:class="{'disabled':page <= 1}"><a href="javascript:void(0)">«上一页</a></li>
+                            <li v-bind:class="{'active':item+1 == page}" v-for="item in totalPage">
+                                <a href="javascript:void(0)" v-on:click="load(item+1)">{{ item+1 }}</a>
+                            </li>
+                            <li class="dotted" v-if="totalPage < 5"><span>...</span></li>
+                            <li class="next" v-bind:class="{'disabled':page == totalPage}"><a href="javascript:void(0)">下一页»</a></li>
+                        </ul>
+                        <div>
+                            <span>共{{ totalPage }}页&nbsp;</span>
+                            <span v-if="totalPage >= 10">
+                                到<input type="text" class="page-num">
+                                <button class="page-confirm" onclick="alert(1)">确定</button>页
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="otherJobs" ng-controller="RecommendController">
+                <div class="otherJobs">
                     <h4>职位推荐</h4>
                     <c:if test="${sessionScope.user == null}">
                         <span style="color: red">登录后可见</span>
@@ -208,7 +235,8 @@
                         <table>
                             <tr>
                                 <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
-                                <td width="30%" class="font3">{{item.post_time.time | dateFilter 'YYYY-MM-DD hh:mm'}}</td>
+                                <td width="30%" class="font3">{{item.post_time.time | dateFilter 'YYYY-MM-DD hh:mm'}}
+                                </td>
                                 <td width="30%" class="font5">{{item.post_company.company_name}}</td>
                             </tr>
                             <tr>
@@ -223,7 +251,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"></jsp:include>
+<jsp:include page="common/footer.jsp"/>
 
 <script type="application/javascript">
 
@@ -258,9 +286,6 @@
     $(function () {
         formatDate();
 
-        //设置登录按钮的href
-        $("#loginHref").attr("href", "${root}/user/toLogin.do?from=" + window.location.href);
-
         flag = ${requestScope.collection != null};
         initMap();
         var spareStr = parseInt(${requestScope.job.work_time}).toString(2);
@@ -285,7 +310,7 @@
     //收藏
     $("#collect").click(function () {
         if (${sessionScope.user == null}) {
-            window.location = "${root}/user/toLogin.do?from=" + window.location.href;
+            window.location = "/login?from=" + window.location.href;
         } else {
             flag = !flag;
             if (flag) {
@@ -321,18 +346,28 @@
         }
     });
 
+    var vm = undefined;
+
     $(function () {
         // 该公司所有职位
         $.get('/job/company/' + '${requestScope.job.post_company.id}' + '/page/1', function (data) {
             if (data.success) {
-                new Vue({
+                vm = new Vue({
                     el: '#allJobs',
-                    data: {
-                        jobs: data.list
-                    },
+                    data: data,
                     methods: {
                         toUrl: function (id) {
                             window.location = '/job/' + id;
+                        },
+                        load: function (page) {
+                            if(page == vm.data.page) {
+                                return;
+                            }
+                            $.get('/job/company/' + '${requestScope.job.post_company.id}' + '/page/' + page, function (data) {
+                                if (data.success) {
+                                    vm.data = data;
+                                }
+                            }, 'JSON');
                         }
                     }
                 })
@@ -341,20 +376,40 @@
             }
         }, 'JSON');
 
+        loadComments(1);
+    });
+
+    var commentsVm = undefined;
+
+    function loadComments(page) {
+        page = page ? page : 1;
         // 职位评论
-        $.get('/job/' + '${requestScope.job.id}' + '/comment/page/1', function (data) {
+        $.get('/job/' + '${requestScope.job.id}' + '/comment/page/' + page, function (data) {
             if (data.success) {
-                new Vue({
-                    el: '#allComments',
-                    data: {
-                        comments: data.list
-                    }
-                })
+                if (commentsVm) {
+                    commentsVm.$set('page', data.page);
+                    commentsVm.$set('totalPage', data.totalPage);
+                    commentsVm.$set('totalItem', data.totalItem);
+                    commentsVm.$set('list', data.list);
+                } else {
+                    commentsVm = new Vue({
+                        el: '#allComments',
+                        data: data,
+                        methods: {
+                            toPage: function (p) {
+                                console.log(p);
+                                if (p > 1 && p <= data.totalPage) {
+                                    loadComments(p);
+                                }
+                            }
+                        }
+                    })
+                }
             } else {
                 alert(data.error);
             }
         }, 'JSON');
-    });
+    }
 
 </script>
 </body>

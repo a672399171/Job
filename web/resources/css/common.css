@@ -81,8 +81,6 @@ a:hover {
 #photo {
     width: 30px;
     height: 30px;
-    border: 1px solid #999999;
-    border-radius: 15px;
 }
 
 #list {
@@ -237,11 +235,11 @@ a:hover {
     margin-left: 15px;
 }
 
-.selectType ul li:hover {
+/*.selectType ul li:hover {
     background: #337ab7;
     color: white;
     border-radius: 5px;
-}
+}*/
 
 .on {
     background: #337ab7;

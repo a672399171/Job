@@ -1,7 +1,7 @@
 package com.zzu.common.interceptor;
 
 import com.zzu.common.annotaion.Authorization;
-import com.zzu.model.Common;
+import com.zzu.common.Common;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,12 +20,24 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         HandlerMethod method = (HandlerMethod) handler;
         Authorization auth = method.getMethodAnnotation(Authorization.class);
         if (auth != null) {
-            String value = auth.value();
-            if (value.equals(Common.AUTH_USER_LOGIN)
-                    && session.getAttribute(Common.USER) == null) {
-                response.sendRedirect("/login");
-                return false;
+            String[] values = auth.value();
+
+            for(String value : values) {
+                if (value.equals(Common.AUTH_USER_LOGIN)
+                        && session.getAttribute(Common.USER) != null) {
+                    // response.sendRedirect("/login");
+                    return true;
+                } else if (value.equals(Common.AUTH_COMPANY_LOGIN)
+                        && session.getAttribute(Common.COMPANY) != null) {
+                    // response.sendRedirect("/login");
+                    return true;
+                } else if (value.equals(Common.AUTH_ADMIN_LOGIN)
+                        && session.getAttribute(Common.ADMIN) != null) {
+                    // response.sendRedirect("/login");
+                    return true;
+                }
             }
+            return false;
         }
         return true;
     }

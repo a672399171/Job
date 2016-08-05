@@ -11,7 +11,7 @@ public interface UserDao {
 
     User exists(String username);
 
-    void modifyInfo(String nickname, String sex, String photo_src, int uId);
+    int modifyInfo(User user);
 
     User getById(int id);
 
@@ -33,7 +33,8 @@ public interface UserDao {
 
     int deleteUsers(int[] ids);
 
-    void changeUserPassword(User user);
+    int changeUserPassword(@Param("id") int id,
+                            @Param("password") String password);
 
     void bindEmail(User user);
 

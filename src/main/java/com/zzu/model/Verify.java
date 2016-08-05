@@ -1,16 +1,17 @@
 package com.zzu.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Administrator on 2016/3/4.
  */
-public class Verify {
+public class Verify implements Serializable {
 	private String username;
 	private String verify;
 	private Date time;
 	private String email;
-	private int type;
+	private String type;
 	private String u;
 
 	public String getU() {
@@ -21,11 +22,11 @@ public class Verify {
 		this.u = u;
 	}
 
-	public int getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(int type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 

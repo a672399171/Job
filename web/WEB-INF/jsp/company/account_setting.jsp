@@ -1,13 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>账号设置</title>
-    <%@include file="../common/head.jsp"%>
+    <%@include file="../common/head.jsp" %>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
-    <script src="${root}/js/ajaxfileupload.js"></script>
+    <script src="/resources/js/ajaxfileupload.js"></script>
     <style type="text/css">
         #container {
             background: white;
@@ -28,7 +27,7 @@
     </style>
 </head>
 <body>
-<jsp:include page="header.jsp"></jsp:include>
+<jsp:include page="header.jsp"/>
 
 <div class="shade"></div>
 <div class="pop" id="modifyPassword">
@@ -75,7 +74,7 @@
     </div>
     <div class="row">
         <div class="col-xs-8">
-            <form class="form-horizontal" action="${root}/user/updateCompany.do" method="post"
+            <form class="form-horizontal" action="/company/updateCompany" method="post"
                   enctype="multipart/form-data">
                 <div class="form-group">
                     <label class="col-xs-2 control-label">公司名称</label>
@@ -175,7 +174,7 @@
                                 <input type="file" id="logo" name="logo">
                             </c:when>
                             <c:otherwise>
-                                <img src="${root}/images/${company.logo}"/>
+                                <img src="/resource/images/${company.logo}"/>
                             </c:otherwise>
                         </c:choose>
                     </div>
@@ -235,11 +234,11 @@
         </div>
     </div>
 </div>
-<%@include file="../footer.jsp"%>
+<%@include file="../common/footer.jsp" %>
 <script type="application/javascript">
     //页面加载完后获取当前位置
     $(function () {
-        if("${requestScope.msg}" != "") {
+        if ("${requestScope.msg}" != "") {
             alert("${requestScope.msg}");
         }
 
@@ -289,8 +288,7 @@
 
     //修改密码
     function modifyPassword() {
-        $.post("${root}/user/modifyCompanyPassword.do",
-                {
+        $.post("/company/modifyPassword", {
                     password: $("#password").val(),
                     newPassword: $("#newPassword").val()
                 }, function (data) {

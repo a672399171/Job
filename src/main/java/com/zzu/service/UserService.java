@@ -21,4 +21,14 @@ public interface UserService {
     List<Apply> getApplies(int uId, int jId);
 
     List<Poor> searchPoor(int uId);
+
+    Result modifyInfo(User user);
+
+    Result deleteCollection(int u_id, int j_id);
+
+    User exists(String username);
+
+    void bindEmail(User user);
+
+    Result changeUserPassword(int id,String password);
 }

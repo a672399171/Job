@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -101,21 +100,21 @@
             return;
         }
 
-        $.post("${root}/user/resetPassword.do", {
+        $.post("/user/resetPassword", {
             password: pwd1,
             type:"company"
         }, function (data) {
             if (data.msg) {
                 alert(data.msg);
             } else {
-                window.location = "${root}";
+                window.location = "/";
             }
         });
     });
 
     //发送邮件
     function sendEmail() {
-        $.post("${root}/user/varifyEmail.do", {
+        $.post("/user/verifyEmail", {
             email: $("#email").val(),
             username: $("#user").val(),
             type:"company"

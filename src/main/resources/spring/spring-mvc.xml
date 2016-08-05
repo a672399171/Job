@@ -10,13 +10,35 @@
        http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 
     <!-- 注解驱动 -->
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven conversion-service="conversionService"/>
 
     <bean id="loginAuthInterceptor" class="com.zzu.common.interceptor.AuthorizationInterceptor"/>
+
+    <!-- 自定义注解 -->
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="registerDefaultFormatters" value="false" />
+        <property name="formatters">
+            <set>
+                <bean class="org.springframework.format.number.NumberFormatAnnotationFormatterFactory" />
+            </set>
+        </property>
+        <property name="formatterRegistrars">
+            <set>
+                <bean class="org.springframework.format.datetime.joda.JodaTimeFormatterRegistrar">
+                    <property name="dateFormatter">
+                        <bean class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean">
+                            <property name="pattern" value="yyyy-MM-dd"/>
+                        </bean>
+                    </property>
+                </bean>
+            </set>
+        </property>
+    </bean>
 
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/user/**"/>
+            <mvc:mapping path="/company/**"/>
             <ref bean="loginAuthInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>
