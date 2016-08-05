@@ -68,61 +68,72 @@
             <div class="col-md-1">
                 类别:
             </div>
-            {{param | json}}
             <div class="col-md-11">
                 <ul>
-                    <%--<li v-bind:class="{'on':param}" ng-click="changePid(0)">不限</li>
-                    <li v-bind:class="{'on':item.id == param.pId}" v-for="item in positionData"
-                        ng-click="changePid(item.id)">
+                    <li v-bind:class="{'on':param.pId == null}" v-on:click="param.pId=null">不限</li>
+                    <li v-bind:class="{'on':item.id == param.pId}" v-for="item in positions"
+                        v-on:click="param.pId=item.id">
                         {{item.name}}
-                    </li>--%>
+                    </li>
                 </ul>
             </div>
         </div>
-        <%--
+
         <div class="row selectType" id="timeDiv">
             <div class="col-md-1">
                 工作时间:
             </div>
             <div class="col-md-11">
-                <ul>
-                    <li ng-class="{on:timeArray[0]}" ng-click="changeTime(0)">不限</li>
-                    <li ng-class="{on:timeArray[1]}" ng-click="changeTime(1)">周一</li>
-                    <li ng-class="{on:timeArray[2]}" ng-click="changeTime(2)">周二</li>
-                    <li ng-class="{on:timeArray[3]}" ng-click="changeTime(3)">周三</li>
-                    <li ng-class="{on:timeArray[4]}" ng-click="changeTime(4)">周四</li>
-                    <li ng-class="{on:timeArray[5]}" ng-click="changeTime(5)">周五</li>
-                    <li ng-class="{on:timeArray[6]}" ng-click="changeTime(6)">周六</li>
-                    <li ng-class="{on:timeArray[7]}" ng-click="changeTime(7)">周日</li>
-                </ul>
+                <%--<ul>
+                    <li v-bind:class="{'on':timeArray[0]}" v-on:click="changeTime(0)">不限</li>
+                    <li v-bind:class="{on:timeArray[1]}" v-on:click="changeTime(1)">周一</li>
+                    <li v-bind:class="{on:timeArray[2]}" v-on:click="changeTime(2)">周二</li>
+                    <li v-bind:class="{on:timeArray[3]}" v-on:click="changeTime(3)">周三</li>
+                    <li v-bind:class="{on:timeArray[4]}" v-on:click="changeTime(4)">周四</li>
+                    <li v-bind:class="{on:timeArray[5]}" v-on:click="changeTime(5)">周五</li>
+                    <li v-bind:class="{on:timeArray[6]}" v-on:click="changeTime(6)">周六</li>
+                    <li v-bind:class="{on:timeArray[7]}" v-on:click="changeTime(7)">周日</li>
+                </ul>--%>
             </div>
         </div>
+
+        {{flags | json}}
         <div class="row selectType" id="salaryDiv">
             <div class="col-md-1">
                 月薪:
             </div>
             <div class="col-md-11">
                 <ul>
-                    <li ng-class="{on:params.low==0 && params.high=='max'}" ng-click="changeSalary(0,'max')">不限</li>
-                    <li ng-class="{on:params.low==0 && params.high==500}" ng-click="changeSalary(0,500)">500以下</li>
-                    <li ng-class="{on:params.low==500 && params.high==1000}" ng-click="changeSalary(500,1000)">
+                    <li v-bind:class="flags[0]"
+                        v-on:click="changeSalary(0,0,0)">不限
+                    </li>
+                    <li v-bind:class="flags[1]"
+                        v-on:click="changeSalary(0,500,1)">
+                        500以下
+                    </li>
+                    <li v-bind:class="flags[2]"
+                        v-on:click="changeSalary(500,1000,2)">
                         500-1000
                     </li>
-                    <li ng-class="{on:params.low==1000 && params.high==2000}" ng-click="changeSalary(1000,2000)">
+                    <li v-bind:class="flags[3]"
+                        v-on:click="changeSalary(1000,2000,3)">
                         1000-2000
                     </li>
-                    <li ng-class="{on:params.low==2000 && params.high==3000}" ng-click="changeSalary(2000,3000)">
+                    <li v-bind:class="flags[4]"
+                        v-on:click="changeSalary(2000,3000,4)">
                         2000-3000
                     </li>
-                    <li ng-class="{on:params.low==3000 && params.high==4000}" ng-click="changeSalary(3000,4000)">
+                    <li v-bind:class="flags[5]"
+                        v-on:click="changeSalary(3000,4000,5)">
                         3000-4000
                     </li>
-                    <li ng-class="{on:params.low==4000 && params.high=='max'}" ng-click="changeSalary(4000,'max')">
+                    <li v-bind:class="flags[6]"
+                        v-on:click="changeSalary(4000,0,6)">
                         4000以上
                     </li>
                 </ul>
             </div>
-        </div>--%>
+        </div>
     </div>
 
     <div id="middle">
@@ -155,19 +166,39 @@
         pId:${param.pId},
         cId:${param.cId}
     };
-    $(function () {
+
+    function loadPositions() {
         $.getJSON('/job/positionData?cId=${param.cId}', function (data) {
-            vueData.positionData = data;
+            vueData.positions = data;
         });
+    }
+
+    $(function () {
+        loadPositions();
 
         $.post('/job/listData', vueData.param, function (data) {
             if (data.success) {
-                vueData = data;
+                vueData.list = data.list;
+                vueData.totalItem = data.totalItem;
+                vueData.totalPage = data.totalPage;
+                vueData.page = data.page;
+
+                vueData.flags = new Array(7);
+                vueData.flags.fill({
+                    'on': false
+                });
 
                 new Vue({
                     el: '#app',
                     data: vueData,
-                    methods: {}
+                    methods: {
+                        changeSalary: function (low, high, i) {
+                            vueData.param.low = low;
+                            vueData.param.high = high;
+                            vueData.flags[1]['on'] = true;
+                        }
+                    },
+                    computed: {}
                 });
             } else {
                 alert(data.error);
