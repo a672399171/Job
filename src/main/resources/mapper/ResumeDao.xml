@@ -34,4 +34,75 @@
         and m.s_id=s.id
         and u_id=#{u_id}
     </select>
+
+    <select id="searchResumes" resultType="com.zzu.model.Resume">
+        SELECT
+        r.id,
+        r.name,
+        r.sex,
+        r.grade,
+        r.salary,
+        s.school as "major.school.school",
+        m.major as "major.major"
+        FROM
+        tb_resume r,
+        tb_school s,
+        tb_major m
+        where
+        r.major=m.id
+        and m.s_id=s.id
+        <if test="grade != null and grade &gt; 0">
+            and r.grade=#{grade}
+        </if>
+        <if test="time != null and time &gt; 0">
+            and r.spare_time &amp; #{time} &gt; 0
+        </if>
+        <if test="salary != ''">
+            and r.salary = #{salary}
+        </if>
+        <if test="keyword != null">
+            and
+            (r.title like "%"#{keyword}"%" OR
+            r.name like "%"#{keyword}"%" OR
+            s.school like "%"#{keyword}"%" OR
+            m.major like "%"#{keyword}"%")
+        </if>
+        <if test="school != null and school &gt; 0">
+            and s.id = #{school}
+        </if>
+        <if test="count != null and count &gt; 0">
+            limit ${start},${count}
+        </if>
+    </select>
+
+    <select id="getResumeCount" resultType="int">
+        SELECT
+        count(*) as num
+        FROM
+        tb_resume r,
+        tb_school s,
+        tb_major m
+        where
+        r.major=m.id
+        and m.s_id=s.id
+        <if test="grade != null and grade &gt; 0">
+            and r.grade=#{grade}
+        </if>
+        <if test="time != null and time &gt; 0">
+            and r.spare_time &amp; #{time} &gt; 0
+        </if>
+        <if test="salary != ''">
+            and r.salary = #{salary}
+        </if>
+        <if test="keyword != null">
+            and
+            (r.title like "%"#{keyword}"%" OR
+            r.name like "%"#{keyword}"%" OR
+            s.school like "%"#{keyword}"%" OR
+            m.major like "%"#{keyword}"%")
+        </if>
+        <if test="school != null and school &gt; 0">
+            and s.id = #{school}
+        </if>
+    </select>
 </mapper>

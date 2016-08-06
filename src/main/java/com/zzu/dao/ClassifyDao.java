@@ -3,6 +3,7 @@ package com.zzu.dao;
 import com.zzu.model.Classify;
 import com.zzu.model.Position;
 import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -16,6 +17,8 @@ public interface ClassifyDao {
     void updateClassify(Classify classify);
 
     void deleteClassify(int id);
+
+    List<Position> searchPositionsWithArr(@Param("arr") int[] arr);
 
     List<Position> searchPositions(@Param("cId") int cId);
 

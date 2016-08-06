@@ -25,18 +25,16 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             for(String value : values) {
                 if (value.equals(Common.AUTH_USER_LOGIN)
                         && session.getAttribute(Common.USER) != null) {
-                    // response.sendRedirect("/login");
                     return true;
                 } else if (value.equals(Common.AUTH_COMPANY_LOGIN)
                         && session.getAttribute(Common.COMPANY) != null) {
-                    // response.sendRedirect("/login");
                     return true;
                 } else if (value.equals(Common.AUTH_ADMIN_LOGIN)
                         && session.getAttribute(Common.ADMIN) != null) {
-                    // response.sendRedirect("/login");
                     return true;
                 }
             }
+            response.sendRedirect("/login");
             return false;
         }
         return true;

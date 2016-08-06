@@ -1,6 +1,7 @@
 package com.zzu.service;
 
 import com.zzu.dto.Result;
+import com.zzu.model.Apply;
 import com.zzu.model.Company;
 
 /**
@@ -21,4 +22,6 @@ public interface CompanyService {
     Company exists(String username);
 
     Company searchByEmail(String email);
+
+    Result<Apply> getApplies(int id,int page,int pageSize);
 }

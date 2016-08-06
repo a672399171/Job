@@ -22,4 +22,18 @@
         </if>
     </select>
 
+    <select id="searchPositionsWithArr" resultType="com.zzu.model.Position">
+        select
+        `id`,
+        `c_id` as "cId",
+        `name`
+        from tb_position
+        <if test="arr != null">
+            where id in
+            <foreach collection="arr" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
 </mapper>

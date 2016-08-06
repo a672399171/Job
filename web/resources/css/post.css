@@ -55,19 +55,8 @@
     height: 100%;
     overflow: auto;
 }
-
-.tag {
-    cursor: pointer;
+#addInput {
+    width: 50%;
     display: inline-block;
-    width: 100px;
-    height: 40px;
-    line-height: 40px;
-    text-align: center;
-    background-color: #F8F8F8;
-    color: grey;
-    border-radius: 5px;
-}
-
-.tag:hover {
-    color: grey;
+    margin: 10px;
 }

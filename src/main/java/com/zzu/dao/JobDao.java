@@ -13,9 +13,9 @@ public interface JobDao {
 
     Job getJobById(@Param("id") int id);
 
-    void updateJob(Job job);
+    int updateJob(Job job);
 
-    void addJob(Job job);
+    int addJob(Job job);
 
     int deleteJobs(int[] ids);
 

@@ -19,4 +19,6 @@ public interface JobService {
     Result<Job> searchJobs(int[] pIds, int time, int low, int high, String keyword, int page, int pageSize);
 
     Result changeJobStatus(int jId, int status);
+
+    Result addJob(Job job);
 }

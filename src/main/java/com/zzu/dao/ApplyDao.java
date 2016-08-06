@@ -15,9 +15,11 @@ public interface ApplyDao {
 
     void addApply(Apply apply);
 
-    List<Apply> getAppliesByCompany(int id, int page);
+    List<Apply> getAppliesByCompany(@Param("id") int id,
+                                    @Param("start") int start,
+                                    @Param("count") int count);
 
-    int getCompanyApplyCount(int id);
+    int getCompanyApplyCount(@Param("id") int id);
 
     void updateApply(int jId, int rId, int state);
 }

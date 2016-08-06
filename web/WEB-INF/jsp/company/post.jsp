@@ -4,11 +4,13 @@
 <html lang="zh-CN">
 <head>
     <title>发布新职位</title>
-    <%@include file="../common/head.jsp"%>
-    <link rel="stylesheet" type="text/css" href="/css/post.css"/>
-    <link href="/js/summernote/summernote.css" rel="stylesheet">
-    <script src="/js/summernote/summernote.js"></script>
-    <script src="/js/summernote/lang/summernote-zh-CN.js"></script>
+    <%@include file="../common/head.jsp" %>
+    <link rel="stylesheet" type="text/css" href="/resources/css/post.css"/>
+    <link href="/resources/js/summernote/summernote.css" rel="stylesheet">
+    <script src="/resources/js/summernote/summernote.js"></script>
+    <script src="/resources/js/summernote/lang/summernote-zh-CN.js"></script>
+    <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <link href="http://g.alicdn.com/sj/dpl/1.5.1/css/sui.min.css" rel="stylesheet">
 </head>
 <body>
 <jsp:include page="header.jsp"/>
@@ -16,7 +18,7 @@
 <div class="container" id="container">
     <div class="row">
         <div class="col-md-8">
-            <form class="form-horizontal" method="post" action="/job/post_job.do" id="postForm">
+            <form class="form-horizontal" method="post" action="/job/add" id="postForm">
                 <div class="form-group">
                     <label for="name" class="col-sm-2 control-label">职位名称</label>
 
@@ -44,10 +46,11 @@
                     <label class="col-sm-2 control-label">月薪范围</label>
 
                     <div class="col-sm-3">
-                        <input type="number" class="form-control" name="low_salary" placeholder="最低月薪">
+                        <input type="number" class="form-control" id="low_salary" name="low_salary" placeholder="最低月薪">
                     </div>
                     <div class="col-sm-3">
-                        <input type="number" class="form-control" name="high_salary" placeholder="最高月薪">
+                        <input type="number" class="form-control" id="high_salary" name="high_salary"
+                               placeholder="最高月薪">
                     </div>
                 </div>
                 <div class="form-group">
@@ -61,7 +64,8 @@
                     <label class="col-sm-2 control-label">招聘人数</label>
 
                     <div class="col-sm-10">
-                        <input type="number" class="form-control" name="person_count" placeholder="招聘人数">
+                        <input type="number" class="form-control" id="person_count" name="person_count"
+                               placeholder="招聘人数">
                     </div>
                 </div>
                 <div class="form-group">
@@ -75,8 +79,10 @@
                     <label class="col-sm-2 control-label">职位标签</label>
 
                     <div class="col-sm-10">
-                        <div class="tag" id="t1">工资日结</div>
-                        <div class="tag" id="t2">长期兼职</div>
+                        <input type="text" class="form-control" id="addInput"/>
+                        <button type="button" class="btn btn-default" onclick="addTag()">添加</button>
+                        <label>添加自定义标签</label>
+                        <ul id="tagContainer" class="sui-tag tag-bordered"></ul>
                     </div>
                 </div>
                 <div class="form-group">
@@ -123,6 +129,7 @@
 
 <script type="application/javascript">
     var objs = [];
+    var tags = undefined;
 
     $("#typeDiv").click(function () {
         $("#hideJobDiv").show();
@@ -149,6 +156,26 @@
 
         $('#description').summernote(config);
         $('#skill').summernote(config);
+    }
+
+    function addTag() {
+        var tagText = $('#addInput').val();
+
+        if (tagText.trim().length > 0) {
+            var li = $("<li class='tag-selected with-x'>" + tagText + "<i>×</i></li>");
+
+            $('#tagContainer').append(li);
+            $('#addInput').val("");
+
+            li.click(function () {
+                li.toggleClass("tag-selected");
+            });
+            li.children('i').click(function () {
+                $(this).parent().remove();
+            });
+        } else {
+            alert("请输入标签内容");
+        }
     }
 
     $(function () {
@@ -208,51 +235,57 @@
             }
         });
     });
+
     $("#rightList ul li").click(function () {
         $("#rightList ul li").css("background", "white");
         $(this).css("background", "grey");
     });
 
     function initData() {
-        $.getJSON("/job/classifies.do", function (data) {
-            var classifies = data.classifies;
-            var positions = data.positions;
+        $.getJSON('/resources/json/tags.json', function (data) {
+            tags = data;
+            $('#tagContainer').html('');
+
+            tags.forEach(function (e) {
+                $('#tagContainer').append("<li>" + e + "</li>");
+            });
+
+            $('#tagContainer li').click(function () {
+                $(this).toggleClass("tag-selected");
+            });
+        });
+
+        $.getJSON("/job/typeData", function (data) {
+            var classifies = data;
+            var classify = undefined;
             for (var i = 0; i < classifies.length; i++) {
-                var classify = classifies[i];
+                classify = classifies[i];
                 var li = $("<li>" + classify.name + "</li>");
                 $("#leftList ul").append(li);
-                var obj = {
-                    classify: classify,
-                    positions: []
-                };
-
-                for (var j = 0; j < positions.length; j++) {
-                    var position = positions[j];
-                    if (position.c_id == classify.id) {
-                        obj.positions.push(position);
-                    }
-                }
-                objs.push(obj);
             }
             $("#leftList ul li").click(function () {
                 $("#leftList ul li").css("background", "white");
                 $(this).css("background", "grey");
 
+                var text = $(this).text();
+
                 $("#rightList ul").html("");
-                for (var i = 0; i < objs.length; i++) {
-                    var obj = objs[i];
-                    if (obj.classify.name == $(this).text()) {
-                        for (var j = 0; j < obj.positions.length; j++) {
-                            $("#rightList ul").append("<li id='" + obj.positions[j].id + "'>" + obj.positions[j].name + "</li>");
+
+                classifies.forEach(function (e) {
+                    if (e.name === text) {
+                        for (var i = 0; i < e.positions.length; i++) {
+                            var position = e.positions[i];
+                            $("#rightList ul").append("<li id='" + position.id + "'>" + position.name + "</li>");
                         }
-                        break;
+                        $("#rightList ul li").click(function () {
+                            $("#rightList ul li").css("background", "white");
+                            $(this).css("background", "grey");
+                            $("#type").val($(this).text());
+                            $("#typeHidden").val($(this).attr("id"));
+                        });
+
+                        return;
                     }
-                }
-                $("#rightList ul li").click(function () {
-                    $("#rightList ul li").css("background", "white");
-                    $(this).css("background", "grey");
-                    $("#type").val($(this).text());
-                    $("#typeHidden").val($(this).attr("id"));
                 });
             });
         });
@@ -265,26 +298,6 @@
 
     $("#type").focus(function () {
         $("#type").blur();
-    });
-
-    var t1 = false;
-    var t2 = false;
-
-    $("#t1").click(function () {
-        if (t1) {
-            $(this).css("background", "#F8F8F8");
-        } else {
-            $(this).css("background", "#A2C2D1");
-        }
-        t1 = !t1;
-    });
-    $("#t2").click(function () {
-        if (t2) {
-            $(this).css("background", "#F8F8F8");
-        } else {
-            $(this).css("background", "#A2C2D1");
-        }
-        t2 = !t2;
     });
 
     function getSpareTime() {
@@ -302,12 +315,11 @@
     function setData() {
         $("#work_time").val(getSpareTime());
         var array = [];
-        if (t1) {
-            array.push($("#t1").text());
-        }
-        if (t2) {
-            array.push($("#t2").text());
-        }
+
+        $('#tagContainer .tag-selected').forEach(function (e) {
+            array.push($(this).text());
+        });
+
         $("#tag").val(array.join("#"));
         $("#des").val($('#description').summernote('code'));
         $("#sk").val($('#skill').summernote('code'));
@@ -322,7 +334,26 @@
             return false;
         }
 
-        return true;
+        $.post('/job/add', {
+            "type.id": $('#typeHidden').val(),
+            "name": $('#name').val(),
+            "description": $('#des').val(),
+            "person_count": $('#person_count').val(),
+            "skill": $('#sk').val(),
+            "high_salary": $('#high_salary').val(),
+            "low_salary": $('#low_salary').val(),
+            "post_company.id": '${sessionScope.company.id}',
+            "tag": $('#tag').val(),
+            "work_time": $("#work_time").val()
+        }, function (data) {
+            if (data.success) {
+                window.location = '/company/jobManage';
+            } else {
+                alert(data.error);
+            }
+        }, 'JSON');
+
+        return false;
     }
 
 </script>
