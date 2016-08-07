@@ -13,6 +13,7 @@
     <mvc:annotation-driven conversion-service="conversionService"/>
 
     <bean id="loginAuthInterceptor" class="com.zzu.common.interceptor.AuthorizationInterceptor"/>
+    <bean id="autoLoginInterceptor" class="com.zzu.common.interceptor.AutoLoginInterceptor"/>
 
     <!-- 自定义注解 -->
     <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
@@ -40,6 +41,10 @@
             <mvc:mapping path="/user/**"/>
             <mvc:mapping path="/company/**"/>
             <ref bean="loginAuthInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <ref bean="autoLoginInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>
 

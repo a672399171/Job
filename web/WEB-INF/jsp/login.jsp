@@ -1,3 +1,4 @@
+<%@ page import="com.zzu.common.Common" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
@@ -7,7 +8,7 @@
     boolean flag = false;
     if (cookies != null) {
         for (int i = 0; i < cookies.length; i++) {
-            if (cookies[i].getName().equals("cookie_user")) {
+            if (cookies[i].getName().equals(Common.JOB_COOKIE_USER_REMEMBER)) {
                 username = cookies[i].getValue().split("-")[0];
                 passward = cookies[i].getValue().split("-")[1];
                 request.setAttribute("username", username); //存用户名
@@ -23,7 +24,6 @@
     <title>登录</title>
     <%@include file="common/head.jsp"%>
     <link rel="stylesheet" type="text/css" href="/resources/css/style_login.css"/>
-    <script src="/resources/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
     <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
 </head>
 <body>
@@ -49,7 +49,7 @@
                             <%
                             }
                         %>
-                        >记住我
+                        >7天内自动登录
                     </label>
                     <a href="/findPassword" id="wangji">忘记密码</a>
                 </div>
