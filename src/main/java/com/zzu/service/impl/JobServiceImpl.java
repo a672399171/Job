@@ -74,4 +74,20 @@ public class JobServiceImpl implements JobService {
         return result;
     }
 
+    public Result addJob(Job job){
+        Result result = new Result();
+        result.setSuccess(false);
+        if(job == null) {
+            result.setError("职位信息缺失");
+        } else if(job.getType() == null || job.getType().getId() <= 0) {
+            result.setError("职位类型错误");
+        } else if(jobDao.addJob(job) < 1){
+            result.setError("发布失败");
+        } else {
+            result.setSuccess(true);
+        }
+
+        return result;
+    }
+
 }

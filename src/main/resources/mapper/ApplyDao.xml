@@ -31,4 +31,45 @@
         </if>
         order by apply_date
     </select>
+
+    <select id="getAppliesByCompany" resultType="com.zzu.model.Apply">
+        select
+        state,
+        apply_date,
+        r.id as "resume.id",
+        r.u_id as "resume.user.id",
+        r.name as "resume.name",
+        r.grade as "resume.grade",
+        j.id as "job.id",
+        j.name as "job.name"
+        from
+        tb_resume r,
+        tb_job j,
+        tb_apply a
+        where 1
+        and r.id=a.r_id
+        and j.id=a.j_id
+        <if test="id != null and id &gt; 0">
+            and j.post_company=#{id}
+        </if>
+        order by apply_date
+        <if test="count != null and count &gt; 0">
+            limit ${start},${count}
+        </if>
+    </select>
+
+    <select id="getCompanyApplyCount" resultType="int">
+        select
+        count(*) as num
+        from
+        tb_resume r,
+        tb_job j,
+        tb_apply a
+        where 1
+        and r.id=a.r_id
+        and j.id=a.j_id
+        <if test="id != null and id &gt; 0">
+            and j.post_company=#{id}
+        </if>
+    </select>
 </mapper>

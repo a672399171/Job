@@ -9,10 +9,12 @@ import com.zzu.model.Collection;
 import com.zzu.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -111,7 +113,7 @@ public class JobController {
         return "vague_search_job";
     }
 
-    @Authorization({Common.AUTH_USER_LOGIN, Common.AUTH_ADMIN_LOGIN, Common.COMPANY})
+    @Authorization({Common.AUTH_USER_LOGIN, Common.AUTH_ADMIN_LOGIN})
     @RequestMapping(value = "/listData", method = RequestMethod.POST)
     @ResponseBody
     public Result<Job> listData(@RequestParam(value = "cId", required = false) Integer cId,
@@ -120,7 +122,7 @@ public class JobController {
                                 @RequestParam(value = "low", required = false) Integer low,
                                 @RequestParam(value = "high", required = false) Integer high,
                                 @RequestParam(value = "keyword", required = false) String keyword,
-                                @RequestParam(value = "status", required = false) Integer page) {
+                                @RequestParam(value = "page", required = false) Integer page) {
         int[] pIds = null;
         if (pId != null && pId > 0) {
             pIds = new int[]{pId};
@@ -158,5 +160,27 @@ public class JobController {
     public Result changeJobStatus(@RequestParam(value = "j_id", defaultValue = "0") Integer j_id,
                                   @RequestParam(value = "status", defaultValue = "0") Integer status) {
         return jobService.changeJobStatus(j_id, status);
+    }
+
+    @Authorization({Common.AUTH_COMPANY_LOGIN, Common.AUTH_ADMIN_LOGIN})
+    @RequestMapping("/add")
+    @ResponseBody
+    public Result addJob(@Valid @ModelAttribute("job") Job job,
+                         BindingResult bindingResult, HttpSession session) {
+        Result result = new Result();
+        Company company = (Company) session.getAttribute(Common.COMPANY);
+        Admin admin = (Admin) session.getAttribute(Common.ADMIN);
+
+        if (company != null && job != null && job.getPost_company() != null &&
+                company.getId() == job.getPost_company().getId()) {
+            result = jobService.addJob(job);
+        } else if (admin != null) {
+            result = jobService.addJob(job);
+        } else {
+            result.setSuccess(false);
+            result.setError("权限错误");
+        }
+
+        return result;
     }
 }

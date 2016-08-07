@@ -97,7 +97,7 @@ public class UserController {
      *
      * @return
      */
-    @RequestMapping(value = "/resume",method = RequestMethod.GET)
+    @RequestMapping(value = "/resume", method = RequestMethod.GET)
     @Authorization(Common.AUTH_USER_LOGIN)
     public String resume() {
         return "resume";
@@ -133,7 +133,7 @@ public class UserController {
         return "poor";
     }
 
-    @Authorization(Common.AUTH_USER_LOGIN)
+    @Authorization({Common.AUTH_USER_LOGIN, Common.AUTH_COMPANY_LOGIN})
     @RequestMapping(value = "/resume/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Result getResumeById(@PathVariable("id") int id) {
@@ -145,12 +145,13 @@ public class UserController {
 
     /**
      * 修改简历
+     *
      * @return
      */
-    @RequestMapping(value = "/resume",method = RequestMethod.POST)
+    @RequestMapping(value = "/resume", method = RequestMethod.POST)
     @Authorization(Common.AUTH_USER_LOGIN)
     @ResponseBody
-    public Result saveOrModifyResult(@Valid @ModelAttribute("resume") Resume resume,BindingResult bindingResult) {
+    public Result saveOrModifyResult(@Valid @ModelAttribute("resume") Resume resume, BindingResult bindingResult) {
         Result result = new Result();
         System.out.println(resume);
         return result;
@@ -404,25 +405,6 @@ public class UserController {
         map.put("src", newFile);
         return map;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     @RequestMapping("/captchaCode")

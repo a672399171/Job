@@ -3,9 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
-    <!--<welcome-file-list>
-        <welcome-file>job/index.do</welcome-file>
-    </welcome-file-list>-->
 
     <!-- 配置spring配置文件的位置 -->
     <context-param>
@@ -58,5 +55,11 @@
     <context-param>
         <param-name>logbackConfigLocation</param-name>
         <param-value>classpath:logback.xml</param-value>
+    </context-param>
+
+    <!-- webAppRootKey -->
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>job</param-value>
     </context-param>
 </web-app>

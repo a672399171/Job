@@ -45,7 +45,7 @@
             </thead>
             <tbody>
             <tr v-for="item in list">
-                <td><a href="/job/{{item.id}}">{{item.name}}</a></td>
+                <td><a href="/company/job/{{item.id}}">{{item.name}}</a></td>
                 <td><span class="font3">{{item.type.name}}</span></td>
                 <td>
                     <span class="date">

@@ -1,8 +1,10 @@
 package com.zzu.service.impl;
 
+import com.zzu.dao.ApplyDao;
 import com.zzu.dao.CompanyDao;
 import com.zzu.dto.Result;
 import com.zzu.common.Common;
+import com.zzu.model.Apply;
 import com.zzu.model.Company;
 import com.zzu.service.CompanyService;
 import com.zzu.util.StringUtil;
@@ -17,6 +19,8 @@ import javax.annotation.Resource;
 public class CompanyServiceImpl implements CompanyService {
     @Resource
     private CompanyDao companyDao;
+    @Resource
+    private ApplyDao applyDao;
 
     public Result login(String username, String password) {
         Result result = new Result();
@@ -68,5 +72,18 @@ public class CompanyServiceImpl implements CompanyService {
 
     public Company searchByEmail(String email) {
         return companyDao.search(null, null, email);
+    }
+
+    public Result<Apply> getApplies(int id, int page, int pageSize) {
+        Result<Apply> result = new Result<Apply>(page, pageSize);
+        if (page < 1) {
+            result.setSuccess(false);
+            result.setError("页码错误");
+        } else {
+            result.setList(applyDao.getAppliesByCompany(id, (page - 1) * pageSize, pageSize));
+            result.setTotalItem(applyDao.getCompanyApplyCount(id));
+        }
+
+        return result;
     }
 }

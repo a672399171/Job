@@ -5,10 +5,9 @@
 <head>
     <title>职位信息</title>
     <%@include file="../common/head.jsp"%>
-    <link rel="stylesheet" type="text/css" href="/css/post.css"/>
-    <script src="/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
-    <script src="/js/ajaxfileupload.js"></script>
+    <link rel="stylesheet" type="text/css" href="/resources/css/post.css"/>
+    <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <script src="/resources/js/ajaxfileupload.js"></script>
 </head>
 <body>
 <jsp:include page="header.jsp"/>

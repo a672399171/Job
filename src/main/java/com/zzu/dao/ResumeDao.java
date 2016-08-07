@@ -1,6 +1,8 @@
 package com.zzu.dao;
 
+import com.zzu.dto.Result;
 import com.zzu.model.Resume;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -10,9 +12,19 @@ import java.util.List;
 public interface ResumeDao {
     Resume getByUid(int id);
 
-    List<Resume> searchResume(int grade, int spareTime, String salary, int school, int page, String filter, boolean push);
+    List<Resume> searchResumes(@Param("grade") int grade,
+                                @Param("time") int time,
+                                @Param("salary") String salary,
+                                @Param("keyword") String keyword,
+                                @Param("school") int school,
+                                @Param("start") int start,
+                                @Param("count") int count);
 
-    int getResumeCount(int grade, int time, String salary, int school, String filter, boolean push);
+    int getResumeCount(@Param("grade") int grade,
+                       @Param("time") int time,
+                       @Param("salary") String salary,
+                       @Param("keyword") String keyword,
+                       @Param("school") int school);
 
     Resume getResumeByUid(int uId);
 

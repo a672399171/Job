@@ -150,4 +150,32 @@
         set status=#{status}
         where id=#{jId}
     </update>
+
+    <insert id="addJob">
+        insert into
+        tb_job(
+        `type`,
+        `name`,
+        description,
+        person_count,
+        skill,
+        high_salary,
+        low_salary,
+        post_company,
+        tag,
+        work_time
+        )
+        values (
+        #{type.id},
+        #{name},
+        #{description},
+        #{person_count},
+        #{skill},
+        #{high_salary},
+        #{low_salary},
+        #{post_company.id},
+        #{tag},
+        #{work_time}
+        )
+    </insert>
 </mapper>

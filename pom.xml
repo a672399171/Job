@@ -246,7 +246,7 @@
 
     <!-- 默认到webapp下找web.xml,需要制定webresources -->
     <build>
-        <finalName>friends</finalName>
+        <finalName>Job</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
