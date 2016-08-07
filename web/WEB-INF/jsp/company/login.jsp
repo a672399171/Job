@@ -1,22 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%
-    String username = ""; //用户名
-    String passward = ""; //密码
-    Cookie[] cookies = request.getCookies();
-    boolean flag = false;
-    if (cookies != null) {
-        for (int i = 0; i < cookies.length; i++) {
-            if (cookies[i].getName().equals("cookie_user")) {
-                username = cookies[i].getValue().split("-")[0];
-                passward = cookies[i].getValue().split("-")[1];
-                request.setAttribute("username", username); //存用户名
-                request.setAttribute("password", passward); //存密码
-                flag = true;
-            }
-        }
-    }
-%>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -41,14 +24,10 @@
             <div class="checkbox">
                 <label>
                     <input type="checkbox" id="on"
-                        <%
-                            if(flag) {
-                                %>
+                    <c:if test="${requestScope.flag}">
                            checked
-                        <%
-                            }
-                        %>
-                    >记住我
+                    </c:if>
+                    >7天内自动登录
                 </label>
                 <a href="/user/company_find_password.do" id="wangji">忘记密码</a>
             </div>

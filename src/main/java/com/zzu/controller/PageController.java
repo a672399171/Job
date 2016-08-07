@@ -34,8 +34,7 @@ public class PageController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model model,
-                        @CookieValue(value = Common.JOB_COOKIE_USER_REMEMBER, required = false) String cookie) {
+    public String login(Model model, @CookieValue(value = Common.JOB_COOKIE_USER_REMEMBER, required = false) String cookie) {
         boolean flag = false;
         if (cookie != null) {
             flag = true;
@@ -45,7 +44,12 @@ public class PageController {
     }
 
     @RequestMapping(value = "/companyLogin", method = RequestMethod.GET)
-    public String companyLogin(Model model) {
+    public String companyLogin(Model model, @CookieValue(value = Common.JOB_COOKIE_COMPANY_REMEMBER, required = false) String cookie) {
+        boolean flag = false;
+        if (cookie != null) {
+            flag = true;
+        }
+        model.addAttribute("flag", flag);
         return "company/login";
     }
 

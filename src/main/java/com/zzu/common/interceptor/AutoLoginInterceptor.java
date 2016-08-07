@@ -28,10 +28,11 @@ public class AutoLoginInterceptor implements HandlerInterceptor {
         User user = (User) session.getAttribute(Common.USER);
         Company company = (Company) session.getAttribute(Common.COMPANY);
 
-        if (user == null && session.getAttribute(Common.COOKIE_USER_CHECKED) == null) {
+        if (user == null && session.getAttribute(Common.COOKIE_USER_CHECKED) == null &&
+                request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals(Common.JOB_COOKIE_USER_REMEMBER)) {
-                    String username = CookieUtil.getUserName(cookie.getValue().getBytes());
+                    String username = CookieUtil.getUserName(cookie.getValue());
                     session.setAttribute(Common.USER, userService.exists(username));
                     session.setAttribute(Common.COOKIE_USER_CHECKED, true);
                     break;
@@ -39,10 +40,11 @@ public class AutoLoginInterceptor implements HandlerInterceptor {
             }
         }
 
-        if (company == null && session.getAttribute(Common.COOKIE_COMPANY_CHECKED) == null) {
+        if (company == null && session.getAttribute(Common.COOKIE_COMPANY_CHECKED) == null &&
+                request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals(Common.JOB_COOKIE_COMPANY_REMEMBER)) {
-                    String username = CookieUtil.getUserName(cookie.getValue().getBytes());
+                    String username = CookieUtil.getUserName(cookie.getValue());
                     session.setAttribute(Common.COMPANY, companyService.exists(username));
                     session.setAttribute(Common.COOKIE_COMPANY_CHECKED, true);
                     break;

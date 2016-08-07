@@ -42,7 +42,7 @@ public class CompanyController {
             if (on != null && on) {
                 if (cookie == null) {
                     CookieUtil.addCookie(request.getServerName(), response, username);
-                } else {
+                } else if(request.getCookies() != null){
                     for (Cookie c : request.getCookies()) {
                         if (c.getName().equals(Common.JOB_COOKIE_COMPANY_REMEMBER)) {
                             c.setMaxAge(Common.MAX_AGE);
@@ -50,10 +50,10 @@ public class CompanyController {
                         }
                     }
                 }
-            } else if (cookie != null) {
+            } else if (cookie != null && request.getCookies() != null) {
                 for (Cookie c : request.getCookies()) {
                     if (c.getName().equals(Common.JOB_COOKIE_COMPANY_REMEMBER)) {
-                        c.setMaxAge(-1);
+                        CookieUtil.deleteCookie(request.getServerName(), response, username);
                         break;
                     }
                 }

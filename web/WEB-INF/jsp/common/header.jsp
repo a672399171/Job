@@ -65,9 +65,9 @@
 
     //退出
     function quit() {
-        $.post("${root}/user/quit", function (data) {
+        $.post("/user/quit", function (data) {
             window.location = "/";
-        });
+        },'JSON');
     }
 
     //鼠标滑过

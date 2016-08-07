@@ -4,7 +4,7 @@
 <html>
 <head>
     <title>找回密码</title>
-    <%@include file="common/head.jsp"%>
+    <%@include file="common/head.jsp" %>
     <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <style type="text/css">
         #panel {
@@ -113,8 +113,8 @@
 
 <script type="application/javascript">
 
-    $(function() {
-        if('${sessionScope.auth}' != "") {
+    $(function () {
+        if ('${sessionScope.auth}' != "") {
             showChangPwd();
         }
     });
@@ -167,9 +167,9 @@
 
         $.post("/user/resetPassword.do", {
             password: pwd1,
-            type:"user"
+            type: "user"
         }, function (data) {
-            if(data.msg) {
+            if (data.msg) {
                 alert(data.msg);
             } else {
                 window.location = "/";
@@ -178,17 +178,17 @@
     });
 
     //发送邮件
+    // TODO 发送邮件后隐藏页面显示区域,邮箱格式错误时要提示
     function sendEmail() {
         $.post("/user/findPassword", {
             email: $("#email").val(),
             username: $("#user").val(),
-            type:"user"
+            type: "user"
         }, function (data) {
-            console.log(data);
-            if (data.msg) {
-                $("#m").text(data.msg);
+            if(data.success) {
+                alert("发送成功,请及时登录邮箱 " + $("#email").val() + " 验证！");
             } else {
-                alert("发送成功,请及时登录邮箱验证！");
+                $("#m").text(data.error);
             }
         });
     }

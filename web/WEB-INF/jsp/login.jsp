@@ -1,28 +1,11 @@
 <%@ page import="com.zzu.common.Common" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%
-    String username = ""; //用户名
-    String passward = ""; //密码
-    Cookie[] cookies = request.getCookies();
-    boolean flag = false;
-    if (cookies != null) {
-        for (int i = 0; i < cookies.length; i++) {
-            if (cookies[i].getName().equals(Common.JOB_COOKIE_USER_REMEMBER)) {
-                username = cookies[i].getValue().split("-")[0];
-                passward = cookies[i].getValue().split("-")[1];
-                request.setAttribute("username", username); //存用户名
-                request.setAttribute("password", passward); //存密码
-                flag = true;
-            }
-        }
-    }
-%>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <title>登录</title>
-    <%@include file="common/head.jsp"%>
+    <%@include file="common/head.jsp" %>
     <link rel="stylesheet" type="text/css" href="/resources/css/style_login.css"/>
     <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
 </head>
@@ -42,13 +25,9 @@
                 <div class="checkbox">
                     <label>
                         <input type="checkbox" id="on"
-                            <%
-                            if(flag) {
-                                %>
+                        <c:if test="${requestScope.flag}">
                                checked
-                            <%
-                            }
-                        %>
+                        </c:if>
                         >7天内自动登录
                     </label>
                     <a href="/findPassword" id="wangji">忘记密码</a>
@@ -106,7 +85,7 @@
                 on: $("#on").is(":checked")
             }, function (data) {
                 if (data.success) {
-                    if("${param.from}".trim() == "") {
+                    if ("${param.from}".trim() == "") {
                         window.location = "/";
                     } else {
                         window.location = "${param.from}";
