@@ -109,17 +109,19 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    public Result insertPoor(Poor poor) {
+        Result result = new Result();
+        if(userDao.insertPoor(poor) < 1) {
+            result.setSuccess(false);
+            result.setError("插入失败");
+        }
+
+        return result;
+    }
+
     /*
     public void updateSecret(int id, boolean secret) {
         userDao.updateSecret(id, secret);
-    }
-
-    public void insertOrUpdateVarify(Verify varify) {
-        userDao.insertOrUpdateVarify(varify);
-    }
-
-    public void deleteVarify(Verify varify) {
-        userDao.deleteVarify(varify);
     }
 
     public Admin adminLogin(String username, String password) {
@@ -129,10 +131,6 @@ public class UserServiceImpl implements UserService {
     //搜索用户
     public List<User> searchUsers(int page, String filter) {
         return userDao.searchUsers(page, filter);
-    }
-
-    public void insertPoor(Poor poor) {
-        userDao.insertPoor(poor);
     }
 
     //根据用户名和密码查找公司

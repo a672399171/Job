@@ -7,6 +7,7 @@
     <title>贫困生认证</title>
     <%@include file="common/head.jsp" %>
     <link href="http://g.alicdn.com/sj/dpl/1.5.1/css/sui.min.css" rel="stylesheet">
+    <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
 </head>
 <body>
 <div class="big container">
@@ -116,8 +117,8 @@
                     </div>
                 </c:if>
             </div>
-            <form class="form-horizontal" action="/user/poor_confirm.do" enctype="multipart/form-data"
-                  method="post">
+            <form class="form-horizontal" action="/user/poorConfirm" enctype="multipart/form-data"
+                  method="post" id="form">
                 <div class="form-group">
                     <label class="col-xs-2 control-label">学号:</label>
 
@@ -156,7 +157,7 @@
 
                     <c:if test="${poor == null || poor.status == 0}">
                         <div class="col-xs-4">
-                            <select class="form-control" id="school"></select>
+                            <select class="form-control" name="school" id="school"></select>
                         </div>
                         <div class="col-xs-4">
                             <select class="form-control" name="major" id="major"></select>
@@ -177,7 +178,7 @@
                             <input type="file" id="file" name="file">
                         </c:if>
                         <c:if test="${poor !=null &&poor.status != 0}">
-                            <img src="${root}/images/${poor.src}" alt="暂无图片"/>
+                            <img src="/resources/images/${poor.src}" alt="暂无图片"/>
                         </c:if>
                     </div>
                 </div>
@@ -198,6 +199,73 @@
 <script type="application/javascript">
     $(function () {
         loadSchoolData();
+
+        $('#form').bootstrapValidator({
+            message: 'This value is not valid',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                name: {
+                    message: '姓名不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '姓名不能为空'
+                        },
+                        stringLength: {
+                            min: 2,
+                            max: 10,
+                            message: '姓名为2-10位之间'
+                        }
+                    }
+                },
+                email: {
+                    validators: {
+                        notEmpty: {
+                            message: 'email不能为空'
+                        },
+                        emailAddress: {
+                            message: 'email格式错误'
+                        }
+                    }
+                },
+                school: {
+                    message: '学院不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '学院不能为空'
+                        }
+                    }
+                },
+                major: {
+                    message: '专业不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '专业不能为空'
+                        }
+                    }
+                },
+                file: {
+                    message: '文件不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '文件不能为空'
+                        }
+                    }
+                }
+            }
+        }).on('success.form.bv', function (e) {
+            // Prevent form submission
+            e.preventDefault();
+
+            // Get the form instance
+            var $form = $(e.target);
+
+            // Get the BootstrapValidator instance
+            var bv = $form.data('bootstrapValidator');
+        });
     });
 
     //加载学院数据

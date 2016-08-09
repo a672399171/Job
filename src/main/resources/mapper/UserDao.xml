@@ -136,4 +136,24 @@
         #{push}
         )
     </insert>
+
+    <insert id="insertPoor">
+        insert into tb_poor(
+        u_id,
+        `name`,
+        email,
+        major,
+        src,
+        status,
+        isNew
+        ) values(
+        #{u_id},
+        #{name},
+        #{email},
+        #{major},
+        #{src},
+        #{status},
+        #{isNew}
+        )
+    </insert>
 </mapper>

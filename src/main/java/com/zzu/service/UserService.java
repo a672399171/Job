@@ -35,4 +35,6 @@ public interface UserService {
     User searchBySchoolNum(String schoolNum);
 
     Result addUser(User user);
+
+    Result insertPoor(Poor poor);
 }

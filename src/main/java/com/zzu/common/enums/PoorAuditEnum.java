@@ -17,4 +17,8 @@ public enum PoorAuditEnum {
         this.value = value;
         this.title = title;
     }
+
+    public int value() {
+        return value;
+    }
 }

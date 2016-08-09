@@ -3,6 +3,7 @@ package com.zzu.controller;
 import com.google.code.kaptcha.servlet.KaptchaExtend;
 import com.zzu.common.Common;
 import com.zzu.common.annotaion.Authorization;
+import com.zzu.common.enums.PoorAuditEnum;
 import com.zzu.dto.Result;
 import com.zzu.model.*;
 import com.zzu.model.Collection;
@@ -301,6 +302,48 @@ public class UserController {
             }
         }
         return result;
+    }
+
+    @Authorization(Common.AUTH_USER_LOGIN)
+    @RequestMapping("/poorConfirm")
+    public String poorConfirm(String name, String email, int major, @RequestParam("file") MultipartFile myfile,
+                              HttpSession session) {
+        User user = (User) session.getAttribute(Common.USER);
+
+        String realPath = session.getServletContext().getRealPath("/images");
+        File file = new File(realPath);
+        if (file.isDirectory() && !file.exists()) {
+            file.mkdirs();
+        }
+
+        String originalFilename = myfile.getOriginalFilename();
+        String newFile = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
+        String newPath = realPath + "/" + newFile;
+        try {
+            myfile.transferTo(new File(newPath));
+        } catch (IOException e) {
+            System.out.println("文件[" + originalFilename + "]上传失败,堆栈轨迹如下");
+            e.printStackTrace();
+        }
+
+        Major m = new Major();
+        m.setId(major);
+
+        Poor poor = new Poor();
+        poor.setU_id(user.getId());
+        poor.setName(name);
+        poor.setEmail(email);
+        poor.setMajor(m);
+        poor.setSrc(newFile);
+        poor.setStatus(PoorAuditEnum.AUDITING_POOR.value());
+        userService.insertPoor(poor);
+
+        if (!StringUtil.isEmail(email)) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("text", "同学你好，请及时关注贫困生审核进展，我们将以邮件的方式通知给你。");
+            mailService.sendEmail(email, "审核进展", "poorAuditChange.ftl", map);
+        }
+        return "redirect:/user/poor";
     }
 
     /**

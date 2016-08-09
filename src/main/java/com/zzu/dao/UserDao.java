@@ -25,7 +25,7 @@ public interface UserDao {
 
     List<Poor> searchPoor(@Param("uId") int uId);
 
-    void insertPoor(Poor poor);
+    int insertPoor(Poor poor);
 
     int addUser(User user);
 
