@@ -10,6 +10,7 @@ import com.zzu.service.RedisService;
 import com.zzu.service.ResumeService;
 import com.zzu.service.UserService;
 import com.zzu.service.impl.MailServiceImpl;
+import com.zzu.util.CookieUtil;
 import com.zzu.util.PictureUtil;
 import com.zzu.util.StringUtil;
 import org.springframework.stereotype.Controller;
@@ -54,15 +55,31 @@ public class UserController {
      */
     @RequestMapping("/login")
     @ResponseBody
-    public Result login(String username, String password, boolean on,
-                        HttpSession session, HttpServletResponse response) {
+    public Result login(String username, String password, Boolean on,
+                        @CookieValue(value = Common.JOB_COOKIE_USER_REMEMBER,required = false) String cookie,
+                        HttpSession session, HttpServletResponse response, HttpServletRequest request) {
         Result result = new Result();
-        Map<String, Object> map = new HashMap<String, Object>();
         User user = userService.search(username, password);
 
         if (user != null) {
-            if (on) {
-                setCookie("cookie_user", response, username, password);
+            if (on != null && on) {
+                if (cookie == null) {
+                    CookieUtil.addCookie(request.getServerName(), response, username);
+                } else if (request.getCookies() != null){
+                    for (Cookie c : request.getCookies()) {
+                        if (c.getName().equals(Common.JOB_COOKIE_USER_REMEMBER)) {
+                            c.setMaxAge(Common.MAX_AGE);
+                            break;
+                        }
+                    }
+                }
+            } else if (cookie != null && request.getCookies() != null) {
+                for (Cookie c : request.getCookies()) {
+                    if (c.getName().equals(Common.JOB_COOKIE_USER_REMEMBER)) {
+                        CookieUtil.deleteCookie(request.getServerName(), response, username);
+                        break;
+                    }
+                }
             }
 
             session.setAttribute(Common.USER, user);
@@ -72,13 +89,6 @@ public class UserController {
         }
 
         return result;
-    }
-
-    private void setCookie(String name, HttpServletResponse response, String username, String password) {
-        Cookie cookie = new Cookie(name, username + "-" + password);
-        cookie.setMaxAge(60 * 60 * 24 * 7); //cookie 保存7天
-        cookie.setPath("/");
-        response.addCookie(cookie);
     }
 
     /**
@@ -360,7 +370,7 @@ public class UserController {
 
     @RequestMapping("/findPassword")
     @ResponseBody
-    public Result findPassword(HttpSession session, String email, String username, HttpServletRequest request) {
+    public Result findPassword(String email, String username, HttpServletRequest request) {
         Result result = new Result();
         String url = request.getScheme() + "://" + request.getServerName() + ":" +
                 request.getServerPort() + request.getContextPath() + "/user/validate?type=" + Common.FINDPWD;
@@ -369,7 +379,13 @@ public class UserController {
         Map<String, Object> valMap = new HashMap<String, Object>();
         valMap.put("url", url);
 
-        mailService.sendEmail(email, "找回密码", "findPwd.ftl", valMap);
+        try {
+            mailService.sendEmail(email, "找回密码", "findPwd.ftl", valMap);
+        } catch (Exception e) {
+            result.setSuccess(false);
+            result.setError(e.getMessage());
+            return result;
+        }
 
         Verify verify = new Verify();
         verify.setEmail(email);
@@ -410,5 +426,11 @@ public class UserController {
     @RequestMapping("/captchaCode")
     public void captchaCode(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         kaptchaExtend.captcha(req, resp);
+    }
+
+    @RequestMapping(value = "/quit", method = RequestMethod.POST)
+    @ResponseBody
+    public void quit(HttpSession session) {
+        session.removeAttribute(Common.USER);
     }
 }

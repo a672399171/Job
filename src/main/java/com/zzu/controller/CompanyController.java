@@ -7,11 +7,16 @@ import com.zzu.model.*;
 import com.zzu.service.CompanyService;
 import com.zzu.service.JobService;
 import com.zzu.service.ResumeService;
+import com.zzu.util.CookieUtil;
+import com.zzu.util.StringUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -27,11 +32,32 @@ public class CompanyController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public Result login(String username, String password, HttpSession session) {
+    public Result login(String username, String password, Boolean on,
+                        @CookieValue(value = Common.JOB_COOKIE_COMPANY_REMEMBER, required = false) String cookie,
+                        HttpSession session, HttpServletResponse response, HttpServletRequest request) {
         Result result = companyService.login(username, password);
         Company company = (Company) result.getData().get(Common.COMPANY);
         if (company != null) {
             session.setAttribute(Common.COMPANY, company);
+            if (on != null && on) {
+                if (cookie == null) {
+                    CookieUtil.addCookie(request.getServerName(), response, username);
+                } else if(request.getCookies() != null){
+                    for (Cookie c : request.getCookies()) {
+                        if (c.getName().equals(Common.JOB_COOKIE_COMPANY_REMEMBER)) {
+                            c.setMaxAge(Common.MAX_AGE);
+                            break;
+                        }
+                    }
+                }
+            } else if (cookie != null && request.getCookies() != null) {
+                for (Cookie c : request.getCookies()) {
+                    if (c.getName().equals(Common.JOB_COOKIE_COMPANY_REMEMBER)) {
+                        CookieUtil.deleteCookie(request.getServerName(), response, username);
+                        break;
+                    }
+                }
+            }
         }
         return companyService.login(username, password);
     }
@@ -96,7 +122,7 @@ public class CompanyController {
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "school", required = false, defaultValue = "0") Integer school,
             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
-        return resumeService.searchResumes(grade,time,salary,keyword,school,page);
+        return resumeService.searchResumes(grade, time, salary, keyword, school, page);
     }
 
     @RequestMapping(value = "/quit", method = RequestMethod.POST)

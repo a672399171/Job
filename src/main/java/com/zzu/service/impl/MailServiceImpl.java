@@ -2,6 +2,7 @@ package com.zzu.service.impl;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -56,7 +57,11 @@ public class MailServiceImpl {
 			// true 表示启动HTML格式的邮件 邮件内容
 			messageHelper.setText(getMailText(tplSrc, map), true);
 			// 发送
-			this.mailSender.send(mailMsg);
+			try {
+				this.mailSender.send(mailMsg);
+			} catch (MailException e) {
+				throw new RuntimeException("错误：" + e.getMessage());
+			}
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
