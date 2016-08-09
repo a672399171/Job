@@ -255,14 +255,14 @@ public class UserController {
             if (Common.USER.equals(type)) {
                 User user = userService.exists(username);
                 if (user != null) {
-                    object = userService.changeUserPassword(user.getId(), password);
+                    object = userService.changeUserPassword(user.getId(), StringUtil.toMd5(password));
                 } else {
                     object.setError("用户名不存在");
                 }
             } else if (Common.COMPANY.equals(type)) {
                 Company company = companyService.exists(username);
                 if (company != null) {
-                    object = companyService.modifyPassword(company.getId(), password);
+                    object = companyService.modifyPassword(company.getId(), StringUtil.toMd5(password));
                 } else {
                     object.setError("用户名不存在");
                 }
@@ -310,7 +310,7 @@ public class UserController {
                               HttpSession session) {
         User user = (User) session.getAttribute(Common.USER);
 
-        String realPath = session.getServletContext().getRealPath("/images");
+        String realPath = session.getServletContext().getRealPath("/resources/images");
         File file = new File(realPath);
         if (file.isDirectory() && !file.exists()) {
             file.mkdirs();
@@ -442,30 +442,40 @@ public class UserController {
 
     @RequestMapping("/findPassword")
     @ResponseBody
-    public Result findPassword(String email, String username, HttpServletRequest request) {
+    public Result findPassword(String username, HttpServletRequest request) {
         Result result = new Result();
-        String url = request.getScheme() + "://" + request.getServerName() + "/user/validate?type=" + Common.FINDPWD;
-        String ran = StringUtil.toMd5(username + Common.FINDPWD);
-        url += "&s=" + ran;
-        Map<String, Object> valMap = new HashMap<String, Object>();
-        valMap.put("url", url);
-
-        try {
-            mailService.sendEmail(email, "找回密码", "findPwd.ftl", valMap);
-        } catch (Exception e) {
+        User user = userService.exists(username);
+        if(user == null || StringUtil.isEmpty(user.getEmail())) {
             result.setSuccess(false);
-            result.setError(e.getMessage());
-            return result;
+            result.setError("用户不存在或暂未绑定邮箱,无法找回密码");
+        } else {
+            String email = user.getEmail();
+
+            String url = request.getScheme() + "://" + request.getServerName() + "/user/validate?type=" + Common.FINDPWD;
+            String ran = StringUtil.toMd5(username + Common.FINDPWD);
+            url += "&s=" + ran;
+            Map<String, Object> valMap = new HashMap<String, Object>();
+            valMap.put("url", url);
+
+            try {
+                mailService.sendEmail(email, "找回密码", "findPwd.ftl", valMap);
+            } catch (Exception e) {
+                result.setSuccess(false);
+                result.setError(e.getMessage());
+                return result;
+            }
+
+            Verify verify = new Verify();
+            verify.setEmail(email);
+            verify.setVerify(ran);
+            verify.setUsername(username);
+            verify.setTime(new Date());
+            verify.setType(Common.FINDPWD);
+
+            result.getData().put("email",email);
+
+            redisService.insertVerify(verify);
         }
-
-        Verify verify = new Verify();
-        verify.setEmail(email);
-        verify.setVerify(ran);
-        verify.setUsername(username);
-        verify.setTime(new Date());
-        verify.setType(Common.FINDPWD);
-
-        redisService.insertVerify(verify);
 
         return result;
     }
@@ -505,7 +515,7 @@ public class UserController {
             result.setError("用户名已存在");
         } else if (verify == null || !verify.equalsIgnoreCase(kaptchaExtend.getGeneratedKey(request))) {
             result.setError("验证码错误");
-        } else if (!NetUtil.isZZUStudent(user.getUsername(), jwpwd)) {
+        } else if (!NetUtil.isZZUStudent(user.getSchool_num(), jwpwd)) {
             result.setError("学号或教务系统密码错误");
         } else if (userService.searchBySchoolNum(user.getSchool_num()) != null) {
             result.setError("该学号已绑定");

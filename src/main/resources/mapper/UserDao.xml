@@ -45,6 +45,7 @@
 
     <select id="searchPoor" resultType="com.zzu.model.Poor">
         select
+        u_id
         `name`,
         p.email as "email",
         p.major as "major.id",
@@ -138,22 +139,20 @@
     </insert>
 
     <insert id="insertPoor">
-        insert into tb_poor(
+        insert ignore into tb_poor(
         u_id,
         `name`,
         email,
         major,
         src,
-        status,
-        isNew
+        status
         ) values(
         #{u_id},
         #{name},
         #{email},
-        #{major},
+        #{major.id},
         #{src},
-        #{status},
-        #{isNew}
+        #{status}
         )
     </insert>
 </mapper>

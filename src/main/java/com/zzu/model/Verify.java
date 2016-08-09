@@ -14,6 +14,8 @@ public class Verify implements Serializable {
 	private String type;
 	private String u;
 
+
+
 	public String getU() {
 		return u;
 	}

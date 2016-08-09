@@ -206,6 +206,7 @@
                 return;
             }
 
+            layer.msg('加载中', {icon: 16});
             // Use Ajax to submit form data
             $.post("/user/reg", {
                 username: $("#username").val(),
@@ -214,10 +215,11 @@
                 jwpwd: $("#jwpwd").val(),
                 verify: $("#verify").val()
             }, function (data) {
+                layer.closeAll();
                 if(data.success) {
                     window.location = "/regSuccess";
                 } else {
-                    $("#msg").text(data.msg);
+                    $("#msg").text(data.error);
                 }
             }, 'json');
         });

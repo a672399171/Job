@@ -6,6 +6,7 @@
     <title>找回密码</title>
     <%@include file="common/head.jsp" %>
     <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <script src="/resources/layer/layer.js"></script>
     <style type="text/css">
         #panel {
             width: 45%;
@@ -96,11 +97,6 @@
                     </div>
                     <div class="row">
                         <div class="col-md-8 col-md-offset-2">
-                            <input type="email" class="form-control" id="email" placeholder="输入绑定的邮箱">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-8 col-md-offset-2">
                             <button type="button" class="btn btn-primary" id="n" style="width: 100%">下一步</button>
                         </div>
                     </div>
@@ -168,8 +164,8 @@
             password: pwd1,
             type: "user"
         }, function (data) {
-            if(data.success) {
-                window.location = "/";
+            if (data.success) {
+                window.location = "/login";
             } else {
                 alert(data.error);
             }
@@ -178,18 +174,17 @@
 
     //发送邮件
     function sendEmail() {
-        $('#e').hide();
+        layer.msg("加载中", {icon: 16});
         $.post("/user/findPassword", {
-            email: $("#email").val(),
             username: $("#user").val(),
             type: "user"
         }, function (data) {
-            if(data.success) {
-                alert("发送成功,请及时登录邮箱 " + $("#email").val() + " 验证！");
+            if (data.success) {
+                alert("邮件已发送至 " + data.data.email + ",请及时登录邮箱验证！");
             } else {
                 $("#m").text(data.error);
-                $('#e').show();
             }
+            layer.closeAll();
         });
     }
 

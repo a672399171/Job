@@ -44,6 +44,6 @@ public class NetUtil {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(isZZUStudent("20133410139", "67239917"));
+		System.out.println(isZZUStudent("20133410139", "672399171"));
 	}
 }

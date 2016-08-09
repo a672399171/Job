@@ -184,8 +184,7 @@
                 </div>
                 <c:if test="${poor == null || poor.status == 0}">
                     <div class="col-xs-6" style="text-align: center">
-                        <button type="submit" class="btn btn-primary" style="width: 150px"
-                                onclick="return setData()">
+                        <button type="submit" class="btn btn-primary" style="width: 150px">
                             <i class="fa fa-floppy-o"></i> 确定
                         </button>
                     </div>
@@ -256,15 +255,6 @@
                     }
                 }
             }
-        }).on('success.form.bv', function (e) {
-            // Prevent form submission
-            e.preventDefault();
-
-            // Get the form instance
-            var $form = $(e.target);
-
-            // Get the BootstrapValidator instance
-            var bv = $form.data('bootstrapValidator');
         });
     });
 
