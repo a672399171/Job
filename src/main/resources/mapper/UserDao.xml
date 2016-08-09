@@ -105,4 +105,35 @@
         where
         id=#{id}
     </update>
+
+    <select id="searchBySchoolNum" resultType="com.zzu.model.User">
+        SELECT
+        <include refid="userSql"/>
+        FROM
+        tb_user
+        WHERE
+        school_num=#{schoolNum}
+    </select>
+
+    <insert id="addUser" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        tb_user(
+        username,
+        password,
+        school_num,
+        nickname,
+        photo_src,
+        sex,
+        push
+        )
+        values (
+        #{username},
+        #{password},
+        #{school_num},
+        #{nickname},
+        #{photo_src},
+        #{sex},
+        #{push}
+        )
+    </insert>
 </mapper>

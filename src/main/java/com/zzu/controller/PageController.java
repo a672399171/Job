@@ -62,4 +62,9 @@ public class PageController {
     public String reg(Model model) {
         return "reg";
     }
+
+    @RequestMapping(value = "/regSuccess", method = RequestMethod.GET)
+    public String regSuccess(Model model) {
+        return "reg_success";
+    }
 }

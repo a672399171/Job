@@ -11,6 +11,7 @@ import com.zzu.service.ResumeService;
 import com.zzu.service.UserService;
 import com.zzu.service.impl.MailServiceImpl;
 import com.zzu.util.CookieUtil;
+import com.zzu.util.NetUtil;
 import com.zzu.util.PictureUtil;
 import com.zzu.util.StringUtil;
 import org.springframework.stereotype.Controller;
@@ -56,7 +57,7 @@ public class UserController {
     @RequestMapping("/login")
     @ResponseBody
     public Result login(String username, String password, Boolean on,
-                        @CookieValue(value = Common.JOB_COOKIE_USER_REMEMBER,required = false) String cookie,
+                        @CookieValue(value = Common.JOB_COOKIE_USER_REMEMBER, required = false) String cookie,
                         HttpSession session, HttpServletResponse response, HttpServletRequest request) {
         Result result = new Result();
         User user = userService.search(username, password);
@@ -65,7 +66,7 @@ public class UserController {
             if (on != null && on) {
                 if (cookie == null) {
                     CookieUtil.addCookie(request.getServerName(), response, username);
-                } else if (request.getCookies() != null){
+                } else if (request.getCookies() != null) {
                     for (Cookie c : request.getCookies()) {
                         if (c.getName().equals(Common.JOB_COOKIE_USER_REMEMBER)) {
                             c.setMaxAge(Common.MAX_AGE);
@@ -153,11 +154,6 @@ public class UserController {
         return result;
     }
 
-    /**
-     * 修改简历
-     *
-     * @return
-     */
     @RequestMapping(value = "/resume", method = RequestMethod.POST)
     @Authorization(Common.AUTH_USER_LOGIN)
     @ResponseBody
@@ -167,23 +163,12 @@ public class UserController {
         return result;
     }
 
-    /**
-     * 账号设置
-     *
-     * @return
-     */
     @RequestMapping("/setting")
     @Authorization(Common.AUTH_USER_LOGIN)
     public String setting() {
         return "setting";
     }
 
-    /**
-     * 隐私设置
-     *
-     * @param session
-     * @return
-     */
     @RequestMapping("/secret")
     @Authorization(Common.AUTH_USER_LOGIN)
     public String secret(HttpSession session) {
@@ -196,12 +181,6 @@ public class UserController {
         return "secret";
     }
 
-    /**
-     * 我的收藏
-     *
-     * @param session
-     * @return
-     */
     @RequestMapping("/collection")
     @Authorization(Common.AUTH_USER_LOGIN)
     public String collection(HttpSession session, Model model) {
@@ -214,15 +193,6 @@ public class UserController {
         return "collection";
     }
 
-    /**
-     * 个人资料的修改
-     *
-     * @param nickname
-     * @param sex
-     * @param photo_src
-     * @param session
-     * @return
-     */
     @RequestMapping("/modifyInfo")
     @Authorization(Common.AUTH_USER_LOGIN)
     public String modify_info(String nickname, String sex, String photo_src, HttpSession session) {
@@ -241,14 +211,6 @@ public class UserController {
         return "redirect:/user/info";
     }
 
-    /**
-     * 取消收藏
-     *
-     * @param session
-     * @param u_id
-     * @param j_id
-     * @return
-     */
     @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping("/cancelCollection")
     @ResponseBody
@@ -402,7 +364,7 @@ public class UserController {
     @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping("uploadPhoto")
     @ResponseBody
-    public Map<String, Object> upload_photo(@RequestParam("file") MultipartFile myfile, HttpServletRequest request) {
+    public Map<String, Object> uploadPhoto(@RequestParam("file") MultipartFile myfile, HttpServletRequest request) {
         Map<String, Object> map = new HashMap<String, Object>();
         String realPath = request.getSession().getServletContext().getRealPath("/resources/images");
         String originalFilename = myfile.getOriginalFilename();
@@ -422,10 +384,56 @@ public class UserController {
         return map;
     }
 
+    @RequestMapping("/reg")
+    @ResponseBody
+    public Result reg(@Valid @ModelAttribute("user") User user, String jwpwd,
+                      String verify, HttpServletRequest request) throws Exception {
+        Result result = new Result();
+        result.setSuccess(false);
+
+        User u = userService.exists(user.getUsername());
+        if (u != null) {
+            result.setError("用户名已存在");
+        } else if (verify == null || !verify.equalsIgnoreCase(kaptchaExtend.getGeneratedKey(request))) {
+            result.setError("验证码错误");
+        } else if (!NetUtil.isZZUStudent(user.getUsername(), jwpwd)) {
+            result.setError("学号或教务系统密码错误");
+        } else if (userService.searchBySchoolNum(user.getSchool_num()) != null) {
+            result.setError("该学号已绑定");
+        } else {
+            user.setPassword(StringUtil.toMd5(user.getPassword()));
+            user.setNickname("用户" + user.getUsername());
+            user.setPush(false);
+            user.setSex("男");
+            user.setPhoto_src(Common.DEFAULTPHOTO);
+            Result _result = userService.addUser(user);
+            result = _result;
+            if (result.isSuccess()) {
+                request.getSession().setAttribute(Common.USER, user);
+            }
+        }
+        return result;
+    }
+
 
     @RequestMapping("/captchaCode")
     public void captchaCode(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         kaptchaExtend.captcha(req, resp);
+    }
+
+    @RequestMapping("/checkCaptcha")
+    @ResponseBody
+    public Map<String, Object> checkCaptcha(String verify, HttpServletRequest request) {
+        Map<String, Object> object = new HashMap<String, Object>();
+
+        String code = kaptchaExtend.getGeneratedKey(request);
+        if (code.equalsIgnoreCase(verify)) {
+            object.put("valid", true);
+        } else {
+            object.put("valid", false);
+        }
+
+        return object;
     }
 
     @RequestMapping(value = "/quit", method = RequestMethod.POST)

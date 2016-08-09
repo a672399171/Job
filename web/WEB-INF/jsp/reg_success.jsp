@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="root" value="${pageContext.request.contextPath}"></c:set>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -59,7 +58,7 @@
     <div id="body">
         <div class="well">
             <div id="top1">
-                <img src="${root}/images/icon-succeed.png">
+                <img src="/resources/images/icon-succeed.png">
 
                 <div>
                     <span class="usernameStyle">${sessionScope.user.username}</span>
@@ -68,17 +67,17 @@
             </div>
             <hr>
             <div id="top2">
-                <a type="button" class="btn btn-primary" href="${root}/user/info.do">
+                <a type="button" class="btn btn-primary" href="/user/info">
                     <i class="fa fa-pencil-square-o"></i>&nbsp;完善个人资料
                 </a>
-                <a type="button" class="btn btn-info" href="${root}/">
+                <a type="button" class="btn btn-info" href="/">
                     <i class="fa fa-home"></i>&nbsp;返回主页查看
                 </a>
             </div>
         </div>
     </div>
 </div>
-<jsp:include page="common/footer.jsp"></jsp:include>
+<jsp:include page="common/footer.jsp"/>
 </body>
 </html>
 

@@ -21,13 +21,13 @@ public interface UserDao {
 
     List<User> searchUsers(int page, String filter);
 
-    User searchUserBySchoolNum(String schoolNum);
+    User searchBySchoolNum(String schoolNum);
 
     List<Poor> searchPoor(@Param("uId") int uId);
 
     void insertPoor(Poor poor);
 
-    void addUser(User user);
+    int addUser(User user);
 
     void modifyUser(User user);
 

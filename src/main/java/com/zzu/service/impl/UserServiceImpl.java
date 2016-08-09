@@ -90,6 +90,25 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    public User searchBySchoolNum(String schoolNum) {
+        return userDao.searchBySchoolNum(schoolNum);
+    }
+
+    public Result addUser(User user) {
+        Result result = new Result();
+        result.setSuccess(false);
+        if(StringUtil.isEmpty(user.getUsername())) {
+            result.setError("用户名不能为空");
+        } else if(StringUtil.isEmpty(user.getPassword())) {
+            result.setError("密码不能为空");
+        } else if(userDao.addUser(user) < 1) {
+            result.setError("添加失败");
+        } else {
+            result.setSuccess(true);
+        }
+        return result;
+    }
+
     /*
     public void updateSecret(int id, boolean secret) {
         userDao.updateSecret(id, secret);
@@ -149,11 +168,6 @@ public class UserServiceImpl implements UserService {
     //根据email查找公司
     public Company searchCompanyByEmail(String email) {
         return userDao.searchCompanyByEmail(email);
-    }
-
-    //添加用户
-    public void addUser(User user) {
-        userDao.addUser(user);
     }
 
     //修改用户

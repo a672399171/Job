@@ -31,4 +31,8 @@ public interface UserService {
     void bindEmail(User user);
 
     Result changeUserPassword(int id,String password);
+
+    User searchBySchoolNum(String schoolNum);
+
+    Result addUser(User user);
 }

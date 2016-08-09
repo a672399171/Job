@@ -91,7 +91,10 @@ public class StringUtil {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(toMd5("admin"));
-		//sendMsg();
+		List<Long> longs = new ArrayList<Long>();
+		longs.add(new Long(2));
+		longs.add(new Long(3));
+
+		System.out.println(longs.contains(new Long(2)));
 	}
 }
