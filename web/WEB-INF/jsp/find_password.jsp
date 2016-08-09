@@ -8,7 +8,7 @@
     <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
     <style type="text/css">
         #panel {
-            width: 35%;
+            width: 45%;
             min-width: 420px;
             height: 400px;
             margin: 0 auto;
@@ -22,7 +22,7 @@
 
         #pic {
             cursor: pointer;
-            margin-top: 5px;
+            height: 30px;
         }
 
         #hide div {
@@ -129,17 +129,16 @@
 
     //验证学号和验证码
     function verifySchoolNum() {
-        $.post("/user/verify", {
+        $.post("/user/verifySchoolNum", {
             username: $("#username").val(),
             school_num: $("#school_num").val(),
             jwpwd: $("#jwpwd").val(),
             code: $("#code").val()
         }, function (data) {
-            console.log(data);
-            if (data.msg) {
-                $("#msg").text(data.msg);
-            } else {
+            if (data.success) {
                 showChangPwd();
+            } else {
+                $("#msg").text(data.error);
             }
         });
     }
@@ -165,21 +164,21 @@
             return;
         }
 
-        $.post("/user/resetPassword.do", {
+        $.post("/user/resetPassword", {
             password: pwd1,
             type: "user"
         }, function (data) {
-            if (data.msg) {
-                alert(data.msg);
-            } else {
+            if(data.success) {
                 window.location = "/";
+            } else {
+                alert(data.error);
             }
         });
     });
 
     //发送邮件
-    // TODO 发送邮件后隐藏页面显示区域,邮箱格式错误时要提示
     function sendEmail() {
+        $('#e').hide();
         $.post("/user/findPassword", {
             email: $("#email").val(),
             username: $("#user").val(),
@@ -189,13 +188,14 @@
                 alert("发送成功,请及时登录邮箱 " + $("#email").val() + " 验证！");
             } else {
                 $("#m").text(data.error);
+                $('#e').show();
             }
         });
     }
 
     $('#tab a').click(function (e) {
         e.preventDefault();
-        $(this).tab('show')
+        $(this).tab('show');
     })
 </script>
 </body>

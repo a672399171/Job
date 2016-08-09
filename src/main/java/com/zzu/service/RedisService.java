@@ -17,4 +17,6 @@ public interface RedisService {
     void insertVerify(Verify verify);
 
     Verify searchVerify(String verify,String type);
+
+    void deleteVerify(Verify verify);
 }

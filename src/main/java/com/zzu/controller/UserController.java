@@ -6,6 +6,7 @@ import com.zzu.common.annotaion.Authorization;
 import com.zzu.dto.Result;
 import com.zzu.model.*;
 import com.zzu.model.Collection;
+import com.zzu.service.CompanyService;
 import com.zzu.service.RedisService;
 import com.zzu.service.ResumeService;
 import com.zzu.service.UserService;
@@ -44,6 +45,8 @@ public class UserController {
     private MailServiceImpl mailService;
     @Resource
     private RedisService redisService;
+    @Resource
+    private CompanyService companyService;
     private KaptchaExtend kaptchaExtend = new KaptchaExtend();
 
     /**
@@ -240,6 +243,66 @@ public class UserController {
         return result;
     }
 
+    @RequestMapping("/resetPassword")
+    @ResponseBody
+    public Result resetPassword(String password, String type, HttpSession session) {
+        Result object = new Result();
+        object.setSuccess(false);
+
+        String username = (String) session.getAttribute(Common.AUTH);
+        if (username != null) {
+            if (Common.USER.equals(type)) {
+                User user = userService.exists(username);
+                if (user != null) {
+                    object = userService.changeUserPassword(user.getId(), password);
+                } else {
+                    object.setError("用户名不存在");
+                }
+            } else if (Common.COMPANY.equals(type)) {
+                Company company = companyService.exists(username);
+                if (company != null) {
+                    object = companyService.modifyPassword(company.getId(), password);
+                } else {
+                    object.setError("用户名不存在");
+                }
+            } else {
+                object.setError("未知类型");
+            }
+        } else {
+            object.setError("未验证");
+        }
+        session.removeAttribute(Common.AUTH);
+
+        return object;
+    }
+
+    @RequestMapping("verifySchoolNum")
+    @ResponseBody
+    public Result verifySchoolNum(String username, String school_num,
+                                  String jwpwd, String code,
+                                  HttpServletRequest request) {
+        Result result = new Result();
+        result.setSuccess(false);
+
+        if (StringUtil.isEmpty(username) || StringUtil.isEmpty(school_num)
+                || StringUtil.isEmpty(jwpwd) || StringUtil.isEmpty(code)) {
+            result.setError("字段不能为空");
+        } else if (!code.equalsIgnoreCase(kaptchaExtend.getGeneratedKey(request))) {
+            result.setError("验证码错误");
+        } else {
+            User user = userService.searchBySchoolNum(school_num);
+            if (user == null || !username.equals(user.getUsername())) {
+                result.setError("用户名或学号错误");
+            } else if (!NetUtil.isZZUStudent(school_num, jwpwd)) {
+                result.setError("教务密码与学号不匹配");
+            } else {
+                request.getSession().setAttribute(Common.AUTH, username);
+                result.setSuccess(true);
+            }
+        }
+        return result;
+    }
+
     /**
      * 绑定邮箱
      *
@@ -324,8 +387,12 @@ public class UserController {
         if (verify != null && verify.getVerify() != null && verify.getVerify().equals(s)) {
             int hourGap = (int) ((new Date().getTime() - verify.getTime().getTime()) / (1000 * 3600));
             if (hourGap <= 48) {
-                session.setAttribute("auth", true);
+                session.setAttribute(Common.AUTH, verify.getUsername());
+            } else {
+                redisService.deleteVerify(verify);
             }
+        } else {
+            redisService.deleteVerify(verify);
         }
         return "find_password";
     }
@@ -334,8 +401,7 @@ public class UserController {
     @ResponseBody
     public Result findPassword(String email, String username, HttpServletRequest request) {
         Result result = new Result();
-        String url = request.getScheme() + "://" + request.getServerName() + ":" +
-                request.getServerPort() + request.getContextPath() + "/user/validate?type=" + Common.FINDPWD;
+        String url = request.getScheme() + "://" + request.getServerName() + "/user/validate?type=" + Common.FINDPWD;
         String ran = StringUtil.toMd5(username + Common.FINDPWD);
         url += "&s=" + ran;
         Map<String, Object> valMap = new HashMap<String, Object>();
@@ -406,8 +472,7 @@ public class UserController {
             user.setPush(false);
             user.setSex("男");
             user.setPhoto_src(Common.DEFAULTPHOTO);
-            Result _result = userService.addUser(user);
-            result = _result;
+            result = userService.addUser(user);
             if (result.isSuccess()) {
                 request.getSession().setAttribute(Common.USER, user);
             }

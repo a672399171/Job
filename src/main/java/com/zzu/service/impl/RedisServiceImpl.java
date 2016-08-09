@@ -63,6 +63,12 @@ public class RedisServiceImpl implements RedisService {
         redisTemplate.boundHashOps(verify.getType()).put(verify.getVerify(), verify);
     }
 
+    public void deleteVerify(Verify verify) {
+        if(verify != null && verify.getVerify() != null && verify.getType() != null) {
+            redisTemplate.boundHashOps(verify.getType()).delete(verify.getVerify());
+        }
+    }
+
     public Verify searchVerify(String verify, String type) {
         Verify v = (Verify) redisTemplate.boundHashOps(type).get(verify);
         redisTemplate.boundHashOps(type).delete(verify);

@@ -8,6 +8,7 @@ public class Common {
 	public static final String COMPANY = "company";
 	public static final String COOKIE_USER_CHECKED = "cookie_user_checked";
 	public static final String COOKIE_COMPANY_CHECKED = "cookie_company_checked";
+	public static final String AUTH = "auth";
 	//分页常量
 	public static final int COUNT = 10;
 	public static final int SMALL_COUNT = 5;
