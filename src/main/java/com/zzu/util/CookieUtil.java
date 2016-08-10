@@ -1,7 +1,11 @@
 package com.zzu.util;
 
 import com.zzu.common.Common;
+import com.zzu.util.coder.PBECoder;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import javax.crypto.*;
 import javax.crypto.spec.DESedeKeySpec;
@@ -13,18 +17,12 @@ import java.security.SecureRandom;
 
 public class CookieUtil {
     // 3DES 加密
-    private static final String Algorithm = "DESede";
-    private static Key key = null;
-    private static Cipher cipher = null;
+    private static final String password = "job_application";
+    private static byte[] salt = null;
 
     static {
         try {
-            key = build3DesKey();
-            cipher = Cipher.getInstance(Algorithm);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
+            salt = PBECoder.initSalt();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -33,7 +31,7 @@ public class CookieUtil {
     private static void addCookieCore(String serverName, HttpServletResponse response, String username, int expiry) {
         String s = null;
         try {
-            s = Hex.encodeHexString(encrypt(username));
+            s = Base64.encodeBase64String(PBECoder.encrypt(username.getBytes(), password, salt));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,46 +54,19 @@ public class CookieUtil {
     public static String getUserName(String src) {
         String s = null;
         try {
-            s = new String(decrypt(src));
+            s = new String(PBECoder.decrypt(Base64.decodeBase64(src), password, salt));
         } catch (Exception e) {
             e.printStackTrace();
         }
         return s;
     }
 
-    // 加密
-    private static byte[] encrypt(String src) throws Exception {
-        cipher.init(Cipher.ENCRYPT_MODE, key);
-        return cipher.doFinal(src.getBytes());
-    }
-
-    // 解密
-    private static byte[] decrypt(String src) throws Exception {
-        cipher.init(Cipher.DECRYPT_MODE, key);
-        return cipher.doFinal(Hex.decodeHex(src.toCharArray()));
-    }
-
-    private static Key build3DesKey() throws Exception {
-        // 生成KEY
-        KeyGenerator generator = KeyGenerator.getInstance(Algorithm);
-        generator.init(new SecureRandom());
-        SecretKey secretKey = generator.generateKey();
-        byte[] byteKey = secretKey.getEncoded();
-
-        // Key转换
-        DESedeKeySpec deSedeKeySpec = new DESedeKeySpec(byteKey);
-        SecretKeyFactory factory = SecretKeyFactory.getInstance(Algorithm);
-
-        return factory.generateSecret(deSedeKeySpec);
-    }
-
     public static void main(String[] args) throws Exception {
-        try {
-            String str = Hex.encodeHexString(encrypt("a672399171"));
-            System.out.println(str);
-            // System.out.println(new String(decrypt(Hex.decodeHex(str.toCharArray()))));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String username = "a672399171";
+        System.out.println("salt:" + Base64.encodeBase64String(salt));
+        byte[] data = PBECoder.encrypt(username.getBytes(), password, salt);
+        String str = Base64.encodeBase64String(data);
+        System.out.println("加密后：" + str);
+        System.out.println("加密后：" + getUserName(str));
     }
 }

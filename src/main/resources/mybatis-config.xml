@@ -15,7 +15,7 @@
 
         <!-- 配置日志的具体实现输出sql：
         SLF4J、LOG4J、LOG4J2、JDK_LOGGING、COMMONS_LOGGING、STDOUT_LOGGING、NO_LOGGING -->
-        <setting name="logImpl" value="SLF4J"/>
+        <setting name="logImpl" value="LOG4J2"/>
     </settings>
     <!-- 这里可以写多个实体的映射文件 -->
     <mappers>
