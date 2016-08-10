@@ -1,4 +1,3 @@
-<%@ page import="com.zzu.common.Common" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -13,7 +12,7 @@
 <div class="big">
     <div class="panel panel-default" id="login_panel">
         <div class="panel-body">
-            <form id="loginForm">
+            <form id="loginForm" method="post">
                 <div class="form-group">
                     <input type="text" class="form-control" name="username" id="username" placeholder="用户名"
                            value="${username}">
@@ -24,7 +23,7 @@
                 </div>
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" id="on"
+                        <input type="checkbox" id="on" name="on"
                         <c:if test="${requestScope.flag}">
                                checked
                         </c:if>

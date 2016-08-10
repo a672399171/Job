@@ -13,6 +13,10 @@ import com.zzu.util.CookieUtil;
 import com.zzu.util.NetUtil;
 import com.zzu.util.PictureUtil;
 import com.zzu.util.StringUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,9 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * Created by Administrator on 2016/3/1.
- */
 @Controller
 @RequestMapping("user")
 public class UserController {
@@ -59,14 +60,34 @@ public class UserController {
      */
     @RequestMapping("/login")
     @ResponseBody
-    public Result login(String username, String password, Boolean on,
+    public Result login(String username, String password, boolean on,
                         @CookieValue(value = Common.JOB_COOKIE_USER_REMEMBER, required = false) String cookie,
                         HttpSession session, HttpServletResponse response, HttpServletRequest request) {
         Result result = new Result();
+
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        if (on) {
+            token.setRememberMe(true);
+        }
+        // 获取当前subject
+        Subject currentUser = SecurityUtils.getSubject();
+        try {
+            currentUser.login(token);
+        } catch (AccountException e) {
+            result.setSuccess(false);
+            result.setError(e.getMessage());
+        }
+
+        if (currentUser.isAuthenticated()) {
+            // 验证通过
+        } else {
+            token.clear();
+        }
+        /*
         User user = userService.search(username, password);
 
         if (user != null) {
-            if (on != null && on) {
+            if (on) {
                 if (cookie == null) {
                     CookieUtil.addCookie(request.getServerName(), response, username);
                 } else if (request.getCookies() != null) {
@@ -91,6 +112,7 @@ public class UserController {
             result.setSuccess(false);
             result.setError("用户名或密码错误");
         }
+        */
 
         return result;
     }

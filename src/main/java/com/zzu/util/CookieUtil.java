@@ -3,17 +3,8 @@ package com.zzu.util;
 import com.zzu.common.Common;
 import com.zzu.util.coder.PBECoder;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
-import javax.crypto.*;
-import javax.crypto.spec.DESedeKeySpec;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 public class CookieUtil {
     // 3DES 加密

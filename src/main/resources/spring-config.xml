@@ -18,4 +18,5 @@
     <import resource="classpath:spring/spring-base.xml"/>
     <import resource="classpath:spring/spring-datasource.xml"/>
     <import resource="classpath:spring/spring-mvc.xml"/>
+    <import resource="classpath:spring/spring-shiro.xml"/>
 </beans>

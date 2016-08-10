@@ -36,7 +36,7 @@
         </property>
     </bean>
 
-    <mvc:interceptors>
+    <!--<mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/user/**"/>
             <mvc:mapping path="/company/**"/>
@@ -46,7 +46,7 @@
             <mvc:mapping path="/**"/>
             <ref bean="autoLoginInterceptor"/>
         </mvc:interceptor>
-    </mvc:interceptors>
+    </mvc:interceptors>-->
 
     <!-- 视图解析器velocity -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">

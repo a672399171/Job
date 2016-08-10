@@ -29,6 +29,10 @@ public class Result<E> implements Serializable {
 
     public Result() {}
 
+    public Result(boolean success) {
+        this.success = success;
+    }
+
     public boolean isSuccess() {
         return success;
     }

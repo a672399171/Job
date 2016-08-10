@@ -1,21 +1,14 @@
 package com.zzu.service.impl;
 
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.apache.velocity.app.VelocityEngine;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeUtility;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 
@@ -25,63 +18,31 @@ import java.util.Map;
 @Service("mailService")
 public class MailServiceImpl {
 	@Resource
-	public JavaMailSenderImpl mailSender;
+	private JavaMailSender mailSender;
 	@Resource
-	private SimpleMailMessage mailMessage;
-	@Resource
-	private FreeMarkerConfigurer freeMarkerConfigurer;
+	private VelocityEngine velocityEngine;
+	private static final String FROM = "m15617536860@163.com";
 
 	/**
 	 * 发送邮件模板
 	 * @param email 发送到的地址
-	 * @param title 标题
+	 * @param subject 标题
 	 * @param tplSrc 模板的文件名
 	 * @param map 参数
 	 */
-	public void sendEmail(String email, String title, String tplSrc, Map<String, Object> map) {
-		try {
-			MimeMessage mailMsg = mailSender.createMimeMessage();
-
-			MimeMessageHelper messageHelper = new MimeMessageHelper(mailMsg, true, "UTF-8");
-			// 接收邮箱
-			messageHelper.setTo(email);
-			// 发送邮箱
-			messageHelper.setFrom(mailMessage.getFrom());
-			// 发送时间
-			messageHelper.setSentDate(new Date());
-			// 邮件标题
-			messageHelper.setSubject(title);
-			// 设置昵称
-			String nick = MimeUtility.encodeText("职来了");
-			messageHelper.setFrom(new InternetAddress(nick + "<m15617536860@163.com>"));
-			// true 表示启动HTML格式的邮件 邮件内容
-			messageHelper.setText(getMailText(tplSrc, map), true);
-			// 发送
-			try {
-				this.mailSender.send(mailMsg);
-			} catch (MailException e) {
-				throw new RuntimeException("错误：" + e.getMessage());
+	public void sendEmail(final String email, final String subject, final String tplSrc, final Map<String, Object> map) {
+		MimeMessagePreparator preparator = new MimeMessagePreparator() {
+			public void prepare(MimeMessage mimeMessage) throws Exception {
+				MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+				message.setTo(email);
+				message.setFrom(FROM);
+				message.setSentDate(new Date());
+				message.setSubject(subject);
+				String text = VelocityEngineUtils.mergeTemplateIntoString(
+						velocityEngine, tplSrc, "utf-8", map);
+				message.setText(text, true);
 			}
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private String getMailText(String src, Map<String, Object> map) {
-		String html = "";
-
-		try {
-			// 装载模板
-			Template tpl = freeMarkerConfigurer.getConfiguration().getTemplate(src);
-			// 加入map到模板中 输出对应变量
-			html = FreeMarkerTemplateUtils.processTemplateIntoString(tpl, map);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (TemplateException e) {
-			e.printStackTrace();
-		}
-		return html;
+		};
+		this.mailSender.send(preparator);
 	}
 }

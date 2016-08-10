@@ -22,6 +22,9 @@
         </RollingRandomAccessFile>-->
     </Appenders>
     <Loggers>
+        <logger name="com.zzu" level="debug" additivity="false">
+            <appender-ref ref="Console"/>
+        </logger>
         <Root level="debug">
             <AppenderRef ref="Console"/>
         </Root>
