@@ -1,5 +1,6 @@
 package com.zzu.service.impl;
 
+import com.zzu.common.Common;
 import com.zzu.common.enums.JobStateEnum;
 import com.zzu.dao.JobDao;
 import com.zzu.dto.Result;
@@ -74,19 +75,25 @@ public class JobServiceImpl implements JobService {
         return result;
     }
 
-    public Result addJob(Job job){
+    public Result addJob(Job job) {
         Result result = new Result();
         result.setSuccess(false);
-        if(job == null) {
+        if (job == null) {
             result.setError("职位信息缺失");
-        } else if(job.getType() == null || job.getType().getId() <= 0) {
+        } else if (job.getType() == null || job.getType().getId() <= 0) {
             result.setError("职位类型错误");
-        } else if(jobDao.addJob(job) < 1){
+        } else if (jobDao.addJob(job) < 1) {
             result.setError("发布失败");
         } else {
             result.setSuccess(true);
         }
 
+        return result;
+    }
+
+    public Result<Job> getRecommendJobs(int time, int pId) {
+        Result<Job> result = new Result<Job>(1, Common.COUNT);
+        result.setList(jobDao.getRecommendJobs(time, pId));
         return result;
     }
 

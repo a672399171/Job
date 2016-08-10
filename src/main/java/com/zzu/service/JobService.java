@@ -21,4 +21,6 @@ public interface JobService {
     Result changeJobStatus(int jId, int status);
 
     Result addJob(Job job);
+
+    Result<Job> getRecommendJobs(int time,int pId);
 }

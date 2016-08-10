@@ -28,7 +28,8 @@
     <div class="row">
         <div class="col-md-8" id="top">
             <h2>${job.name}
-                <i class="fa fa-star" id="collect" v-on:click="updateCollection()" v-bind:class="{'red':collection}"></i>
+                <i class="fa fa-star" id="collect" v-on:click="updateCollection()"
+                   v-bind:class="{'red':collection}"></i>
             </h2>
 
             <div class="require">
@@ -136,7 +137,7 @@
                 <div id="content">
                     <div v-for="item in list">
                         <div>
-                            <img src="/resources/images/{{item.user.photo_src}}" class='headPhoto'>
+                            <img v-bind:src="genSrc(item.user.photo_src)" class='headPhoto'>
                             <span style="color: #2b542c">{{item.user.nickname}}</span>
                             <span>{{item.c_time | timestampFilter 'YYYY-MM-DD hh:mm'}}</span>
                         </div>
@@ -215,27 +216,29 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="otherJobs">
+                <div class="otherJobs" id="otherJobs">
                     <h4>职位推荐</h4>
                     <c:if test="${sessionScope.user == null}">
                         <span style="color: red">登录后可见</span>
                     </c:if>
-
-                    <div class="job_item" style="display: block" ng-repeat="item in data" ng-click="toUrl(item.id)">
-                        <table>
-                            <tr>
-                                <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
-                                <td width="30%" class="font3">{{item.post_time.time | dateFilter 'YYYY-MM-DD hh:mm'}}
-                                </td>
-                                <td width="30%" class="font5">{{item.post_company.company_name}}</td>
-                            </tr>
-                            <tr>
-                                <td class="font5">{{item.type.name}}</td>
-                                <td class="font4">{{item.low_salary}}-{{item.high_salary}}</td>
-                                <td class="font3">{{item.post_company.scope}}</td>
-                            </tr>
-                        </table>
-                    </div>
+                    <c:if test="${sessionScope.user != null}">
+                        <div class="job_item" style="display: block" v-if="list" v-for="item in list" v-on:click="toUrl(item.id)">
+                            <table>
+                                <tr>
+                                    <td width="30%"><a href="#" class="link">{{item.name}}</a></td>
+                                    <td width="30%" class="font3">{{item.post_time | timestampFilter 'YYYY-MM-DD
+                                        hh:mm'}}
+                                    </td>
+                                    <td width="30%" class="font5">{{item.post_company.company_name}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font5">{{item.type.name}}</td>
+                                    <td class="font4">{{item.low_salary}}-{{item.high_salary}}</td>
+                                    <td class="font3">{{item.post_company.scope}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </c:if>
                 </div>
             </div>
         </div>
@@ -303,9 +306,9 @@
             window.location = "/login?from=" + window.location.href;
         } else {
             $.post("/user/applyJob", {
-                j_id:'${job.id}'
+                j_id: '${job.id}'
             }, function (data) {
-                if(data.success) {
+                if (data.success) {
                     window.location = "/applySuccess";
                 } else {
                     alert(data.error);
@@ -343,6 +346,7 @@
                 alert(data.error);
             }
         }, 'JSON');
+        // 获取收藏
         if (${sessionScope.user != null}) {
             $.post('/user/getCollection', {
                 j_id: '${job.id}'
@@ -357,7 +361,7 @@
                                     window.location = "/login?from=" + window.location.href;
                                 } else {
                                     var that = this;
-                                    if(that.collection) {
+                                    if (that.collection) {
                                         $.post("/user/cancelCollection", {
                                             u_id: '${sessionScope.user.id}',
                                             j_id: '${job.id}'
@@ -374,7 +378,7 @@
                                             j_id: '${job.id}'
                                         }, function (data) {
                                             if (data.success) {
-                                                that.collection = {id:1};
+                                                that.collection = {id: 1};
                                             } else {
                                                 alert(data.error);
                                             }
@@ -388,7 +392,26 @@
             })
         }
 
+        // 加载评论
         loadComments(1);
+
+        // 加载推荐职位
+        if (${sessionScope.user != null}) {
+            $.post('/job/getRecommendJobs', {
+                u_id: '${sessionScope.user.id}',
+                j_id: '${job.id}'
+            }, function (data) {
+                new Vue({
+                    el: '#otherJobs',
+                    data: data,
+                    methods:{
+                        toUrl: function (id) {
+                            window.location = '/job/' + id;
+                        }
+                    }
+                });
+            }, 'JSON');
+        }
     });
 
     var commentsVm = undefined;
@@ -413,6 +436,9 @@
                                 if (p > 1 && p <= data.totalPage) {
                                     loadComments(p);
                                 }
+                            },
+                            genSrc:function (src) {
+                                return "/resources/images/" + src;
                             }
                         }
                     })

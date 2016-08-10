@@ -30,6 +30,8 @@ public class JobController {
     private UserService userService;
     @Resource
     private ClassifyService classifyService;
+    @Resource
+    private ResumeService resumeService;
 
     /**
      * 用户界面查看职位详情
@@ -175,6 +177,31 @@ public class JobController {
         } else {
             result.setSuccess(false);
             result.setError("权限错误");
+        }
+
+        return result;
+    }
+
+    @Authorization(Common.AUTH_USER_LOGIN)
+    @RequestMapping("/getRecommendJobs")
+    @ResponseBody
+    public Result<Job> getRecommendJobs(Integer u_id, Integer j_id) {
+        Result<Job> result = new Result<Job>();
+        result.setSuccess(false);
+        if (u_id == null) {
+            u_id = 0;
+        }
+        if (j_id == null) {
+            j_id = 0;
+        }
+
+        if (u_id != 0 && j_id != 0) {
+            Resume resume = resumeService.getByUid(u_id);
+            if(resume != null) {
+                int time = resume.getSpare_time();
+                Job job = jobService.getJobById(j_id);
+                result = jobService.getRecommendJobs(time, job.getType().getId());
+            }
         }
 
         return result;

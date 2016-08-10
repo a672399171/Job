@@ -178,4 +178,18 @@
         #{work_time}
         )
     </insert>
+
+    <select id="getRecommendJobs" resultType="com.zzu.model.Job">
+        SELECT
+        <include refid="jobListSql"/>
+        FROM tb_job j,
+        tb_company c,
+        tb_position p
+        where
+        j.type=p.id
+        and j.post_company=c.id
+        and #{time} &amp; j.work_time &lt;&gt; 0
+        and j.type=#{pId}
+        limit 0,10
+    </select>
 </mapper>

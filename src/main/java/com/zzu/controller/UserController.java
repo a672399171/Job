@@ -593,7 +593,8 @@ public class UserController {
 
     @RequestMapping(value = "/quit", method = RequestMethod.POST)
     @ResponseBody
-    public void quit(HttpSession session) {
+    public Result quit(HttpSession session) {
         session.removeAttribute(Common.USER);
+        return null;
     }
 }

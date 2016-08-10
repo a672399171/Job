@@ -40,5 +40,6 @@ public interface JobDao {
     int changeJobStatus(@Param("jId") int jId,
                         @Param("status") int status);
 
-    List<Job> getRecommendJobs(int time, int pId);
+    List<Job> getRecommendJobs(@Param("time") int time,
+                               @Param("pId") int pId);
 }
