@@ -18,13 +18,19 @@ public interface UserService {
 
     Result<Collection> searchCollections(int u_id, int page, int pageSize);
 
+    Collection getCollection(int u_id,int j_id);
+
+    Result deleteCollection(int u_id, int j_id);
+
+    Result addCollection(int u_id, int j_id);
+
     List<Apply> getApplies(int uId, int jId);
+
+    Result addApply(int uId,int jId);
 
     List<Poor> searchPoor(int uId);
 
     Result modifyInfo(User user);
-
-    Result deleteCollection(int u_id, int j_id);
 
     User exists(String username);
 

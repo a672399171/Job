@@ -16,4 +16,12 @@ public enum ApplyStateEnum {
         this.value = value;
         this.title = title;
     }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }

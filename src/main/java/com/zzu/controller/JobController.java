@@ -42,23 +42,19 @@ public class JobController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String detail(@PathVariable("id") Integer id, Model model, HttpSession session) {
         User user = (User) session.getAttribute(Common.USER);
-        Collection collection = null;
 
         Job job = jobService.getJobById(id);
         model.addAttribute("job", job);
 
         if (user != null) {
-            // collection = jobService.getCollection(user.getId(), id);
-            /*List<Apply> applies = jobService.getApplies(user.getId(), id);
+            List<Apply> applies = userService.getApplies(user.getId(), id);
             for (Apply apply : applies) {
                 if (apply.getJob().getId() == id) {
                     model.addAttribute("apply", apply);
                     break;
                 }
-            }*/
+            }
         }
-
-        //model.addAttribute("collection", collection);
         return "job_detail";
     }
 

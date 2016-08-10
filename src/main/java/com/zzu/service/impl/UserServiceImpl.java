@@ -1,5 +1,6 @@
 package com.zzu.service.impl;
 
+import com.zzu.common.enums.ApplyStateEnum;
 import com.zzu.dao.ApplyDao;
 import com.zzu.dao.CollectionDao;
 import com.zzu.dao.UserDao;
@@ -29,6 +30,10 @@ public class UserServiceImpl implements UserService {
         return userDao.getById(id);
     }
 
+    public Collection getCollection(int u_id, int j_id) {
+        return collectionDao.getCollection(u_id, j_id);
+    }
+
     public Result<Collection> searchCollections(int u_id, int page, int pageSize) {
         Result<Collection> result = new Result<Collection>(page, pageSize);
         if (page < 1) {
@@ -45,6 +50,27 @@ public class UserServiceImpl implements UserService {
 
     public List<Apply> getApplies(int uId, int jId) {
         return applyDao.getApplies(uId, jId);
+    }
+
+    public Result addApply(int uId, int jId) {
+        Apply apply = new Apply();
+
+        apply.setState(ApplyStateEnum.APPLYING_APPLY.getValue());
+        Resume resume = new Resume();
+        resume.setU_id(uId);
+
+        Job job = new Job();
+        job.setId(jId);
+
+        apply.setResume(resume);
+        apply.setJob(job);
+
+        Result result = new Result();
+        if (applyDao.addApply(apply) < 1) {
+            result.setError("申请失败");
+            result.setSuccess(false);
+        }
+        return result;
     }
 
     public List<Poor> searchPoor(int uId) {
@@ -65,6 +91,15 @@ public class UserServiceImpl implements UserService {
         if (collectionDao.deleteCollection(u_id, j_id) < 1) {
             result.setSuccess(false);
             result.setError("删除失败");
+        }
+        return result;
+    }
+
+    public Result addCollection(int u_id, int j_id) {
+        Result result = new Result();
+        if (collectionDao.addCollection(u_id, j_id) < 1) {
+            result.setSuccess(false);
+            result.setError("添加失败");
         }
         return result;
     }

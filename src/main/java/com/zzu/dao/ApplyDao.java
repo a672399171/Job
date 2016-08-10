@@ -13,7 +13,7 @@ public interface ApplyDao {
     List<Apply> getApplies(@Param("uId") int uId,
                            @Param("jId") int jId);
 
-    void addApply(Apply apply);
+    int addApply(Apply apply);
 
     List<Apply> getAppliesByCompany(@Param("id") int id,
                                     @Param("start") int start,

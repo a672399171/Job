@@ -37,4 +37,37 @@
         and com.id=j.post_company
         and c.u_id=#{u_id}
     </select>
+
+    <select id="getCollection" resultType="com.zzu.model.Collection">
+        select
+        c.collect_time,
+        c.u_id as "user.id",
+        c.j_id as "job.id"
+        from
+        tb_job j,
+        tb_collection c
+        where
+        j.id=c.j_id
+        and c.u_id=#{uId}
+        and j.id=#{jId}
+    </select>
+
+    <insert id="addCollection" >
+        insert into
+        tb_collection(
+        u_id,
+        j_id
+        )values(
+        #{uId},
+        #{jId}
+        )
+    </insert>
+
+    <delete id="deleteCollection">
+        delete from
+        tb_collection
+        where
+        u_id=#{uId}
+        and j_id=#{jId}
+    </delete>
 </mapper>

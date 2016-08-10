@@ -15,22 +15,20 @@
     <script src="/resources/scripts/vue.js"></script>
     <script src="/resources/js/filters/filters.js"></script>
     <script src="/resources/js/directives/directives.js"></script>
+    <style>
+        .red {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 <div class="big container">
     <%@include file="common/header.jsp" %>
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-8" id="top">
             <h2>${job.name}
-                <c:choose>
-                    <c:when test="${requestScope.collection == null}">
-                        <i class="fa fa-star" id="collect"></i>
-                    </c:when>
-                    <c:otherwise>
-                        <i class="fa fa-star" id="collect" style="color: red"></i>
-                    </c:otherwise>
-                </c:choose>
+                <i class="fa fa-star" id="collect" v-on:click="updateCollection()" v-bind:class="{'red':collection}"></i>
             </h2>
 
             <div class="require">
@@ -61,12 +59,9 @@
             <div>
                 <h4>职位介绍</h4>
 
+                <h5>招聘人数：${job.person_count}</h5>
                 <p>
                     技能要求：${job.skill}
-                </p>
-
-                <p>
-                    招聘人数：${job.person_count}
                 </p>
 
                 <p>
@@ -99,20 +94,13 @@
             </div>
             <h4>公司介绍</h4>
 
-            <p>公司全名：${job.post_company.company_name}</p>
-
-            <p>公司地址：${job.post_company.address}</p>
-
+            <h5>公司全名：${job.post_company.company_name}</h5>
+            <h5>公司地址：${job.post_company.address}</h5>
+            <h5>公司规模：${job.post_company.scope}</h5>
+            <h5>联系人：${job.post_company.name}</h5>
+            <h5>手机号：${job.post_company.phone}</h5>
+            <h5>邮箱：${job.post_company.email}</h5>
             <p>公司简介：${job.post_company.introduce}</p>
-
-            <p>公司规模：${job.post_company.scope}</p>
-
-            <p>联系人：${job.post_company.name}</p>
-
-            <p>手机号：${job.post_company.phone}</p>
-
-            <p>邮箱：${job.post_company.email}</p>
-
             <div id="container"></div>
         </div>
 
@@ -148,7 +136,7 @@
                 <div id="content">
                     <div v-for="item in list">
                         <div>
-                            <img v-bind:src="/resources/images/item.user.photo_src" class='headPhoto'>
+                            <img src="/resources/images/{{item.user.photo_src}}" class='headPhoto'>
                             <span style="color: #2b542c">{{item.user.nickname}}</span>
                             <span>{{item.c_time | timestampFilter 'YYYY-MM-DD hh:mm'}}</span>
                         </div>
@@ -205,12 +193,14 @@
 
                     <div class="sui-pagination">
                         <ul>
-                            <li class="prev" v-bind:class="{'disabled':page <= 1}"><a href="javascript:void(0)">«上一页</a></li>
+                            <li class="prev" v-bind:class="{'disabled':page <= 1}"><a href="javascript:void(0)">«上一页</a>
+                            </li>
                             <li v-bind:class="{'active':item+1 == page}" v-for="item in totalPage">
                                 <a href="javascript:void(0)" v-on:click="load(item+1)">{{ item+1 }}</a>
                             </li>
                             <li class="dotted" v-if="totalPage < 5"><span>...</span></li>
-                            <li class="next" v-bind:class="{'disabled':page == totalPage}"><a href="javascript:void(0)">下一页»</a></li>
+                            <li class="next" v-bind:class="{'disabled':page == totalPage}"><a href="javascript:void(0)">下一页»</a>
+                            </li>
                         </ul>
                         <div>
                             <span>共{{ totalPage }}页&nbsp;</span>
@@ -307,40 +297,18 @@
         $(":checkbox").attr("disabled", "disabled");
     });
 
-    //收藏
-    $("#collect").click(function () {
-        if (${sessionScope.user == null}) {
-            window.location = "/login?from=" + window.location.href;
-        } else {
-            flag = !flag;
-            if (flag) {
-                $("#collect").css("color", "red");
-            } else {
-                $("#collect").css("color", "#888");
-            }
-            $.post("${root}/job/updateCollection.do", {
-                collection: flag,
-                j_id:${job.id}
-            }, function (data) {
-                if (data.msg) {
-                    window.location = "${root}/user/toLogin.do?from=" + window.location.href;
-                }
-            }, "JSON");
-        }
-    });
-
     //申请职位
     $("#apply").click(function () {
         if (${sessionScope.user == null}) {
-            window.location = "${root}/user/toLogin.do?from=" + window.location.href;
+            window.location = "/login?from=" + window.location.href;
         } else {
-            $.post("${root}/job/applyJob.do", {
-                j_id:${job.id}
+            $.post("/user/applyJob", {
+                j_id:'${job.id}'
             }, function (data) {
-                if (data.msg) {
-                    window.location = "${root}/user/toLogin.do?from=" + window.location.href;
+                if(data.success) {
+                    window.location = "/applySuccess";
                 } else {
-                    window.location = "${root}/job/applySuccess.do";
+                    alert(data.error);
                 }
             }, "JSON");
         }
@@ -360,7 +328,7 @@
                             window.location = '/job/' + id;
                         },
                         load: function (page) {
-                            if(page == vm.data.page) {
+                            if (page == vm.data.page) {
                                 return;
                             }
                             $.get('/job/company/' + '${requestScope.job.post_company.id}' + '/page/' + page, function (data) {
@@ -375,6 +343,50 @@
                 alert(data.error);
             }
         }, 'JSON');
+        if (${sessionScope.user != null}) {
+            $.post('/user/getCollection', {
+                j_id: '${job.id}'
+            }, function (data) {
+                if (data.success) {
+                    new Vue({
+                        el: '#top',
+                        data: data.data,
+                        methods: {
+                            updateCollection: function () {
+                                if (${sessionScope.user == null}) {
+                                    window.location = "/login?from=" + window.location.href;
+                                } else {
+                                    var that = this;
+                                    if(that.collection) {
+                                        $.post("/user/cancelCollection", {
+                                            u_id: '${sessionScope.user.id}',
+                                            j_id: '${job.id}'
+                                        }, function (data) {
+                                            if (data.success) {
+                                                that.collection = undefined;
+                                            } else {
+                                                alert(data.error);
+                                            }
+                                        }, "JSON");
+                                    } else {
+                                        $.post("/user/addCollection", {
+                                            u_id: '${sessionScope.user.id}',
+                                            j_id: '${job.id}'
+                                        }, function (data) {
+                                            if (data.success) {
+                                                that.collection = {id:1};
+                                            } else {
+                                                alert(data.error);
+                                            }
+                                        }, "JSON");
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            })
+        }
 
         loadComments(1);
     });

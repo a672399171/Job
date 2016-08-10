@@ -72,4 +72,17 @@
             and j.post_company=#{id}
         </if>
     </select>
+
+    <insert id="addApply">
+        insert into
+        tb_apply(
+        r_id,
+        j_id,
+        state
+        )values(
+        #{resume.id},
+        #{job.id},
+        #{state}
+        )
+    </insert>
 </mapper>

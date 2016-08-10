@@ -129,6 +129,19 @@ public class UserController {
         return "apply";
     }
 
+    @RequestMapping("/applyJob")
+    @Authorization(Common.AUTH_USER_LOGIN)
+    @ResponseBody
+    public Result applyJob(HttpSession session, Integer j_id) {
+        User user = (User) session.getAttribute(Common.USER);
+        Result result = null;
+        if (user != null) {
+            result = userService.addApply(user.getId(), j_id);
+        }
+
+        return result;
+    }
+
     @RequestMapping("/poor")
     @Authorization(Common.AUTH_USER_LOGIN)
     public String poor(HttpSession session, Model model) {
@@ -225,6 +238,30 @@ public class UserController {
             result = userService.deleteCollection(u_id, j_id);
         }
 
+        return result;
+    }
+
+    @Authorization(Common.AUTH_USER_LOGIN)
+    @RequestMapping("/addCollection")
+    @ResponseBody
+    public Result addCollection(HttpSession session, int u_id, int j_id) {
+        User user = (User) session.getAttribute(Common.USER);
+        Result result = null;
+        if (user != null) {
+            result = userService.addCollection(u_id, j_id);
+        }
+
+        return result;
+    }
+
+    @Authorization(Common.AUTH_USER_LOGIN)
+    @RequestMapping(value = "/getCollection", method = RequestMethod.POST)
+    @ResponseBody
+    public Result getCollection(HttpSession session, Integer j_id) {
+        User user = (User) session.getAttribute(Common.USER);
+        Result result = new Result();
+        Collection collection = userService.getCollection(user.getId(), j_id);
+        result.getData().put("collection", collection);
         return result;
     }
 
@@ -445,7 +482,7 @@ public class UserController {
     public Result findPassword(String username, HttpServletRequest request) {
         Result result = new Result();
         User user = userService.exists(username);
-        if(user == null || StringUtil.isEmpty(user.getEmail())) {
+        if (user == null || StringUtil.isEmpty(user.getEmail())) {
             result.setSuccess(false);
             result.setError("用户不存在或暂未绑定邮箱,无法找回密码");
         } else {
@@ -472,7 +509,7 @@ public class UserController {
             verify.setTime(new Date());
             verify.setType(Common.FINDPWD);
 
-            result.getData().put("email",email);
+            result.getData().put("email", email);
 
             redisService.insertVerify(verify);
         }

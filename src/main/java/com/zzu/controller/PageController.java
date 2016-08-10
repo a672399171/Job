@@ -67,4 +67,9 @@ public class PageController {
     public String regSuccess(Model model) {
         return "reg_success";
     }
+
+    @RequestMapping(value = "/applySuccess", method = RequestMethod.GET)
+    public String applySuccess(Model model) {
+        return "apply_success";
+    }
 }

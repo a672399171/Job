@@ -45,8 +45,8 @@
 
     <select id="searchPoor" resultType="com.zzu.model.Poor">
         select
-        u_id
-        `name`,
+        p.u_id,
+        p.`name`,
         p.email as "email",
         p.major as "major.id",
         src,
