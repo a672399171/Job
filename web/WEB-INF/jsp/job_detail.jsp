@@ -149,11 +149,12 @@
 
                 <div class="sui-pagination pagination-naked pagination-large">
                     <ul>
-                        <li class="prev" v-bind:class="{'disabled':page<=1}"><a href="javascript:void(0)"
-                                                                                v-on:click="toPage(page-1)">上一页</a></li>
+                        <li class="prev" v-bind:class="{'disabled':page<=1}">
+                            <a href="javascript:void(0)" v-on:click="toPage(page-1)">上一页</a>
+                        </li>
                         <li><span class="ex-page-status">{{page}}/{{totalPage}}</span></li>
-                        <li class="next" v-bind:class="{'disabled':page>=totalPage}"><a href="javascript:void(0)"
-                                                                                        v-on:click="toPage(page+1)">下一页 </a>
+                        <li class="next" v-bind:class="{'disabled':page>=totalPage}">
+                            <a href="javascript:void(0)" v-on:click="toPage(page+1)">下一页 </a>
                         </li>
                     </ul>
                 </div>
@@ -162,7 +163,7 @@
                     <c:when test="${sessionScope.user != null}">
                         <div style="width: 100%">
                             <textarea rows="3" style="width: 100%" id="comment"></textarea>
-                            <button class="btn btn-danger" ng-click="postComment()">发表评论</button>
+                            <button class="btn btn-danger" v-on:click="postComment()">发表评论</button>
                         </div>
                     </c:when>
                     <c:otherwise>
@@ -439,6 +440,19 @@
                             },
                             genSrc:function (src) {
                                 return "/resources/images/" + src;
+                            },
+                            postComment:function () {
+                                $.post('/user/postComment',{
+                                    j_id:'${job.id}',
+                                    content:$('#comment').val()
+                                },function (data) {
+                                    if(data.success) {
+                                        $('#comment').val('');
+                                        loadComments(1);
+                                    } else {
+                                        alert(data.error);
+                                    }
+                                },'JSON')
                             }
                         }
                     })

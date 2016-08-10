@@ -39,4 +39,19 @@
         and m.j_id=j.id
         and m.j_id=#{id}
     </select>
+
+    <insert id="addComment" keyProperty="id" useGeneratedKeys="true">
+        insert into
+        tb_comment(
+        u_id,
+        j_id,
+        content,
+        c_time
+        )values (
+        #{user.id},
+        #{job.id},
+        #{content},
+        #{c_time}
+        )
+    </insert>
 </mapper>

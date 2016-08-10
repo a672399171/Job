@@ -8,4 +8,6 @@ import com.zzu.model.Comment;
  */
 public interface CommentService {
     Result<Comment> getComments(int jId,int page,int pageSize);
+
+    Result addComment(Comment comment);
 }

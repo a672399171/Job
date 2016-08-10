@@ -1,9 +1,7 @@
 package com.zzu.dao;
 
-import com.zzu.dto.Result;
 import com.zzu.model.Comment;
 import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 
 /**
@@ -18,7 +16,5 @@ public interface CommentDao {
                                 @Param("start") int start,
                                 @Param("count") int count);
 
-    void addComment(Comment comment);
-
-
+    int addComment(Comment comment);
 }

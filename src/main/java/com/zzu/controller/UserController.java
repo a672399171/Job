@@ -7,10 +7,7 @@ import com.zzu.common.enums.PoorAuditEnum;
 import com.zzu.dto.Result;
 import com.zzu.model.*;
 import com.zzu.model.Collection;
-import com.zzu.service.CompanyService;
-import com.zzu.service.RedisService;
-import com.zzu.service.ResumeService;
-import com.zzu.service.UserService;
+import com.zzu.service.*;
 import com.zzu.service.impl.MailServiceImpl;
 import com.zzu.util.CookieUtil;
 import com.zzu.util.NetUtil;
@@ -48,6 +45,8 @@ public class UserController {
     private RedisService redisService;
     @Resource
     private CompanyService companyService;
+    @Resource
+    private CommentService commentService;
     private KaptchaExtend kaptchaExtend = new KaptchaExtend();
 
     /**
@@ -264,6 +263,29 @@ public class UserController {
         result.getData().put("collection", collection);
         return result;
     }
+
+    @Authorization(Common.AUTH_USER_LOGIN)
+    @RequestMapping("/postComment")
+    @ResponseBody
+    public Result postComment(int j_id, String content, HttpSession session) {
+        Result result = new Result();
+        User user = (User) session.getAttribute(Common.USER);
+        if (user != null) {
+            Comment comment = new Comment();
+            comment.setUser(user);
+            comment.setContent(content);
+
+            Job job = new Job();
+            job.setId(j_id);
+
+            comment.setJob(job);
+            comment.setC_time(new Date());
+
+            result = commentService.addComment(comment);
+        }
+        return result;
+    }
+
 
     @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping("changePassword")
@@ -569,7 +591,6 @@ public class UserController {
         }
         return result;
     }
-
 
     @RequestMapping("/captchaCode")
     public void captchaCode(HttpServletRequest req, HttpServletResponse resp) throws Exception {
