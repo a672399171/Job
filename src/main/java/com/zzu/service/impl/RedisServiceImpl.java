@@ -1,5 +1,6 @@
 package com.zzu.service.impl;
 
+import com.zzu.common.Common;
 import com.zzu.dao.ClassifyDao;
 import com.zzu.dao.SchoolDao;
 import com.zzu.model.*;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service("redisService")
 public class RedisServiceImpl implements RedisService {
@@ -18,6 +20,10 @@ public class RedisServiceImpl implements RedisService {
     private ClassifyDao classifyDao;
     @Resource
     private SchoolDao schoolDao;
+
+    public RedisServiceImpl() {
+        redisTemplate.expire(Common.AUTH_TOKEN, 30, TimeUnit.MINUTES);
+    }
 
     public List<Classify> getClassifies() {
         List<Classify> classifies = null;
@@ -64,9 +70,22 @@ public class RedisServiceImpl implements RedisService {
     }
 
     public void deleteVerify(Verify verify) {
-        if(verify != null && verify.getVerify() != null && verify.getType() != null) {
+        if (verify != null && verify.getVerify() != null && verify.getType() != null) {
             redisTemplate.boundHashOps(verify.getType()).delete(verify.getVerify());
         }
+    }
+
+    public void insertToken(Token token) {
+        if (token != null) {
+            redisTemplate.boundHashOps(Common.AUTH_TOKEN).put(token.getToken(), token);
+        }
+    }
+
+    public Token getToken(String key) {
+        if (key != null) {
+            redisTemplate.boundHashOps(Common.AUTH_TOKEN).get(key);
+        }
+        return null;
     }
 
     public Verify searchVerify(String verify, String type) {

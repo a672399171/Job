@@ -6,6 +6,7 @@ import com.zzu.dto.Result;
 import com.zzu.model.Admin;
 import com.zzu.service.*;
 import com.zzu.util.StringUtil;
+import com.zzu.util.TokenFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,6 +31,8 @@ public class AdminController {
     private ClassifyService classifyService;
     @Resource
     private CommentService commentService;
+    @Resource
+    private AdminService adminService;
 
     @RequestMapping("/login")
     @ResponseBody
@@ -46,6 +49,8 @@ public class AdminController {
             if (admin != null) {
                 session.setAttribute(Common.ADMIN, admin);
                 result.setSuccess(true);
+
+                redisService.insertToken(TokenFactory.getInstance());
             } else {
                 result.setError("用户名或密码错误!");
             }
@@ -66,7 +71,8 @@ public class AdminController {
     @ResponseBody
     public Result dashboard() {
         Result result = new Result(true);
-
+        result.getData().put("poorCount", adminService.getNewPoorCount());
+        result.getData().put("companyCount",adminService.getNewCompanyCount());
         return result;
     }
 }

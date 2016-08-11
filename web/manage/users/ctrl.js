@@ -6,14 +6,15 @@
 
 app.controller('UserListController', function ($scope, $resource, $stateParams, $modal, $state) {
     //查询
-    $scope.query = function (page, filter) {
-        var $com = $resource("/user/admin/users/list/:page?filter=:filter", {page: '@page'});
+    $scope.query = function (page, filter, pageSize) {
+        var $com = $resource("/admin/users/list?page=:page&pageSize=:pageSize&filter=:filter", {page: '@page'});
         if (!page) {
             page = 1;
         } else {
             page = parseInt(page);
         }
-        $com.get({page: page,filter:filter}, function (data) {
+
+        $com.get({page: page, filter: filter}, function (data) {
             //扩展分页数据，显示页签，最终效果为  < 1 2 3 4 5 >
             $scope.page_index = page;
             $scope.pages = [];    //页签表
@@ -45,7 +46,7 @@ app.controller('UserListController', function ($scope, $resource, $stateParams, 
     };
     //搜索跳转
     $scope.search = function () {
-        $scope.query(1,$scope.search_context);
+        $scope.query(1, $scope.search_context);
     };
     //全选
     var selected = false;
@@ -72,11 +73,11 @@ app.controller('UserListController', function ($scope, $resource, $stateParams, 
                     size: 'sm'
                 });
                 modalInstance.result.then(function () {
-                    var $com = $resource("/user/admin/users/delete",null, {
+                    var $com = $resource("/user/admin/users/delete", null, {
                         'delete': {method: 'POST'}
                     });
                     $com.delete({'ids': ids}, function (data) {
-                        if(data.msg) {
+                        if (data.msg) {
                             alert(data.msg);
                         }
                         $state.go('app.users.list');
@@ -142,7 +143,7 @@ app.controller('UserDetailController', function ($rootScope, $scope, $resource, 
             size: 'sm'
         });
         modalInstance.result.then(function () {
-            var $com = $resource("/user/admin/users/delete",null, {
+            var $com = $resource("/user/admin/users/delete", null, {
                 'delete': {method: 'POST'}
             });
             var ids = [];

@@ -9,10 +9,7 @@ import com.zzu.model.*;
 import com.zzu.model.Collection;
 import com.zzu.service.*;
 import com.zzu.service.impl.MailServiceImpl;
-import com.zzu.util.CookieUtil;
-import com.zzu.util.NetUtil;
-import com.zzu.util.PictureUtil;
-import com.zzu.util.StringUtil;
+import com.zzu.util.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -69,7 +66,7 @@ public class UserController {
         if (user != null) {
             if (on != null && on) {
                 if (cookie == null) {
-                    CookieUtil.addCookie(Common.JOB_COOKIE_USER_REMEMBER,request.getServerName(), response, username);
+                    CookieUtil.addCookie(Common.JOB_COOKIE_USER_REMEMBER, request.getServerName(), response, username);
                 } else if (request.getCookies() != null) {
                     for (Cookie c : request.getCookies()) {
                         if (c.getName().equals(Common.JOB_COOKIE_USER_REMEMBER)) {
@@ -81,7 +78,7 @@ public class UserController {
             } else if (cookie != null && request.getCookies() != null) {
                 for (Cookie c : request.getCookies()) {
                     if (c.getName().equals(Common.JOB_COOKIE_USER_REMEMBER)) {
-                        CookieUtil.deleteCookie(Common.JOB_COOKIE_USER_REMEMBER,request.getServerName(), response, username);
+                        CookieUtil.deleteCookie(Common.JOB_COOKIE_USER_REMEMBER, request.getServerName(), response, username);
                         break;
                     }
                 }
@@ -118,7 +115,7 @@ public class UserController {
         return "resume";
     }
 
-    @RequestMapping(value = "/apply",method = RequestMethod.GET)
+    @RequestMapping(value = "/apply", method = RequestMethod.GET)
     @Authorization(Common.AUTH_USER_LOGIN)
     public String apply(HttpSession session, Model model) {
         User user = (User) session.getAttribute(Common.USER);
@@ -129,14 +126,19 @@ public class UserController {
         return "apply";
     }
 
-    @RequestMapping(value = "/applyJob",method = RequestMethod.POST)
+    @RequestMapping(value = "/applyJob", method = RequestMethod.POST)
     @Authorization(Common.AUTH_USER_LOGIN)
     @ResponseBody
-    public Result applyJob(HttpSession session, Integer j_id) {
-        User user = (User) session.getAttribute(Common.USER);
+    public Result applyJob(HttpServletRequest request, Integer j_id, Integer u_id) {
+        User user = (User) request.getSession().getAttribute(Common.USER);
         Result result = new Result(false);
-        if (user != null) {
-            Resume resume = resumeService.getByUid(user.getId());
+        Resume resume = null;
+
+        if (TokenUtil.auth(request)) {
+            resume = resumeService.getByUid(u_id);
+            result = userService.addApply(resume, j_id);
+        } else if (user != null) {
+            resume = resumeService.getByUid(user.getId());
             result = userService.addApply(resume, j_id);
         } else {
             result.setError("未登录");
@@ -164,7 +166,7 @@ public class UserController {
         return "poor";
     }
 
-    @Authorization({Common.AUTH_USER_LOGIN, Common.AUTH_COMPANY_LOGIN})
+    @Authorization({Common.AUTH_USER_LOGIN, Common.AUTH_COMPANY_LOGIN, Common.AUTH_ADMIN_LOGIN})
     @RequestMapping(value = "/resume/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Result getResumeById(@PathVariable("id") int id) {
@@ -175,11 +177,16 @@ public class UserController {
     }
 
     @RequestMapping(value = "/resume", method = RequestMethod.POST)
-    @Authorization(Common.AUTH_USER_LOGIN)
+    @Authorization({Common.AUTH_USER_LOGIN, Common.AUTH_ADMIN_LOGIN})
     @ResponseBody
-    public Result saveOrModifyResult(@Valid @ModelAttribute("resume") Resume resume, BindingResult bindingResult) {
+    public Result saveOrModifyResult(@Valid @ModelAttribute("resume") Resume resume, BindingResult bindingResult,
+                                     HttpServletRequest request) {
         Result result = new Result();
-        System.out.println(resume);
+        if (TokenUtil.auth(request)) {
+            // TODO
+        } else {
+            // TODO
+        }
         return result;
     }
 
@@ -234,11 +241,14 @@ public class UserController {
     @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping("/cancelCollection")
     @ResponseBody
-    public Result cancelCollection(HttpSession session, int u_id, int j_id) {
-        User user = (User) session.getAttribute(Common.USER);
+    public Result cancelCollection(HttpServletRequest request, int u_id, int j_id) {
+        User user = (User) request.getSession().getAttribute(Common.USER);
         Result result = null;
-        if (user != null) {
+
+        if (TokenUtil.auth(request)) {
             result = userService.deleteCollection(u_id, j_id);
+        } else if (user != null) {
+            result = userService.deleteCollection(user.getId(), j_id);
         }
 
         return result;
@@ -247,11 +257,14 @@ public class UserController {
     @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping("/addCollection")
     @ResponseBody
-    public Result addCollection(HttpSession session, int u_id, int j_id) {
-        User user = (User) session.getAttribute(Common.USER);
-        Result result = null;
-        if (user != null) {
+    public Result addCollection(HttpServletRequest request, int u_id, int j_id) {
+        User user = (User) request.getSession().getAttribute(Common.USER);
+        Result result = new Result(false);
+
+        if (TokenUtil.auth(request)) {
             result = userService.addCollection(u_id, j_id);
+        } else if (user != null) {
+            result = userService.addCollection(user.getId(), j_id);
         }
 
         return result;
@@ -260,8 +273,8 @@ public class UserController {
     @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping(value = "/getCollection", method = RequestMethod.POST)
     @ResponseBody
-    public Result getCollection(HttpSession session, Integer j_id) {
-        User user = (User) session.getAttribute(Common.USER);
+    public Result getCollection(HttpServletRequest request, Integer j_id, Integer u_id) {
+        User user = (User) request.getSession().getAttribute(Common.USER);
         Result result = new Result();
         Collection collection = userService.getCollection(user.getId(), j_id);
         result.getData().put("collection", collection);
@@ -271,10 +284,26 @@ public class UserController {
     @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping("/postComment")
     @ResponseBody
-    public Result postComment(int j_id, String content, HttpSession session) {
+    public Result postComment(Integer j_id, Integer u_id, String content, HttpServletRequest request) {
         Result result = new Result();
-        User user = (User) session.getAttribute(Common.USER);
-        if (user != null) {
+        User user = (User) request.getSession().getAttribute(Common.USER);
+
+        if (TokenUtil.auth(request)) {
+            User u = new User();
+            u.setId(u_id);
+
+            Comment comment = new Comment();
+            comment.setUser(u);
+            comment.setContent(content);
+
+            Job job = new Job();
+            job.setId(j_id);
+
+            comment.setJob(job);
+            comment.setC_time(new Date());
+
+            result = commentService.addComment(comment);
+        } else if (user != null) {
             Comment comment = new Comment();
             comment.setUser(user);
             comment.setContent(content);
@@ -290,15 +319,17 @@ public class UserController {
         return result;
     }
 
-
     @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping("changePassword")
     @ResponseBody
-    public Result changePassword(String originPwd, String newPwd, HttpSession session) {
+    public Result changePassword(String originPwd, String newPwd, Integer u_id,HttpServletRequest request) {
         Result result = new Result();
-        User user = (User) session.getAttribute(Common.USER);
+        User user = (User) request.getSession().getAttribute(Common.USER);
         user = userService.search(user.getUsername(), originPwd);
-        if (user == null) {
+
+        if(TokenUtil.auth(request)) {
+            result = userService.changeUserPassword(u_id, newPwd);
+        } else if (user == null) {
             result.setSuccess(false);
             result.setError("密码错误");
         } else {
@@ -309,11 +340,11 @@ public class UserController {
 
     @RequestMapping("/resetPassword")
     @ResponseBody
-    public Result resetPassword(String password, String type, HttpSession session) {
+    public Result resetPassword(String password, String type, HttpServletRequest request) {
         Result object = new Result();
         object.setSuccess(false);
 
-        String username = (String) session.getAttribute(Common.AUTH);
+        String username = (String) request.getSession().getAttribute(Common.AUTH);
         if (username != null) {
             if (Common.USER.equals(type)) {
                 User user = userService.exists(username);
@@ -335,7 +366,7 @@ public class UserController {
         } else {
             object.setError("未验证");
         }
-        session.removeAttribute(Common.AUTH);
+        request.getSession().removeAttribute(Common.AUTH);
 
         return object;
     }
@@ -370,10 +401,10 @@ public class UserController {
     @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping("/poorConfirm")
     public String poorConfirm(String name, String email, int major, @RequestParam("file") MultipartFile myfile,
-                              HttpSession session) {
-        User user = (User) session.getAttribute(Common.USER);
+                              HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute(Common.USER);
 
-        String realPath = session.getServletContext().getRealPath("/resources/images");
+        String realPath = request.getSession().getServletContext().getRealPath("/resources/images");
         File file = new File(realPath);
         if (file.isDirectory() && !file.exists()) {
             file.mkdirs();
@@ -412,16 +443,16 @@ public class UserController {
     /**
      * 绑定邮箱
      *
-     * @param session
+     * @param request
      * @param email
      * @return
      */
     @Authorization(Common.AUTH_USER_LOGIN)
     @RequestMapping("/bindEmail")
     @ResponseBody
-    public Result bindEmail(HttpSession session, String email, HttpServletRequest request) {
+    public Result bindEmail(String email, HttpServletRequest request) {
         Result result = new Result();
-        User user = (User) session.getAttribute(Common.USER);
+        User user = (User) request.getSession().getAttribute(Common.USER);
         if (user != null) {
             String url = request.getScheme() + "://" + request.getServerName() + ":" +
                     request.getServerPort() + request.getContextPath() + "/user/validate?type=" + Common.BINGEMAIL;
@@ -453,20 +484,20 @@ public class UserController {
      * @return
      */
     @RequestMapping("/validate")
-    public String validateResult(String type, String s, Model model, HttpSession session) {
-        User user = (User) session.getAttribute(Common.USER);
+    public String validateResult(String type, String s, Model model, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute(Common.USER);
         Verify verify = redisService.searchVerify(s, type);
 
         if (Common.BINGEMAIL.equals(type)) {
-            return validateBindEmail(verify, user, model, session, s);
+            return validateBindEmail(verify, user, model, request, s);
         } else if (Common.FINDPWD.equals(type)) {
-            return validateFindpwd(verify, s, session);
+            return validateFindpwd(verify, s, request);
         }
 
         return "redirect:/";
     }
 
-    private String validateBindEmail(Verify verify, User user, Model model, HttpSession session, String s) {
+    private String validateBindEmail(Verify verify, User user, Model model, HttpServletRequest request, String s) {
         if (verify != null && verify.getVerify() != null && verify.getVerify().equals(s)) {
             int hourGap = (int) ((new Date().getTime() - verify.getTime().getTime()) / (1000 * 3600));
             if (hourGap <= 48) {
@@ -477,7 +508,7 @@ public class UserController {
                     user.setEmail(verify.getEmail());
                     userService.bindEmail(user);
                     model.addAttribute("result", "恭喜你，验证成功！");
-                    session.setAttribute(Common.USER, user);
+                    request.getSession().setAttribute(Common.USER, user);
                 }
             } else {
                 model.addAttribute("result", "很遗憾，验证失败！");
@@ -489,11 +520,11 @@ public class UserController {
         return "varify_result";
     }
 
-    private String validateFindpwd(Verify verify, String s, HttpSession session) {
+    private String validateFindpwd(Verify verify, String s, HttpServletRequest request) {
         if (verify != null && verify.getVerify() != null && verify.getVerify().equals(s)) {
             int hourGap = (int) ((new Date().getTime() - verify.getTime().getTime()) / (1000 * 3600));
             if (hourGap <= 48) {
-                session.setAttribute(Common.AUTH, verify.getUsername());
+                request.getSession().setAttribute(Common.AUTH, verify.getUsername());
             } else {
                 redisService.deleteVerify(verify);
             }
@@ -618,8 +649,8 @@ public class UserController {
 
     @RequestMapping(value = "/quit", method = RequestMethod.POST)
     @ResponseBody
-    public Result quit(HttpSession session) {
-        session.removeAttribute(Common.USER);
+    public Result quit(HttpServletRequest request) {
+        request.getSession().removeAttribute(Common.USER);
         return new Result(true);
     }
 }

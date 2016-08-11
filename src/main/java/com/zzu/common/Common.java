@@ -31,4 +31,6 @@ public class Common {
 	public static final String JOB_COOKIE_COMPANY_REMEMBER = "job_cookie_company_remember";
 	public static final int MAX_AGE = 7 * 24 * 60 * 60; // 7天
 
+	// param常量
+	public static final String AUTH_TOKEN = "authToken";
 }

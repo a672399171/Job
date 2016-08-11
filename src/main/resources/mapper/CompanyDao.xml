@@ -79,4 +79,12 @@
         )
     </insert>
 
+    <select id="getNewCompanyCount" resultType="int">
+        select
+        count(*) as num
+        from
+        tb_company
+        where
+        auth in (0,1)
+    </select>
 </mapper>

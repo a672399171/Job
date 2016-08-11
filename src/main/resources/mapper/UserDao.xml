@@ -169,4 +169,14 @@
         username=#{username}
         and password=#{password}
     </select>
+
+    <select id="getNewPoorCount" resultType="int">
+        select
+        count(*) as num
+        from
+        tb_poor
+        where
+        status=1
+        and isNew=1
+    </select>
 </mapper>

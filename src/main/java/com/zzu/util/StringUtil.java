@@ -1,10 +1,12 @@
 package com.zzu.util;
 
+import org.springframework.util.DigestUtils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,10 +93,5 @@ public class StringUtil {
 	}
 
 	public static void main(String[] args) {
-		List<Long> longs = new ArrayList<Long>();
-		longs.add(new Long(2));
-		longs.add(new Long(3));
-
-		System.out.println(longs.contains(new Long(2)));
 	}
 }
