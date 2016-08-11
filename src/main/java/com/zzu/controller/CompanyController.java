@@ -55,7 +55,7 @@ public class CompanyController {
             session.setAttribute(Common.COMPANY, company);
             if (on != null && on) {
                 if (cookie == null) {
-                    CookieUtil.addCookie(request.getServerName(), response, username);
+                    CookieUtil.addCookie(Common.JOB_COOKIE_COMPANY_REMEMBER, request.getServerName(), response, username);
                 } else if (request.getCookies() != null) {
                     for (Cookie c : request.getCookies()) {
                         if (c.getName().equals(Common.JOB_COOKIE_COMPANY_REMEMBER)) {
@@ -67,7 +67,7 @@ public class CompanyController {
             } else if (cookie != null && request.getCookies() != null) {
                 for (Cookie c : request.getCookies()) {
                     if (c.getName().equals(Common.JOB_COOKIE_COMPANY_REMEMBER)) {
-                        CookieUtil.deleteCookie(request.getServerName(), response, username);
+                        CookieUtil.deleteCookie(Common.JOB_COOKIE_COMPANY_REMEMBER, request.getServerName(), response, username);
                         break;
                     }
                 }

@@ -4,8 +4,8 @@
 <html lang="zh-CN">
 <head>
     <title>搜索简历</title>
-    <%@include file="../common/head.jsp" %>
     <link href="http://g.alicdn.com/sj/dpl/1.5.1/css/sui.min.css" rel="stylesheet">
+    <%@include file="../common/head.jsp" %>
     <script src="/resources/scripts/vue.js"></script>
     <script src="/resources/js/filters/filters.js"></script>
     <script src="/resources/layer/layer.js"></script>

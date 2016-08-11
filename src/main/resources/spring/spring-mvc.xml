@@ -38,13 +38,13 @@
 
     <mvc:interceptors>
         <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <ref bean="autoLoginInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
             <mvc:mapping path="/user/**"/>
             <mvc:mapping path="/company/**"/>
             <ref bean="loginAuthInterceptor"/>
-        </mvc:interceptor>
-        <mvc:interceptor>
-            <mvc:mapping path="/**"/>
-            <ref bean="autoLoginInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>
 

@@ -69,7 +69,7 @@ public class UserController {
         if (user != null) {
             if (on != null && on) {
                 if (cookie == null) {
-                    CookieUtil.addCookie(request.getServerName(), response, username);
+                    CookieUtil.addCookie(Common.JOB_COOKIE_USER_REMEMBER,request.getServerName(), response, username);
                 } else if (request.getCookies() != null) {
                     for (Cookie c : request.getCookies()) {
                         if (c.getName().equals(Common.JOB_COOKIE_USER_REMEMBER)) {
@@ -81,7 +81,7 @@ public class UserController {
             } else if (cookie != null && request.getCookies() != null) {
                 for (Cookie c : request.getCookies()) {
                     if (c.getName().equals(Common.JOB_COOKIE_USER_REMEMBER)) {
-                        CookieUtil.deleteCookie(request.getServerName(), response, username);
+                        CookieUtil.deleteCookie(Common.JOB_COOKIE_USER_REMEMBER,request.getServerName(), response, username);
                         break;
                     }
                 }
