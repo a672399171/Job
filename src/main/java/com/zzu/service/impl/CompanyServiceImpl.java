@@ -86,4 +86,14 @@ public class CompanyServiceImpl implements CompanyService {
 
         return result;
     }
+
+    public Result updateApply(int jId, int rId, int state) {
+        Result result = new Result();
+        if(applyDao.updateApply(jId, rId, state) < 1) {
+            result.setSuccess(false);
+            result.setError("更新失败");
+        }
+
+        return result;
+    }
 }

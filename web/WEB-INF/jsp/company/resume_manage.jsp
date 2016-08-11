@@ -67,7 +67,7 @@
     </nav>
 
     <%--简历预览界面--%>
-    <div class="preview container" id="preview" >
+    <div class="preview container" id="preview">
         <form class="form-horizontal">
             <div class="form-group">
                 <label class="col-sm-2 control-label">姓名</label>
@@ -219,127 +219,23 @@
                             });
                         }
                     }, 'JSON');
+                },
+                updateApply: function (item, state) {
+                    $.post('/company/updateApply', {
+                        j_id: item.job.id,
+                        r_id: item.resume.id,
+                        state: state
+                    }, function (data) {
+                        if(data.success) {
+                            window.location.reload();
+                        } else {
+                            alert(data.error);
+                        }
+                    }, 'JSON');
                 }
             }
         })
     }, 'JSON');
-
-    /*var app = angular.module("resumeApp", []);
-     app.controller("ResumeController", function ($scope, $http) {
-     $scope.currentPage = 1;
-     $scope.minPage = 1;
-     $scope.maxPage = 1;
-     $scope.currentResume = {};
-
-     $scope.params = {
-     page: 1,
-     id: ${sessionScope.company.id}
-     };
-
-     $scope.isCurrentPage = function (p) {
-     return p == $scope.currentPage;
-     };
-
-     //打开预览对话框
-     $scope.openDlg = function (r_id) {
-     $http.get("/job/admin/resumes/detail/" + r_id)
-     .success(function (data) {
-     $scope.currentResume = data;
-
-     //预处理空余时间表格
-     var spareStr = parseInt(data.spare_time).toString(2);
-     var timeLength = spareStr.length;
-     if (spareStr.length < 7) {
-     for (var i = 0; i < 7 - timeLength; i++) {
-     spareStr = "0" + spareStr;
-     }
-     } else {
-     spareStr = spareStr.substr(spareStr.length - 7);
-     }
-
-     var week = $("#week td :checkbox");
-
-     for (var i = 0; i < spareStr.length; i++) {
-     var c = spareStr.charAt(i);
-     week.eq(i).attr("checked", c == '1');
-     }
-     $(":checkbox").attr("disabled", "disabled");
-
-     layer.open({
-     type: 1,
-     title: "简历预览",
-     closeBtn: 0,
-     shadeClose: true,
-     area: ['800px','600px'],
-     skin: 'yourclass',
-     content: $("#preview")
-     });
-     });
-     };
-
-     //更新投递信息
-     $scope.updateApply = function (item, state) {
-     $http.get("/job/updateApply.do", {
-     params: {
-     j_id: item.job.id,
-     r_id: item.resume.id,
-     state: state
-     }
-     }).success(function (data) {
-     if (!data.error) {
-     $scope.loadData(1);
-     } else {
-     window.location = "/user/toCompanyLogin.do";
-     }
-     });
-     };
-
-     $scope.loadData = function (page) {
-     if (page) {
-     $scope.params.page = page;
-     }
-
-     $http.get('/job/resumeOfCompany.do', {
-     params: $scope.params
-     }).success(function (data) {
-     $scope.applies = data.rows;
-     $scope.pageArray = [];
-
-     $scope.maxPage = Math.ceil(data.total / 10);
-
-     if ($scope.maxPage <= 5) {
-     for (var i = 0; i < $scope.maxPage; i++) {
-     $scope.pageArray.push(i + 1);
-     }
-     } else {
-     if ($scope.currentPage > 3) {
-     var end = $scope.maxPage > $scope.currentPage + 2 ? $scope.currentPage + 2 : $scope.maxPage;
-     for (var i = $scope.currentPage - 2; i <= end; i++) {
-     $scope.pageArray.push(i);
-     }
-     } else {
-     for (var i = 0; i < 5; i++) {
-     $scope.pageArray.push(i + 1);
-     }
-     }
-     }
-
-     $scope.currentPage = page;
-     });
-     };
-
-     $scope.load = function (temp) {
-     if ((temp < 0 && $scope.currentPage <= $scope.minPage) ||
-     ($scope.currentPage >= $scope.maxPage && temp > 0)) {
-     return;
-     } else {
-     $scope.loadData($scope.currentPage + temp);
-     }
-     };
-
-     //初始化数据
-     $scope.loadData();
-     });*/
 </script>
 </body>
 </html>

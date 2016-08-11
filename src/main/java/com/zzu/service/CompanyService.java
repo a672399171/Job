@@ -24,4 +24,6 @@ public interface CompanyService {
     Company searchByEmail(String email);
 
     Result<Apply> getApplies(int id,int page,int pageSize);
+
+    Result updateApply(int jId,int rId,int state);
 }

@@ -6,6 +6,8 @@ import com.zzu.model.User;
 import com.zzu.service.CompanyService;
 import com.zzu.service.UserService;
 import com.zzu.util.CookieUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
@@ -22,6 +24,7 @@ public class AutoLoginInterceptor implements HandlerInterceptor {
     private UserService userService;
     @Resource
     private CompanyService companyService;
+    private static final Logger logger = LogManager.getLogger(AutoLoginInterceptor.class);
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
@@ -33,24 +36,30 @@ public class AutoLoginInterceptor implements HandlerInterceptor {
             for (Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals(Common.JOB_COOKIE_USER_REMEMBER)) {
                     String username = CookieUtil.getUserName(cookie.getValue());
-                    session.setAttribute(Common.USER, userService.exists(username));
-                    session.setAttribute(Common.COOKIE_USER_CHECKED, true);
+                    if (username != null) {
+                        logger.info("用户：" + username + " 自动登录");
+                        session.setAttribute(Common.USER, userService.exists(username));
+                        session.setAttribute(Common.COOKIE_USER_CHECKED, true);
+                    }
                     break;
                 }
             }
         }
 
-        if (company == null && session.getAttribute(Common.COOKIE_COMPANY_CHECKED) == null &&
+        /*if (company == null && session.getAttribute(Common.COOKIE_COMPANY_CHECKED) == null &&
                 request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals(Common.JOB_COOKIE_COMPANY_REMEMBER)) {
                     String username = CookieUtil.getUserName(cookie.getValue());
-                    session.setAttribute(Common.COMPANY, companyService.exists(username));
-                    session.setAttribute(Common.COOKIE_COMPANY_CHECKED, true);
+                    if (username != null) {
+                        logger.info("公司：" + username + " 自动登录");
+                        session.setAttribute(Common.USER, companyService.exists(username));
+                        session.setAttribute(Common.COOKIE_USER_CHECKED, true);
+                    }
                     break;
                 }
             }
-        }
+        }*/
 
         return true;
     }

@@ -4,13 +4,13 @@
 <html lang="zh-CN">
 <head>
     <title>发布新职位</title>
+    <link href="http://g.alicdn.com/sj/dpl/1.5.1/css/sui.min.css" rel="stylesheet">
     <%@include file="../common/head.jsp" %>
     <link rel="stylesheet" type="text/css" href="/resources/css/post.css"/>
     <link href="/resources/js/summernote/summernote.css" rel="stylesheet">
     <script src="/resources/js/summernote/summernote.js"></script>
     <script src="/resources/js/summernote/lang/summernote-zh-CN.js"></script>
     <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
-    <link href="http://g.alicdn.com/sj/dpl/1.5.1/css/sui.min.css" rel="stylesheet">
 </head>
 <body>
 <jsp:include page="header.jsp"/>

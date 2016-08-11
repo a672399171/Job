@@ -22,13 +22,13 @@
                        value="${password}">
             </div>
             <div class="checkbox">
-                <label>
+                <%--<label>
                     <input type="checkbox" id="on"
                     <c:if test="${requestScope.flag}">
                            checked
                     </c:if>
                     >7天内自动登录
-                </label>
+                </label>--%>
                 <a href="/companyFindPassword" id="wangji">忘记密码</a>
             </div>
 
@@ -72,8 +72,8 @@
             // Use Ajax to submit form data
             $.post("/company/login", {
                 username: $("#username").val(),
-                password: $("#password").val(),
-                on: $("#on").is(":checked")
+                password: $("#password").val()
+                /*on: $("#on").is(":checked")*/
             }, function (data) {
                 if (data.success) {
                     window.location = "/company/jobManage";

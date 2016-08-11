@@ -1,6 +1,7 @@
 package com.zzu.util.coder;
 
-import org.apache.commons.codec.binary.Base64;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
@@ -18,9 +19,8 @@ public class PBECoder {
 
     // 初始化salt，8字节
     public static byte[] initSalt() throws Exception {
-        SecureRandom random = new SecureRandom();
-        return random.generateSeed(8);
-        // return Arrays.copyOf(Common.SALT.getBytes(), 8);
+
+        return new byte[]{(byte) 1, (byte) 0, (byte) 4, (byte) 5, (byte) 3, (byte) 2, (byte) 3, (byte) 5};
     }
 
     // 转换秘钥

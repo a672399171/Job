@@ -88,4 +88,14 @@
         state=#{state},
         apply_date=now()
     </insert>
+
+    <update id="updateApply">
+        update
+        tb_apply
+        set
+        state=#{state}
+        where
+        j_id=#{jId}
+        and r_id=#{rId}
+    </update>
 </mapper>

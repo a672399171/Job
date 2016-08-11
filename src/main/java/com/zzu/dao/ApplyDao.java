@@ -21,5 +21,7 @@ public interface ApplyDao {
 
     int getCompanyApplyCount(@Param("id") int id);
 
-    void updateApply(int jId, int rId, int state);
+    int updateApply(@Param("jId") int jId,
+                    @Param("rId") int rId,
+                    @Param("state") int state);
 }

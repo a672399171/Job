@@ -5,9 +5,6 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * Created by zhanglei53 on 2016/7/28.
- */
 public interface CompanyDao {
     Company search(@Param("username") String username,
                    @Param("password") String password,
@@ -19,7 +16,8 @@ public interface CompanyDao {
 
     int addCompany(Company company);
 
-    int modifyPassword(int id, String s);
+    int modifyPassword(@Param("id") int id,
+                       @Param("password") String password);
 
     List<Company> searchCompanies(int page, int[] audit, String filter);
 

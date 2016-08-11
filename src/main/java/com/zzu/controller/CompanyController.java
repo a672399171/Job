@@ -53,25 +53,6 @@ public class CompanyController {
         Company company = (Company) result.getData().get(Common.COMPANY);
         if (company != null) {
             session.setAttribute(Common.COMPANY, company);
-            if (on != null && on) {
-                if (cookie == null) {
-                    CookieUtil.addCookie(Common.JOB_COOKIE_COMPANY_REMEMBER, request.getServerName(), response, username);
-                } else if (request.getCookies() != null) {
-                    for (Cookie c : request.getCookies()) {
-                        if (c.getName().equals(Common.JOB_COOKIE_COMPANY_REMEMBER)) {
-                            c.setMaxAge(Common.MAX_AGE);
-                            break;
-                        }
-                    }
-                }
-            } else if (cookie != null && request.getCookies() != null) {
-                for (Cookie c : request.getCookies()) {
-                    if (c.getName().equals(Common.JOB_COOKIE_COMPANY_REMEMBER)) {
-                        CookieUtil.deleteCookie(Common.JOB_COOKIE_COMPANY_REMEMBER, request.getServerName(), response, username);
-                        break;
-                    }
-                }
-            }
         }
         return companyService.login(username, password);
     }
@@ -272,6 +253,37 @@ public class CompanyController {
             model.addAttribute("result", "很遗憾，注册失败！");
         }
         return "";
+    }
+
+    @Authorization(Common.AUTH_COMPANY_LOGIN)
+    @RequestMapping("modifyPassword")
+    @ResponseBody
+    public Result modifyCompanyPassword(HttpSession session, String password, String newPassword) {
+        Company company = (Company) session.getAttribute(Common.COMPANY);
+        Result result = new Result(false);
+
+        if (company == null) {
+            result.setError("登录已过期!");
+        } else if (companyService.login(company.getUsername(), password) == null) {
+            result.setError("密码错误");
+        } else {
+            companyService.modifyPassword(company.getId(), StringUtil.toMd5(newPassword));
+            company = companyService.getById(company.getId());
+            session.setAttribute(Common.COMPANY, company);
+            result.setSuccess(true);
+        }
+
+        return result;
+    }
+
+    @Authorization(Common.AUTH_COMPANY_LOGIN)
+    @RequestMapping(value = "/updateApply", method = RequestMethod.POST)
+    @ResponseBody
+    public Result updateApply(@RequestParam(value = "j_id",required = false,defaultValue = "0") int j_id,
+                              @RequestParam(value = "r_id",required = false,defaultValue = "0") int r_id,
+                              @RequestParam(value = "state",required = false,defaultValue = "1") int state) {
+        Result result = companyService.updateApply(j_id, r_id, state);
+        return result;
     }
 
     @RequestMapping(value = "/quit", method = RequestMethod.POST)

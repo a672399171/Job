@@ -292,10 +292,10 @@
                     password: $("#password").val(),
                     newPassword: $("#newPassword").val()
                 }, function (data) {
-                    if (data.msg == true) {
+                    if(data.success) {
                         $(".shade").click();
                     } else {
-                        alert(data.msg);
+                        alert(data.error);
                     }
                 }, "JSON"
         );
