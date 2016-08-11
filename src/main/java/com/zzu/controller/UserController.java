@@ -422,7 +422,7 @@ public class UserController {
         if (!StringUtil.isEmail(email)) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("text", "同学你好，请及时关注贫困生审核进展，我们将以邮件的方式通知给你。");
-            mailService.sendEmail(email, "审核进展", "poorAuditChange.ftl", map);
+            mailService.sendEmail(email, "审核进展", "poorAuditChange.vm", map);
         }
         return "redirect:/user/poor";
     }
@@ -448,7 +448,7 @@ public class UserController {
             Map<String, Object> valMap = new HashMap<String, Object>();
             valMap.put("url", url);
 
-            mailService.sendEmail(email, "验证邮箱", "bindEmail.ftl", valMap);
+            mailService.sendEmail(email, "验证邮箱", "bindEmail.vm", valMap);
 
             Verify verify = new Verify();
             verify.setEmail(email);
@@ -539,7 +539,7 @@ public class UserController {
             valMap.put("url", url);
 
             try {
-                mailService.sendEmail(email, "找回密码", "findPwd.ftl", valMap);
+                mailService.sendEmail(email, "找回密码", "findPwd.vm", valMap);
             } catch (Exception e) {
                 result.setSuccess(false);
                 result.setError(e.getMessage());
