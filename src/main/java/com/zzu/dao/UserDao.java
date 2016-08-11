@@ -17,7 +17,8 @@ public interface UserDao {
 
     void updateSecret(int id, boolean secret);
 
-    Admin adminLogin(String username, String password);
+    Admin adminLogin(@Param("username") String username,
+                     @Param("password") String password);
 
     List<User> searchUsers(int page, String filter);
 
@@ -34,7 +35,7 @@ public interface UserDao {
     int deleteUsers(int[] ids);
 
     int changeUserPassword(@Param("id") int id,
-                            @Param("password") String password);
+                           @Param("password") String password);
 
     void bindEmail(User user);
 

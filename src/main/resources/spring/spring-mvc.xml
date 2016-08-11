@@ -44,6 +44,7 @@
         <mvc:interceptor>
             <mvc:mapping path="/user/**"/>
             <mvc:mapping path="/company/**"/>
+            <mvc:mapping path="/admin/**"/>
             <ref bean="loginAuthInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>

@@ -155,6 +155,10 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    public Admin adminLogin(String username, String password) {
+        return userDao.adminLogin(username, StringUtil.toMd5(password));
+    }
+
     /*
     public void updateSecret(int id, boolean secret) {
         userDao.updateSecret(id, secret);

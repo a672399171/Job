@@ -69,7 +69,7 @@ app.directive("xlPage", [function () {
 
     return {
         restrict: 'E',
-        templateUrl: app.host + "/tpl/xl-page.html",
+        templateUrl: "/admin/tpl/xl-page.html",
         link: link
     }
 }]);

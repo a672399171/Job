@@ -155,4 +155,18 @@
         #{status}
         )
     </insert>
+
+    <select id="adminLogin" resultType="com.zzu.model.Admin">
+        select
+        id,
+        username,
+        password,
+        last_login_time,
+        email
+        from
+        tb_admin
+        where
+        username=#{username}
+        and password=#{password}
+    </select>
 </mapper>

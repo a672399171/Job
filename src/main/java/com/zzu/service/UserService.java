@@ -40,4 +40,6 @@ public interface UserService {
     Result addUser(User user);
 
     Result insertPoor(Poor poor);
+
+    Admin adminLogin(String username,String password);
 }

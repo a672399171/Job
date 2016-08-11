@@ -7,7 +7,7 @@ app.controller("CommentController", function ($scope, $http) {
     $scope.load = function (page, callback) {
         $scope.params.page = page;
 
-        $http.get(app.host + '/job/getComments.do', {
+        $http.get('/job/getComments.do', {
             params: $scope.params
         }).success(function (data) {
             if (callback) {
@@ -20,7 +20,7 @@ app.controller("CommentController", function ($scope, $http) {
 
     //发表评论
     $scope.postComment = function () {
-        $http.get(app.host + '/user/postComment.do', {
+        $http.get('/user/postComment.do', {
             params: {
                 j_id: app.job_id,
                 content: $("#comment").val()
@@ -44,7 +44,7 @@ app.controller("CompanyJobController", function ($scope, $http) {
     $scope.load = function (page, callback) {
         $scope.params.page = page;
 
-        $http.get(app.host + '/job/getJobsByCompany.do', {
+        $http.get('/job/getJobsByCompany.do', {
             params: $scope.params
         }).success(function (data) {
             if (callback) {
@@ -54,7 +54,7 @@ app.controller("CompanyJobController", function ($scope, $http) {
     };
 
     $scope.toUrl = function (id) {
-        window.location = app.host + "/job/detail.do?id=" + id;
+        window.location = "/job/detail.do?id=" + id;
     };
 
     $scope.load(1);
@@ -68,7 +68,7 @@ app.controller("RecommendController", function ($scope, $http) {
     };
 
     $scope.load = function () {
-        $http.get(app.host + '/job/getRecommendJobs.do', {
+        $http.get('/job/getRecommendJobs.do', {
             params: $scope.params
         }).then(function (response) {
             console.log(response.data);
@@ -77,7 +77,7 @@ app.controller("RecommendController", function ($scope, $http) {
     };
 
     $scope.toUrl = function (id) {
-        window.location = app.host + "/job/detail.do?id=" + id;
+        window.location = "/job/detail.do?id=" + id;
     };
 
     $scope.load();
