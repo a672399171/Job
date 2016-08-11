@@ -30,6 +30,4 @@ public interface CompanyDao {
     int getCompaniesCount(int[] audit, String filter);
 
     int getNewCompanyCount();
-
-
 }

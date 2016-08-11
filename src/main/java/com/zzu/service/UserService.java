@@ -1,10 +1,7 @@
 package com.zzu.service;
 
 import com.zzu.dto.Result;
-import com.zzu.model.Apply;
-import com.zzu.model.Collection;
-import com.zzu.model.Poor;
-import com.zzu.model.User;
+import com.zzu.model.*;
 
 import java.util.List;
 
@@ -18,7 +15,7 @@ public interface UserService {
 
     Result<Collection> searchCollections(int u_id, int page, int pageSize);
 
-    Collection getCollection(int u_id,int j_id);
+    Collection getCollection(int u_id, int j_id);
 
     Result deleteCollection(int u_id, int j_id);
 
@@ -26,7 +23,7 @@ public interface UserService {
 
     List<Apply> getApplies(int uId, int jId);
 
-    Result addApply(int uId,int jId);
+    Result addApply(Resume resume, int jId);
 
     List<Poor> searchPoor(int uId);
 
@@ -36,7 +33,7 @@ public interface UserService {
 
     void bindEmail(User user);
 
-    Result changeUserPassword(int id,String password);
+    Result changeUserPassword(int id, String password);
 
     User searchBySchoolNum(String schoolNum);
 

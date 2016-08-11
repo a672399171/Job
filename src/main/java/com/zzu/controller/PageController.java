@@ -58,9 +58,19 @@ public class PageController {
         return "find_password";
     }
 
+    @RequestMapping(value = "/companyFindPassword", method = RequestMethod.GET)
+    public String companyFindPassword(Model model) {
+        return "company/find_password";
+    }
+
     @RequestMapping(value = "/reg", method = RequestMethod.GET)
     public String reg(Model model) {
         return "reg";
+    }
+
+    @RequestMapping(value = "/companyReg", method = RequestMethod.GET)
+    public String companyReg(Model model) {
+        return "company/reg";
     }
 
     @RequestMapping(value = "/regSuccess", method = RequestMethod.GET)

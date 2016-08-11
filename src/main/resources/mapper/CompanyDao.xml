@@ -26,8 +26,10 @@
         <include refid="companyDetailSql"/>
         from
         tb_company
-        where
-        username=#{username}
+        where 1
+        <if test="username != null">
+            and username=#{username}
+        </if>
         <if test="password != null">
             and password=#{password}
         </if>
@@ -54,7 +56,7 @@
         id=#{id}
     </update>
 
-    <insert id="addCompany">
+    <insert id="addCompany" keyProperty="id" useGeneratedKeys="true">
         insert into
         tb_company(
         <include refid="companyDetailSql"/>

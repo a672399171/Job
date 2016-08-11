@@ -52,12 +52,10 @@ public class UserServiceImpl implements UserService {
         return applyDao.getApplies(uId, jId);
     }
 
-    public Result addApply(int uId, int jId) {
+    public Result addApply(Resume resume, int jId) {
         Apply apply = new Apply();
 
         apply.setState(ApplyStateEnum.APPLYING_APPLY.getValue());
-        Resume resume = new Resume();
-        resume.setU_id(uId);
 
         Job job = new Job();
         job.setId(jId);
@@ -66,7 +64,10 @@ public class UserServiceImpl implements UserService {
         apply.setJob(job);
 
         Result result = new Result();
-        if (applyDao.addApply(apply) < 1) {
+        if(resume == null) {
+            result.setSuccess(false);
+            result.setError("暂无简历");
+        } else if (applyDao.addApply(apply) < 1) {
             result.setError("申请失败");
             result.setSuccess(false);
         }

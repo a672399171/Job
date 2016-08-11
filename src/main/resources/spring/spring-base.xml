@@ -16,6 +16,9 @@
         <property name="maxUploadSize" value="2000000"/>
     </bean>
 
+    <!-- 验证码 -->
+    <bean id="kaptchaExtend" class="com.google.code.kaptcha.servlet.KaptchaExtend"/>
+
     <!-- 邮件发送方配置bean -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="${mail.smtp.host}"/>

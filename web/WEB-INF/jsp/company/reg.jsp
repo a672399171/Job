@@ -5,10 +5,9 @@
 <head>
     <title>企业注册</title>
     <%@include file="../common/head.jsp"%>
-    <link rel="stylesheet" type="text/css" href="/css/style_reg.css"/>
-    <script src="/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-    <script src="/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
-    <script src="/layer/layer.js"></script>
+    <link rel="stylesheet" type="text/css" href="/resources/css/style_reg.css"/>
+    <script src="/resources/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+    <script src="/resources/layer/layer.js"></script>
 </head>
 <body>
 <div class="big">
@@ -31,9 +30,9 @@
                     <input type="email" class="form-control" id="email" name="email" placeholder="邮箱">
                 </div>
                 <div class="form-group" id="varifyDiv">
-                    <input type="text" class="form-control" id="varify" name="varify" placeholder="验证码">
+                    <input type="text" class="form-control" id="verify" name="verify" placeholder="验证码">
                 </div>
-                <img src="/user/varify.do" width="100" height="31" id="verify_img">
+                <img src="/user/captchaCode" width="100" height="31" id="verify_img">
                 <a href="javascript:void(0)" onclick="refresh()" style="color: #1f637b">看不清？换一个</a>
 
                 <div class="checkbox" id="checkDiv">
@@ -113,7 +112,7 @@
     }
 
     $(function () {
-        $("#login_href").attr("href", "/user/toCompanyLogin.do");
+        $("#login_href").attr("href", "/companyLogin");
 
         $('#regForm').bootstrapValidator({
             message: 'This value is not valid',
@@ -160,7 +159,7 @@
                         }
                     }
                 },
-                varify: {
+                verify: {
                     message: '验证码不能为空',
                     validators: {
                         notEmpty: {
@@ -169,9 +168,9 @@
                     },
                     remote:{
                         message:"验证码错误",
-                        url:"/user/checkVarify.do",
+                        url:"/user/checkCaptcha",
                         data:{
-                            varify:$("#varify").val()
+                            verify:$("#verify").val()
                         }
                     }
                 }
@@ -180,35 +179,29 @@
             // Prevent form submission
             e.preventDefault();
 
-            // Get the form instance
-            var $form = $(e.target);
-
-            // Get the BootstrapValidator instance
-            var bv = $form.data('bootstrapValidator');
-
             if (!$("#tiaokuan").is(":checked")) {
                 alert("请同意服务条款！");
                 return;
             }
 
             // Use Ajax to submit form data
-            $.post("/user/companyReg.do", {
+            $.post("/company/reg", {
                 username: $("#username").val(),
                 password: $("#password").val(),
                 email: $("#email").val(),
-                varify: $("#varify").val()
+                verify: $("#verify").val()
             }, function (data) {
-                if (data.msg != undefined) {
-                    $("#msg").text(data.msg);
-                } else {
+                if(data.success) {
                     alert("邮件发送成功，请登录邮箱完成注册!");
+                } else {
+                    $("#msg").text(data.error);
                 }
             }, 'json');
         });
     });
 
     function refresh() {
-        $("#verify_img").attr("src", "/user/varify.do?t=" + new Date().getTime());
+        $("#verify_img").attr("src", "/user/captchaCode?t=" + new Date().getTime());
     }
 </script>
 </body>

@@ -35,7 +35,7 @@
                         <a class="list-group-item" href="/user/resume">
                             <i class="fa fa-files-o fa-fw"></i>&nbsp; 我的简历
                         </a>
-                        <a class="list-group-item" href="user/apply">
+                        <a class="list-group-item" href="/user/apply">
                             <i class="fa fa-comments fa-fw"></i>&nbsp; 求职进展
                         </a>
                         <a class="list-group-item" href="/user/poor">

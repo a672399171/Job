@@ -1,9 +1,11 @@
 package com.zzu.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2016/3/8.
  */
-public class Company {
+public class Company implements Serializable {
 	private int id;
 	private String username;
 	private String password;

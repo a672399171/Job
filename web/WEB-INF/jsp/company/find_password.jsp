@@ -56,11 +56,6 @@
             </div>
             <div class="row">
                 <div class="col-md-8 col-md-offset-2">
-                    <input type="email" class="form-control" id="email" placeholder="输入绑定的邮箱">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-8 col-md-offset-2">
                     <button type="button" class="btn btn-primary" id="n" style="width: 100%">下一步</button>
                 </div>
             </div>

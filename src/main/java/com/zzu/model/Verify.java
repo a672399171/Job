@@ -2,6 +2,8 @@ package com.zzu.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2016/3/4.
@@ -12,16 +14,14 @@ public class Verify implements Serializable {
 	private Date time;
 	private String email;
 	private String type;
-	private String u;
+	private Map<String,Serializable> data = new HashMap<String, Serializable>();
 
-
-
-	public String getU() {
-		return u;
+	public Map<String, Serializable> getData() {
+		return data;
 	}
 
-	public void setU(String u) {
-		this.u = u;
+	public void setData(Map<String, Serializable> data) {
+		this.data = data;
 	}
 
 	public String getType() {

@@ -46,8 +46,11 @@
                         <c:when test="${requestScope.apply == null}">
                             <button class="btn btn-danger" id="apply">申请职位</button>
                         </c:when>
-                        <c:otherwise>
+                        <c:when test="${requestScope.apply.state == 0}">
                             <button class="btn btn-danger" id="apply" disabled>申请中</button>
+                        </c:when>
+                        <c:otherwise>
+                            <button class="btn btn-danger" id="apply">申请职位</button>
                         </c:otherwise>
                     </c:choose>
                 </c:if>

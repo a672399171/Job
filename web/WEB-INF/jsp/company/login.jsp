@@ -29,12 +29,12 @@
                     </c:if>
                     >7天内自动登录
                 </label>
-                <a href="/user/company_find_password.do" id="wangji">忘记密码</a>
+                <a href="/companyFindPassword" id="wangji">忘记密码</a>
             </div>
 
             <button type="submit" class="btn btn-default">登&nbsp;录</button>
             <div id="msg"></div>
-            <a href="/user/toCompanyReg.do" id="zhuce">没有账号？立即注册</a>
+            <a href="/companyReg" id="zhuce">没有账号？立即注册</a>
         </form>
     </div>
 </div>

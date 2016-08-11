@@ -47,7 +47,8 @@ public class UserController {
     private CompanyService companyService;
     @Resource
     private CommentService commentService;
-    private KaptchaExtend kaptchaExtend = new KaptchaExtend();
+    @Resource
+    private KaptchaExtend kaptchaExtend;
 
     /**
      * 学生用户登录
@@ -117,7 +118,7 @@ public class UserController {
         return "resume";
     }
 
-    @RequestMapping("/apply")
+    @RequestMapping(value = "/apply",method = RequestMethod.GET)
     @Authorization(Common.AUTH_USER_LOGIN)
     public String apply(HttpSession session, Model model) {
         User user = (User) session.getAttribute(Common.USER);
@@ -128,14 +129,17 @@ public class UserController {
         return "apply";
     }
 
-    @RequestMapping("/applyJob")
+    @RequestMapping(value = "/applyJob",method = RequestMethod.POST)
     @Authorization(Common.AUTH_USER_LOGIN)
     @ResponseBody
     public Result applyJob(HttpSession session, Integer j_id) {
         User user = (User) session.getAttribute(Common.USER);
-        Result result = null;
+        Result result = new Result(false);
         if (user != null) {
-            result = userService.addApply(user.getId(), j_id);
+            Resume resume = resumeService.getByUid(user.getId());
+            result = userService.addApply(resume, j_id);
+        } else {
+            result.setError("未登录");
         }
 
         return result;
@@ -616,6 +620,6 @@ public class UserController {
     @ResponseBody
     public Result quit(HttpSession session) {
         session.removeAttribute(Common.USER);
-        return null;
+        return new Result(true);
     }
 }
