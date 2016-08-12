@@ -93,6 +93,25 @@ public class UserController {
         return result;
     }
 
+    @Authorization(Common.AUTH_ADMIN_LOGIN)
+    @RequestMapping("/list")
+    @ResponseBody
+    public Result<User> userList(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                 @RequestParam(value = "filter", required = false, defaultValue = "") String filter) {
+        Result result = userService.list(page,pageSize,filter);
+        return result;
+    }
+
+    @Authorization({Common.AUTH_ADMIN_LOGIN})
+    @RequestMapping("/detail")
+    @ResponseBody
+    public Result detail(Integer id) {
+        Result result = new Result();
+        result.getData().put(Common.USER,userService.getById(id));
+        return result;
+    }
+
     /**
      * 学生用户个人资料
      *

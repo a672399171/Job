@@ -7,40 +7,15 @@
 app.controller('UserListController', function ($scope, $resource, $stateParams, $modal, $state) {
     //查询
     $scope.query = function (page, filter, pageSize) {
-        var $com = $resource("/admin/users/list?page=:page&pageSize=:pageSize&filter=:filter", {page: '@page'});
-        if (!page) {
-            page = 1;
-        } else {
-            page = parseInt(page);
-        }
-
+        var $com = $resource("/user/list?page=:page&pageSize=:pageSize&filter=:filter", {page: '@page'});
         $com.get({page: page, filter: filter}, function (data) {
-            //扩展分页数据，显示页签，最终效果为  < 1 2 3 4 5 >
-            $scope.page_index = page;
-            $scope.pages = [];    //页签表
             var N = 5;          //每次显示5个页签
-
-            $scope.pages = [];
-            $scope.maxPage = Math.ceil(data.total / 10);
-
-            if ($scope.maxPage <= N) {
-                for (var i = 0; i < $scope.maxPage; i++) {
-                    $scope.pages.push(i + 1);
-                }
-            } else {
-                if ($scope.page_index > Math.ceil(N / 2)) {
-                    var end = $scope.maxPage > $scope.page_index + Math.floor(N / 2) ? $scope.page_index + Math.floor(N / 2) : $scope.maxPage;
-                    for (var i = $scope.page_index - Math.floor(N / 2); i <= end; i++) {
-                        $scope.pages.push(i);
-                    }
-                } else {
-                    for (var i = 0; i < N; i++) {
-                        $scope.pages.push(i + 1);
-                    }
-                }
-            }
-
             $scope.data = data;
+            
+            $scope.data.pages = [];
+            for (var i = 0; i < data.totalPage; i++) {
+                $scope.data.pages.push(i + 1);
+            }
             $scope.search_context = filter;
         });
     };
@@ -102,9 +77,9 @@ app.controller('ConfirmController', ['$scope', '$modalInstance', function ($scop
 app.controller('UserDetailController', function ($rootScope, $scope, $resource, $stateParams, $state, $modal) {
     $scope.edit_mode = !!$stateParams.id;
     if ($scope.edit_mode) {
-        var $com = $resource("/user/admin/users/detail/:id", {id: '@id'});
-        var resp = $com.get({id: $stateParams.id}, function (data) {
-            $scope.data = resp;
+        var $com = $resource("/user/detail?id=:id", {id: '@id'});
+        $com.get({id: $stateParams.id}, function (data) {
+            $scope.data = data.data.user;
         });
     }
     else {
@@ -112,25 +87,23 @@ app.controller('UserDetailController', function ($rootScope, $scope, $resource, 
     }
     $scope.submit = function () {
         if ($scope.edit_mode) {
-            var $com = $resource("/user/admin/users/update/:id", {id: '@id'}, {
+            var $com = $resource("/user/update?id=:id", {id: '@id'}, {
                 'update': {method: 'POST'}
             });
             $com.update({id: $stateParams.id}, $scope.data, function (data) {
                 if (data.success) {
-                    alert(data.msg);
                     $state.go('app.users.list');
                 } else {
-                    alert(data.msg);
+                    alert(data.error);
                 }
             });
         } else {
-            var $com = $resource("/user/admin/users/create");
+            var $com = $resource("/user/create");
             $com.save($scope.data, function (data) {
                 if (data.success) {
-                    alert(data.msg);
                     $state.go('app.users.list');
                 } else {
-                    alert(data.msg);
+                    alert(data.error);
                 }
             });
         }

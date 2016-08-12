@@ -179,4 +179,38 @@
         status=1
         and isNew=1
     </select>
+
+    <select id="list" resultType="com.zzu.model.User">
+        select
+        <include refid="userSql"/>
+        from
+        tb_user
+        where 1
+        <if test="filter != null">
+            and(
+            username like "%"#{filter}"%"
+            or `nickname` like "%"#{filter}"%"
+            or school_num like "%"#{filter}"%"
+            )
+        </if>
+        order by id
+        <if test="count &gt; 0">
+            limit ${start},${count}
+        </if>
+    </select>
+
+    <select id="listCount" resultType="int">
+        select
+        count(*) as num
+        from
+        tb_user
+        where 1
+        <if test="filter != null">
+            and(
+            username like "%"#{filter}"%"
+            or `nickname` like "%"#{filter}"%"
+            or school_num like "%"#{filter}"%"
+            )
+        </if>
+    </select>
 </mapper>

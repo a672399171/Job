@@ -4,11 +4,14 @@ import com.zzu.common.Common;
 import com.zzu.common.annotaion.Authorization;
 import com.zzu.dto.Result;
 import com.zzu.model.Admin;
+import com.zzu.model.Resume;
+import com.zzu.model.User;
 import com.zzu.service.*;
 import com.zzu.util.StringUtil;
 import com.zzu.util.TokenFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -72,7 +75,7 @@ public class AdminController {
     public Result dashboard() {
         Result result = new Result(true);
         result.getData().put("poorCount", adminService.getNewPoorCount());
-        result.getData().put("companyCount",adminService.getNewCompanyCount());
+        result.getData().put("companyCount", adminService.getNewCompanyCount());
         return result;
     }
 }

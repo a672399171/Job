@@ -11,6 +11,12 @@ public interface UserDao {
 
     User exists(String username);
 
+    List<User> list(@Param("start") int start,
+                    @Param("count") int count,
+                    @Param("filter") String filter);
+
+    int listCount(@Param("filter") String filter);
+
     int modifyInfo(User user);
 
     User getById(int id);

@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
         apply.setJob(job);
 
         Result result = new Result();
-        if(resume == null) {
+        if (resume == null) {
             result.setSuccess(false);
             result.setError("暂无简历");
         } else if (applyDao.addApply(apply) < 1) {
@@ -133,11 +133,11 @@ public class UserServiceImpl implements UserService {
     public Result addUser(User user) {
         Result result = new Result();
         result.setSuccess(false);
-        if(StringUtil.isEmpty(user.getUsername())) {
+        if (StringUtil.isEmpty(user.getUsername())) {
             result.setError("用户名不能为空");
-        } else if(StringUtil.isEmpty(user.getPassword())) {
+        } else if (StringUtil.isEmpty(user.getPassword())) {
             result.setError("密码不能为空");
-        } else if(userDao.addUser(user) < 1) {
+        } else if (userDao.addUser(user) < 1) {
             result.setError("添加失败");
         } else {
             result.setSuccess(true);
@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
 
     public Result insertPoor(Poor poor) {
         Result result = new Result();
-        if(userDao.insertPoor(poor) < 1) {
+        if (userDao.insertPoor(poor) < 1) {
             result.setSuccess(false);
             result.setError("插入失败");
         }
@@ -157,6 +157,15 @@ public class UserServiceImpl implements UserService {
 
     public Admin adminLogin(String username, String password) {
         return userDao.adminLogin(username, StringUtil.toMd5(password));
+    }
+
+    public Result<User> list(int page, int pageSize, String filter) {
+        Result<User> userResult = new Result<User>(page, pageSize);
+        List<User> users = userDao.list((page - 1) * pageSize, pageSize, filter);
+        userResult.setList(users);
+        userResult.setTotalItem(userDao.listCount(filter));
+
+        return userResult;
     }
 
     /*

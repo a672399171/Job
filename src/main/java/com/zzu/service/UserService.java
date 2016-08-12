@@ -42,4 +42,6 @@ public interface UserService {
     Result insertPoor(Poor poor);
 
     Admin adminLogin(String username,String password);
+
+    Result<User> list(int page,int pageSize,String filter);
 }
