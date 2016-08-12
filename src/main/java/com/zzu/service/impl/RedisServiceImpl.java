@@ -20,10 +20,7 @@ public class RedisServiceImpl implements RedisService {
     private ClassifyDao classifyDao;
     @Resource
     private SchoolDao schoolDao;
-
-    public RedisServiceImpl() {
-        redisTemplate.expire(Common.AUTH_TOKEN, 30, TimeUnit.MINUTES);
-    }
+    private boolean init = false;
 
     public List<Classify> getClassifies() {
         List<Classify> classifies = null;
@@ -76,6 +73,10 @@ public class RedisServiceImpl implements RedisService {
     }
 
     public void insertToken(Token token) {
+        if (!init) {
+            init = true;
+            redisTemplate.expire(Common.AUTH_TOKEN, 30, TimeUnit.MINUTES);
+        }
         if (token != null) {
             redisTemplate.boundHashOps(Common.AUTH_TOKEN).put(token.getToken(), token);
         }
