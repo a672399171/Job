@@ -60,6 +60,9 @@
     <bean id="jedisConnFactory"
           class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
         <property name="usePool" value="true"/>
+        <property name="hostName" value="${redis.host}"/>
+        <property name="port" value="${redis.port}"/>
+        <property name="password" value="${redis.password}"/>
     </bean>
 
     <!-- redis template definition -->
